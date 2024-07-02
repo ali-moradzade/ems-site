@@ -5,7 +5,7 @@ export function LoginPage() {
                 <div className="card shadow">
                     <div className="card-body">
                         <div className="card-title">
-                            <h3>Login as Admin</h3>
+                            <h3>Login</h3>
                             <div className="card-text">
                                 <p className="small text-muted">Login with your username &amp; password</p>
                                 <form>
