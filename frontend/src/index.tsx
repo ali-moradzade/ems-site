@@ -4,15 +4,18 @@ import {App} from './App';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Provider} from "./context/User";
+import {NavigationProvider} from "./context/Navigation";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
 
 root.render(
-    <Provider>
-        <React.StrictMode>
-            <App/>
-        </React.StrictMode>
-    </Provider>
+    <NavigationProvider>
+        <Provider>
+            <React.StrictMode>
+                <App/>
+            </React.StrictMode>
+        </Provider>
+    </NavigationProvider>
 );
