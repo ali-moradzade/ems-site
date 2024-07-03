@@ -1,29 +1,23 @@
+import {Dashboard} from "../components/Dashboard";
+
 export function DashboardPage() {
+    const cards = [
+        {
+            title: 'Employees',
+            size: 254,
+            link: '/employees',
+        },
+        {
+            title: 'Jobs',
+            size: 24,
+            link: '/jobs',
+        },
+    ];
+
     return (
         <div>
             <div className="container-fluid">
-                <div className="row mt-3">
-                    <div className="col-lg-3 col-md-3">
-                        <div className="card card-border">
-                            <div className="card-body">
-                                <h4 className="card-title">254 <small className="text-muted">Employees</small></h4>
-                            </div>
-                            <div className="list-group list-group-flush">
-                                <a href="#" className="list-group-item list-group-item-primary">View All</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="col-lg-3 col-md-3">
-                        <div className="card card-border">
-                            <div className="card-body">
-                                <h4 className="card-title">24 <small className="text-muted">Jobs</small></h4>
-                            </div>
-                            <div className="list-group list-group-flush">
-                                <a href="#" className="list-group-item list-group-item-primary">View All</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <Dashboard cards={cards}/>
             </div>
         </div>
     );
