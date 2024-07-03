@@ -1,4 +1,3 @@
-import {Navbar} from "../components/Navbar";
 import {Jobs} from "../components/Jobs";
 
 export function JobsListPage() {
@@ -22,8 +21,6 @@ export function JobsListPage() {
 
     return (
         <div>
-            <Navbar activeLink={'/jobs'}/>
-
             {/* dashboard contents */}
             <div className="container-fluid">
                 <div className="row mt-3">

@@ -1,10 +1,6 @@
-import {Navbar} from "../components/Navbar";
-
 export function DashboardPage() {
     return (
         <div>
-            <Navbar activeLink={'/'}/>
-
             <div className="container-fluid">
                 <div className="row mt-3">
                     <div className="col-lg-3 col-md-3">
