@@ -8,7 +8,7 @@ export function Navbar() {
     const {firstName, lastName} = user;
     const {currentPath} = useNavigationContext();
 
-    if (currentPath === '/signup' || currentPath === '/login') {
+    if (['/', '/signup', '/login'].includes(currentPath)) {
         return (
             <div></div>
         );
