@@ -3,7 +3,7 @@ import {Navbar} from "../components/Navbar";
 export function EmployeeListPage() {
     return (
         <div>
-            <Navbar userFullName={'Mocked Full Name'}/>
+            <Navbar activeLink={'/employees'}/>
 
             {/* dashboard contents */}
             <div className="container-fluid">

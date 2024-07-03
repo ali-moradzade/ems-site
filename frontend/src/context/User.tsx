@@ -6,19 +6,24 @@ interface User {
     email: string;
 }
 
+const fakeUser: User = {
+    firstName: 'fake firstName',
+    lastName: 'fake lastName',
+    email: 'fake@gmail.com',
+};
+
 interface UserContextType {
     user: User;
     setUser: (user: User) => void;
 }
 
-export const UserContext = createContext<UserContextType | undefined>(undefined);
+export const UserContext = createContext<UserContextType>({
+    user: fakeUser,
+    setUser: (user: User) => console.log('fake imp')
+});
 
 export function Provider({children}: { children: ReactNode }) {
-    const [user, setUser] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-    });
+    const [user, setUser] = useState(fakeUser);
 
     const value = {
         user,
