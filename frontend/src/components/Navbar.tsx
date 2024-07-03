@@ -1,5 +1,6 @@
 import {useUserContext} from "../hooks/use-user-context";
 import React from "react";
+import { FaSearch } from "react-icons/fa";
 import {Link} from "./Link";
 import {useNavigationContext} from "../hooks/use-navigation-context";
 
@@ -58,8 +59,9 @@ export function Navbar() {
                         <div className="input-group">
                             <input type="search" className="form-control form-control-sm" placeholder="Search .."
                                    aria-label="Recipient's username" aria-describedby="button-addon2"/>
-                            <button className="btn btn-sm btn-success" type="submit"><i
-                                className="fa fa-search"></i></button>
+                            <button className="btn btn-sm btn-success" type="submit">
+                                <FaSearch/>
+                            </button>
                         </div>
                     </form>
                     <button role="button" className="btn btn-sm btn-warning ms-3">Logout</button>
