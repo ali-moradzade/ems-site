@@ -10,11 +10,6 @@ export class JobsService {
     ) {
     }
 
-    create(name: string, date: string) {
-        const job = this.repo.create({name, date});
-        return this.repo.save(job);
-    }
-
     findOne(id: number) {
         if (!id) {
             return null;
@@ -25,6 +20,11 @@ export class JobsService {
 
     find(name: string) {
         return this.repo.findBy({name});
+    }
+
+    create(name: string, date: string) {
+        const job = this.repo.create({name, date});
+        return this.repo.save(job);
     }
 
     async update(id: number, attrs: Partial<Job>) {
