@@ -27,13 +27,13 @@ export function JobsListPage() {
                     <div className="col-lg-3 col-md-3">
                         <div className="list-group card-border small">
                             <div className="list-group-item active">Jobs Data</div>
-                            <a href="#" className="list-group-item list-group-item-action" data-bs-toggle="modal"
-                               data-bs-target="#add_job">
+                            <button className="list-group-item list-group-item-action" data-bs-toggle="modal"
+                                    data-bs-target="#add_job">
                                 Add Job
-                            </a>
-                            <a href="#" className="list-group-item list-group-item-action">
+                            </button>
+                            <button className="list-group-item list-group-item-action">
                                 View All Jobs
-                            </a>
+                            </button>
                         </div>
                     </div>
                     <div className="col-lg-9 col-md-9">

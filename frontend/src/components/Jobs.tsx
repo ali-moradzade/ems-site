@@ -13,22 +13,22 @@ export function Jobs({jobs}: JobsProps) {
                 <td>{id}</td>
                 <td>{name}</td>
                 <td>
-                    <a href="#" data-bs-toggle="modal" data-bs-target={`#job_details_${id}`}
+                    <button data-bs-toggle="modal" data-bs-target={`#job_details_${id}`}
                        className="btn btn-info btn-sm w-100">
                         Details
-                    </a>
+                    </button>
                 </td>
                 <td>
-                    <a href="#" data-bs-toggle="modal" data-bs-target={`#edit_job_${id}`}
+                    <button data-bs-toggle="modal" data-bs-target={`#edit_job_${id}`}
                        className="btn btn-warning btn-sm w-100">
                         Edit
-                    </a>
+                    </button>
                 </td>
                 <td>
-                    <a href="#" data-bs-toggle="modal" data-bs-target={`#delete_job_${id}`}
+                    <button data-bs-toggle="modal" data-bs-target={`#delete_job_${id}`}
                        className="btn btn-danger btn-sm w-100">
                         Delete
-                    </a>
+                    </button>
                 </td>
             </tr>
         );

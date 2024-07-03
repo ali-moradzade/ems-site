@@ -64,7 +64,7 @@ export function Navbar() {
                             </button>
                         </div>
                     </form>
-                    <button role="button" className="btn btn-sm btn-warning ms-3">Logout</button>
+                    <button className="btn btn-sm btn-warning ms-3">Logout</button>
                 </div>
             </div>
         </nav>

@@ -36,13 +36,13 @@ export function EmployeeListPage() {
                     <div className="col-lg-3 col-md-3">
                         <div className="list-group card-border small">
                             <div className="list-group-item active">Employee Data</div>
-                            <a href="#" className="list-group-item list-group-item-action" data-bs-toggle="modal"
-                               data-bs-target="#add_employee">
+                            <button className="list-group-item list-group-item-action" data-bs-toggle="modal"
+                                    data-bs-target="#add_employee">
                                 Add Employee
-                            </a>
-                            <a href="#" className="list-group-item list-group-item-action">
+                            </button>
+                            <button className="list-group-item list-group-item-action">
                                 View All Employees
-                            </a>
+                            </button>
                         </div>
                     </div>
                     <div className="col-lg-9 col-md-9">
