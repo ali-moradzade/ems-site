@@ -1,31 +1,33 @@
 import {useUserContext} from "../hooks/use-user-context";
+import React from "react";
+import {Link} from "./Link";
 
-interface NavbarProps {
-    activeLink: string;
-}
-
-const linkItems = [
-    {
-        label: 'Employees',
-        link: '/employees',
-    },
-    {
-        label: 'Jobs',
-        link: '/jobs',
-    }
-];
-
-export function Navbar({activeLink}: NavbarProps) {
+export function Navbar() {
     const {user} = useUserContext()!;
     const {firstName, lastName} = user;
 
-    const renderedLinks = linkItems.map((item, index) => {
+    const linkItems = [
+        {
+            label: 'Employees',
+            path: '/employees',
+        },
+        {
+            label: 'Jobs',
+            path: '/jobs',
+        }
+    ];
+
+
+    const renderedLinks = linkItems.map((item) => {
         return (
-            <li className="nav-item" key={index}>
-                <a className={`nav-link ${item.link === activeLink ? 'active' : ''}`} aria-current="page"
-                   href={item.link}>
+            <li className="nav-item" key={item.label}>
+                <Link
+                    to={item.path}
+                    className="nav-link"
+                    activeClassName="active"
+                >
                     {item.label}
-                </a>
+                </Link>
             </li>
         );
     });
@@ -33,7 +35,9 @@ export function Navbar({activeLink}: NavbarProps) {
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container-fluid">
-                <a className="navbar-brand" href="#">Hi, {firstName} {lastName}</a>
+                <Link to={'/'} className="navbar-brand">
+                    Hi, {firstName} {lastName}
+                </Link>
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +55,7 @@ export function Navbar({activeLink}: NavbarProps) {
                                 className="fa fa-search"></i></button>
                         </div>
                     </form>
-                    <a href="#" role="button" className="btn btn-sm btn-warning ms-3">Logout</a>
+                    <button role="button" className="btn btn-sm btn-warning ms-3">Logout</button>
                 </div>
             </div>
         </nav>

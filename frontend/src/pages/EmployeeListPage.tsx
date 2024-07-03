@@ -31,7 +31,7 @@ export function EmployeeListPage() {
 
     return (
         <div>
-            <Navbar activeLink={'/employees'}/>
+            <Navbar/>
 
             {/* dashboard contents */}
             <div className="container-fluid">

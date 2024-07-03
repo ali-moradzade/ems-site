@@ -22,7 +22,7 @@ export function JobsListPage() {
 
     return (
         <div>
-            <Navbar activeLink={'/jobs'}/>
+            <Navbar/>
 
             {/* dashboard contents */}
             <div className="container-fluid">

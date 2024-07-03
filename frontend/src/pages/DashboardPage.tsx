@@ -3,7 +3,7 @@ import {Navbar} from "../components/Navbar";
 export function DashboardPage() {
     return (
         <div>
-            <Navbar activeLink={'/'}/>
+            <Navbar/>
 
             <div className="container-fluid">
                 <div className="row mt-3">
