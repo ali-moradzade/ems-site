@@ -1,4 +1,3 @@
-import {Navbar} from "../components/Navbar";
 import {Employees} from "../components/Employees";
 
 export function EmployeeListPage() {
@@ -31,8 +30,6 @@ export function EmployeeListPage() {
 
     return (
         <div>
-            <Navbar/>
-
             {/* dashboard contents */}
             <div className="container-fluid">
                 <div className="row mt-3">

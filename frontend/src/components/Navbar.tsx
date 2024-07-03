@@ -1,10 +1,18 @@
 import {useUserContext} from "../hooks/use-user-context";
 import React from "react";
 import {Link} from "./Link";
+import {useNavigationContext} from "../hooks/use-navigation-context";
 
 export function Navbar() {
     const {user} = useUserContext()!;
     const {firstName, lastName} = user;
+    const {currentPath} = useNavigationContext();
+
+    if (currentPath === '/signup' || currentPath === '/login') {
+        return (
+            <div></div>
+        );
+    }
 
     const linkItems = [
         {
@@ -16,7 +24,6 @@ export function Navbar() {
             path: '/jobs',
         }
     ];
-
 
     const renderedLinks = linkItems.map((item) => {
         return (
@@ -35,7 +42,7 @@ export function Navbar() {
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container-fluid">
-                <Link to={'/'} className="navbar-brand">
+                <Link to={'/dashboard'} className="navbar-brand">
                     Hi, {firstName} {lastName}
                 </Link>
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
