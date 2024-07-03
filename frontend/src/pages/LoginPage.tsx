@@ -1,4 +1,5 @@
 import {WelcomePanel} from "../components/WelcomePanel";
+import {Link} from "../components/Link";
 
 export function LoginPage() {
     return (
@@ -27,6 +28,9 @@ export function LoginPage() {
                                             <input type="submit" className="btn btn-success" value="Login"/>
                                         </div>
                                     </form>
+                                    <div className="text-center text-muted small mt-4">
+                                        Don't have an account? <Link to={'/signup'} className="text-decoration-none">Signup</Link>
+                                    </div>
                                 </div>
                             </div>
                         </div>
