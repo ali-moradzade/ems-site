@@ -19,22 +19,22 @@ export function Employees({employees}: EmployeesProps) {
                 <td>{name}</td>
                 <td>{email}</td>
                 <td>
-                    <a href="#" data-bs-toggle="modal" data-bs-target={`#employee_details_${id}`}
+                    <button data-bs-toggle="modal" data-bs-target={`#employee_details_${id}`}
                        className="btn btn-info btn-sm w-100">
                         Details
-                    </a>
+                    </button>
                 </td>
                 <td>
-                    <a href="#" data-bs-toggle="modal" data-bs-target={`#edit_employee_${id}`}
+                    <button data-bs-toggle="modal" data-bs-target={`#edit_employee_${id}`}
                        className="btn btn-warning btn-sm w-100">
                         Edit
-                    </a>
+                    </button>
                 </td>
                 <td>
-                    <a href="#" data-bs-toggle="modal" data-bs-target={`#delete_employee_${id}`}
+                    <button data-bs-toggle="modal" data-bs-target={`#delete_employee_${id}`}
                        className="btn btn-danger btn-sm w-100">
                         Delete
-                    </a>
+                    </button>
                 </td>
             </tr>
         );
