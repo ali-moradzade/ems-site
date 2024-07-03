@@ -1,4 +1,4 @@
-import {Injectable, NotFoundException} from '@nestjs/common';
+import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
 import {InjectRepository} from "@nestjs/typeorm";
 import {Employee} from "./employee.entity";
 import {Repository} from "typeorm";
@@ -8,18 +8,6 @@ export class EmployeesService {
     constructor(
         @InjectRepository(Employee) private repo: Repository<Employee>,
     ) {
-    }
-
-    create(
-        email: string, password: string, firstName: string, lastName: string,
-        phone: string, job: string, date: string
-    ) {
-        const employee = this.repo.create({
-            email, password, firstName,
-            lastName, phone, job, date,
-        });
-
-        return this.repo.save(employee);
     }
 
     findOne(id: number) {
@@ -36,6 +24,22 @@ export class EmployeesService {
         return this.repo.findBy({
             email,
         });
+    }
+
+    async create(
+        email: string, password: string, firstName: string, lastName: string,
+        phone: string, job: string, date: string
+    ) {
+        const employees = await this.find(email);
+        if (employees.length) {
+            throw new BadRequestException('Email in use');
+        }
+        const employee = this.repo.create({
+            email, password, firstName,
+            lastName, phone, job, date,
+        });
+
+        return this.repo.save(employee);
     }
 
     async update(id: number, attrs: Partial<Employee>) {
