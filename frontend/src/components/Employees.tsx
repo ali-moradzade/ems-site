@@ -177,7 +177,7 @@ export function Employees({employees}: EmployeesProps) {
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
-                        <th>Email ID</th>
+                        <th>Email</th>
                         <th>Details</th>
                         <th>Edit</th>
                         <th>Delete</th>
