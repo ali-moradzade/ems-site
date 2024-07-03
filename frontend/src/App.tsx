@@ -1,10 +1,10 @@
 import React from 'react';
-import {SignupPage} from "./pages/SignupPage";
+import {JobsListPage} from "./pages/JobsListPage";
 
 export function App() {
     return (
-        <div className="container-fluid">
-            <SignupPage/>
+        <div className="container-fluid px-0">
+            <JobsListPage/>
         </div>
     );
 }
