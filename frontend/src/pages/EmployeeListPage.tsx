@@ -92,7 +92,8 @@ export function EmployeeListPage() {
                                     </select>
                                 </div>
                                 <div className="mb-3">
-                                    <button type="submit" className="btn btn-sm btn-success w-100">Update Employee
+                                    <button type="submit" className="btn btn-sm btn-success w-100">
+                                        Add Employee
                                     </button>
                                 </div>
                             </form>

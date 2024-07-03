@@ -96,6 +96,11 @@ export function Jobs({jobs}: JobsProps) {
                                            placeholder="Employee Name"
                                            value={name} required/>
                                 </div>
+                                <div className="mb-3">
+                                    <button type="submit" className="btn btn-sm btn-success w-100">
+                                        Update Job
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     </div>

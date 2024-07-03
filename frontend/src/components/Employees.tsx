@@ -130,7 +130,7 @@ export function Employees({employees}: EmployeesProps) {
                                 </div>
                                 <div className="mb-3">
                                     <button type="submit" className="btn btn-sm btn-success w-100">
-                                        Add New Employee
+                                        Update Employee
                                     </button>
                                 </div>
                             </form>
