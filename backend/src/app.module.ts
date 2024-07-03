@@ -2,6 +2,8 @@ import {Module} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {EmployeesModule} from './employees/employees.module';
 import {JobsModule} from './jobs/jobs.module';
+import {Employee} from "./employees/employee.entity";
+import {Job} from "./jobs/jobs.entity";
 
 @Module({
     imports: [
@@ -10,7 +12,10 @@ import {JobsModule} from './jobs/jobs.module';
         TypeOrmModule.forRoot({
             type: 'sqlite',
             database: 'db.sqlite',
-            entities: [],
+            entities: [
+                Employee,
+                Job,
+            ],
             synchronize: true,
         }),
     ],
