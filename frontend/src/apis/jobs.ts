@@ -50,7 +50,7 @@ export class JobsRestClient {
         return res.data;
     }
 
-    static getEmployeeRestClient() {
+    static getJobsRestClient() {
         if (!this.uniqueInstance) {
             this.uniqueInstance = new JobsRestClient();
         }

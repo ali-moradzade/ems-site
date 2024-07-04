@@ -1,7 +1,7 @@
 import {Employee, EmployeesRestClient} from "../apis/employees";
 import {createContext, ReactNode, useState} from "react";
 
-interface EmployeeContextType {
+export interface EmployeeContextType {
     employees: Employee[];
     setEmployees: (employees: Employee[]) => void;
     getAllEmployees: (email: string) => Promise<void>;
@@ -29,7 +29,7 @@ export function EmployeeProvider({children}: EmployeeProviderProps) {
     const createEmployee = async (employeeData: Employee) => {
         const employee = await restClient.createEmployee(employeeData);
 
-        setEmployees([employees, employee]);
+        setEmployees([...employees, employee]);
     };
 
     const updateEmployee = async (id: number, attrs: Partial<Employee>) => {

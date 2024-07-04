@@ -1,6 +1,6 @@
 import {useContext} from "react";
-import {EmployeeContext} from "../context/Employee";
+import {EmployeeContext, EmployeeContextType} from "../context/Employee";
 
-export function useEmployeeContext() {
-    return useContext(EmployeeContext);
+export function useEmployeeContext(): EmployeeContextType {
+    return useContext(EmployeeContext)!;
 }
