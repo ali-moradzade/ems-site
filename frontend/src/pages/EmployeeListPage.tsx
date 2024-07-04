@@ -1,4 +1,4 @@
-import {EmployeeList} from "../components/EmployeeList";
+import {EmployeeList} from "../components/employee/EmployeeList";
 
 export function EmployeeListPage() {
     return (

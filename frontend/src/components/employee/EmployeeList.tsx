@@ -1,7 +1,36 @@
-import {useEmployeeContext} from "../hooks/use-employee-context";
+import {useEmployeeContext} from "../../hooks/use-employee-context";
 
 export function EmployeeList() {
-    const {employees} = useEmployeeContext();
+    const employees = [
+        {
+            id: '1',
+            firstName: 'John',
+            lastName: 'Doe 1',
+            email: 'johndoe1@gmail.com',
+            phone: '+919876543210',
+            job: 'Graphic Designer',
+            date: '12/09/2022',
+        },
+        {
+            id: '2',
+            firstName: 'John',
+            lastName: 'Doe 2',
+            email: 'johndoe2@gmail.com',
+            phone: '+919876543211',
+            job: 'Web Designer',
+            date: '11/09/2022',
+        },
+        {
+            id: '3',
+            firstName: 'John',
+            lastName: 'Doe 3',
+            email: 'johndoe3@gmail.com',
+            phone: '+919876543212',
+            job: 'Web Developer',
+            date: '10/09/2022',
+        },
+    ];
+
 
     const renderedEmployees = employees.map(({id, firstName, lastName, email}) => {
         return (
