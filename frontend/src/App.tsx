@@ -3,7 +3,7 @@ import {Navbar} from "./components/Navbar";
 import {Route} from "./components/Route";
 import {SignupPage} from "./pages/SignupPage";
 import {LoginPage} from "./pages/LoginPage";
-import {EmployeeListPage} from "./pages/EmployeeListPage";
+import {EmployeePage} from "./pages/EmployeePage";
 import {JobsListPage} from "./pages/JobsListPage";
 import {DashboardPage} from "./pages/DashboardPage";
 import {HomePage} from "./pages/HomePage";
@@ -26,7 +26,7 @@ export function App() {
                 <DashboardPage/>
             </Route>
             <Route path='/employees'>
-                <EmployeeListPage/>
+                <EmployeePage/>
             </Route>
             <Route path='/jobs'>
                 <JobsListPage/>

@@ -1,19 +1,15 @@
 import {FormEvent, useState} from "react";
-import {useEmployeeContext} from "../../hooks/use-employee-context";
 
 export function EmployeeCreate() {
-    const {createEmployee} = useEmployeeContext();
-
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
-    const [date, setDate] = useState<Date>(new Date());
+    const [date, setDate] = useState('');
     const [phone, setPhone] = useState('');
-    const [job, setJob] = useState('');
+    const [job, setJob] = useState('Graphic Designer'); // TODO: change when getting jobs dynamically
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        createEmployee({firstName, lastName, email, date: date.toString(), phone, job}).then();
         console.log(firstName, lastName, email, date, phone, job);
     };
 
@@ -31,9 +27,10 @@ export function EmployeeCreate() {
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
                                 <input
-                                    type="date" className="form-control form-control-sm" required
-                                    value={date.toString()}
-                                    onChange={e => setDate(new Date(e.target.value))}
+                                    type="text" className="form-control form-control-sm" required
+                                    placeholder="Date: yyyy-mm-dd"
+                                    value={date}
+                                    onChange={e => setDate(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
@@ -68,7 +65,8 @@ export function EmployeeCreate() {
                                 />
                             </div>
                             <div className="mb-3">
-                                <select className="form-control form-control-sm">
+                                <select className="form-control form-control-sm"
+                                        onChange={choice => setJob(choice.target.value)}>
                                     {/*TODO: handle job*/}
                                     <option value="Graphic Designer">Graphic Designer</option>
                                     <option value="Web Designer">Web Designer Designer</option>
