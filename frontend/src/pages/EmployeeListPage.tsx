@@ -1,33 +1,6 @@
-import {Employees} from "../components/Employees";
+import {EmployeeList} from "../components/EmployeeList";
 
 export function EmployeeListPage() {
-    const employees = [
-        {
-            id: '1',
-            name: 'John Doe 1',
-            email: 'johndoe1@gmail.com',
-            phone: '+919876543210',
-            job: 'Graphic Designer',
-            date: '12/09/2022',
-        },
-        {
-            id: '2',
-            name: 'John Doe 2',
-            email: 'johndoe2@gmail.com',
-            phone: '+919876543211',
-            job: 'Web Designer',
-            date: '11/09/2022',
-        },
-        {
-            id: '3',
-            name: 'John Doe 3',
-            email: 'johndoe3@gmail.com',
-            phone: '+919876543212',
-            job: 'Web Developer',
-            date: '10/09/2022',
-        },
-    ];
-
     return (
         <div>
             {/* dashboard contents */}
@@ -46,7 +19,7 @@ export function EmployeeListPage() {
                         </div>
                     </div>
                     <div className="col-lg-9 col-md-9">
-                        <Employees employees={employees}/>
+                        <EmployeeList/>
                     </div>
                 </div>
             </div>

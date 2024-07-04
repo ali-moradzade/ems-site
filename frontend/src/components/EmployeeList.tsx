@@ -1,38 +1,29 @@
-interface Employee {
-    id: string;
-    name: string;
-    email: string;
-    phone: string;
-    job: string;
-    date: string;
-}
+import {useEmployeeContext} from "../hooks/use-employee-context";
 
-interface EmployeesProps {
-    employees: Employee[];
-}
+export function EmployeeList() {
+    const {employees} = useEmployeeContext();
 
-export function Employees({employees}: EmployeesProps) {
-    const renderedEmployees = employees.map(({id, name, email}) => {
+    const renderedEmployees = employees.map(({id, firstName, lastName, email}) => {
         return (
             <tr key={id}>
                 <td>{id}</td>
-                <td>{name}</td>
+                <td>{`${firstName} ${lastName}`}</td>
                 <td>{email}</td>
                 <td>
                     <button data-bs-toggle="modal" data-bs-target={`#employee_details_${id}`}
-                       className="btn btn-info btn-sm w-100">
+                            className="btn btn-info btn-sm w-100">
                         Details
                     </button>
                 </td>
                 <td>
                     <button data-bs-toggle="modal" data-bs-target={`#edit_employee_${id}`}
-                       className="btn btn-warning btn-sm w-100">
+                            className="btn btn-warning btn-sm w-100">
                         Edit
                     </button>
                 </td>
                 <td>
                     <button data-bs-toggle="modal" data-bs-target={`#delete_employee_${id}`}
-                       className="btn btn-danger btn-sm w-100">
+                            className="btn btn-danger btn-sm w-100">
                         Delete
                     </button>
                 </td>
@@ -40,7 +31,7 @@ export function Employees({employees}: EmployeesProps) {
         );
     });
 
-    const renderedEmployeeDetailsModals = employees.map(({id, name, email, phone, job, date}) => {
+    const renderedEmployeeDetailsModals = employees.map(({id, firstName, lastName, email, phone, job, date}) => {
         return (
             <div className="modal fade" id={`employee_details_${id}`} tabIndex={-1}
                  aria-labelledby={`employee_details_${id}`}
@@ -66,7 +57,7 @@ export function Employees({employees}: EmployeesProps) {
                                     </tr>
                                     <tr>
                                         <th>Name</th>
-                                        <td>{name}</td>
+                                        <td>{`${firstName} ${lastName}`}</td>
                                     </tr>
                                     <tr>
                                         <th>Email</th>
@@ -89,7 +80,7 @@ export function Employees({employees}: EmployeesProps) {
         );
     });
 
-    const renderedEditEmployeesModals = employees.map(({id, name, email, phone, job, date}) => {
+    const renderedEditEmployeesModals = employees.map(({id, firstName, lastName, email, phone, job, date}) => {
         return (
             <div className="modal fade" id={`edit_employee_${id}`} tabIndex={-1} aria-labelledby={`edit_employee_${id}`}
                  key={id}
@@ -112,7 +103,7 @@ export function Employees({employees}: EmployeesProps) {
                                 <div className="mb-3">
                                     <input type="text" className="form-control form-control-sm"
                                            placeholder="Employee Name"
-                                           value={name} required/>
+                                           value={`${firstName} ${lastName}`} required/>
                                 </div>
                                 <div className="mb-3">
                                     <input type="email" className="form-control form-control-sm"
@@ -141,7 +132,7 @@ export function Employees({employees}: EmployeesProps) {
         );
     });
 
-    const renderedDeleteEmployeesModals = employees.map(({id, name}) => {
+    const renderedDeleteEmployeesModals = employees.map(({id, firstName, lastName}) => {
         return (
             <div className="modal fade" id={`delete_employee_${id}`} tabIndex={-1}
                  aria-labelledby={`delete_employee_${id}`} key={id} aria-hidden="true"
@@ -156,7 +147,8 @@ export function Employees({employees}: EmployeesProps) {
                         <div className="modal-body">
                             <form>
                                 <div className="mb-3">
-                                    <p>Are you sure you want to delete <span className="fw-bold">"{name}"</span>? </p>
+                                    <p>Are you sure you want to delete <span
+                                        className="fw-bold">"{`${firstName} ${lastName}`}"</span>? </p>
                                 </div>
                                 <div className="mb-3 float-end">
                                     <button className="btn btn-danger btn-sm">Delete</button>
