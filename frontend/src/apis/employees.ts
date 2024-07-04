@@ -33,7 +33,8 @@ export class EmployeesRestClient {
     }
 
     async createEmployee(
-        employee: Employee
+        // TODO: fix this, create Employee do not need id
+        employee: Partial<Employee>
     ) {
         const res = await axios.post(this.url, employee);
 

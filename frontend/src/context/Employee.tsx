@@ -5,7 +5,8 @@ export interface EmployeeContextType {
     employees: Employee[];
     setEmployees: (employees: Employee[]) => void;
     getAllEmployees: (email: string) => Promise<void>;
-    createEmployee: (employee: Employee) => Promise<void>;
+    // TODO: fix this
+    createEmployee: (employee: Partial<Employee>) => Promise<void>;
     updateEmployee: (id: number, attrs: Partial<Employee>) => Promise<void>;
     deleteEmployee: (id: number) => Promise<void>;
 }
@@ -26,7 +27,8 @@ export function EmployeeProvider({children}: EmployeeProviderProps) {
         setEmployees(employees);
     };
 
-    const createEmployee = async (employeeData: Employee) => {
+    // TODO: fix this -> Partial<Employee>
+    const createEmployee = async (employeeData: Partial<Employee>) => {
         const employee = await restClient.createEmployee(employeeData);
 
         setEmployees([...employees, employee]);
