@@ -93,9 +93,9 @@ describe('Employee', () => {
         });
 
         it('shows employee details', () => {
-            cy.visit(url)
+            cy.visit(url);
 
-            insertMockEmployee()
+            insertMockEmployee();
 
             cy.get('tr td:nth-child(3)').each(($el, index) => {
                 const text = $el.text();
@@ -109,6 +109,36 @@ describe('Employee', () => {
                     }
                 }
             });
+
+            deleteAllEmployees();
+        });
+
+        it('given email and name, updates employee', () => {
+            cy.visit(url);
+
+            insertMockEmployee();
+
+            const email = 'newEmail@gmail.com';
+            const firstName = 'New John';
+
+            cy.get('tr td:nth-child(3)').each(($el, index) => {
+                const text = $el.text();
+
+                if (text === mockEmployee.email) {
+
+                    cy.get('tr :nth-child(5)').eq(index + 1).click();
+
+                    cy.get('.modal-dialog').find('input').eq(1).clear().type(firstName);
+                    cy.get('.modal-dialog').find('input').eq(3).clear().type(email);
+
+                    cy.get('.modal-dialog').contains('Update Employee').click();
+
+                    cy.get('tr td').contains(firstName).should('exist');
+                    cy.get('tr td').contains(email).should('exist');
+                }
+            });
+
+            deleteAllEmployees();
         });
     });
 });
