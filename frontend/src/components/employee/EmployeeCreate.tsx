@@ -1,6 +1,9 @@
 import {FormEvent, useState} from "react";
+import {useEmployeeContext} from "../../hooks/use-employee-context";
 
 export function EmployeeCreate() {
+    const {createEmployee} = useEmployeeContext();
+
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
@@ -10,7 +13,9 @@ export function EmployeeCreate() {
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(firstName, lastName, email, date, phone, job);
+        createEmployee({
+            firstName, lastName, email, date, phone, job
+        }).then(res => console.log(res));
     };
 
     return (
@@ -66,7 +71,9 @@ export function EmployeeCreate() {
                             </div>
                             <div className="mb-3">
                                 <select className="form-control form-control-sm"
-                                        onChange={choice => setJob(choice.target.value)}>
+                                        value={job}
+                                        onChange={e => setJob(e.target.value)}
+                                >
                                     {/*TODO: handle job*/}
                                     <option value="Graphic Designer">Graphic Designer</option>
                                     <option value="Web Designer">Web Designer Designer</option>
