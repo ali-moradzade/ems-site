@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Navbar} from "./components/Navbar";
 import {Route} from "./components/Route";
 import {SignupPage} from "./pages/SignupPage";
@@ -7,8 +7,15 @@ import {EmployeePage} from "./pages/EmployeePage";
 import {JobsListPage} from "./pages/JobsListPage";
 import {DashboardPage} from "./pages/DashboardPage";
 import {HomePage} from "./pages/HomePage";
+import {useEmployeeContext} from "./hooks/use-employee-context";
 
 export function App() {
+    const {getAllEmployees} = useEmployeeContext();
+
+    useEffect(() => {
+        getAllEmployees().then();
+    }, []);
+
     return (
         <div className="container-fluid px-0">
             <Navbar/>

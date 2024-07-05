@@ -16,7 +16,7 @@ export class EmployeesRestClient {
     // TODO: move to config files
     private url = 'http://localhost:8000/employees';
 
-    async getAllEmployees(email: string): Promise<Employee[]> {
+    async getAllEmployees(email?: string): Promise<Employee[]> {
         const res = await axios.get(this.url, {
             params: {
                 email,

@@ -4,7 +4,7 @@ import {createContext, ReactNode, useState} from "react";
 export interface EmployeeContextType {
     employees: Employee[];
     setEmployees: (employees: Employee[]) => void;
-    getAllEmployees: (email: string) => Promise<void>;
+    getAllEmployees: (email?: string) => Promise<void>;
     // TODO: fix this
     createEmployee: (employee: Partial<Employee>) => Promise<void>;
     updateEmployee: (id: number, attrs: Partial<Employee>) => Promise<void>;
@@ -21,7 +21,7 @@ export function EmployeeProvider({children}: EmployeeProviderProps) {
     const [employees, setEmployees] = useState<Employee[]>([]);
     const restClient = EmployeesRestClient.getEmployeeRestClient();
 
-    const getAllEmployees = async (email: string) => {
+    const getAllEmployees = async (email?: string) => {
         const employees = await restClient.getAllEmployees(email);
 
         setEmployees(employees);
