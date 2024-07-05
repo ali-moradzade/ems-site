@@ -4,7 +4,7 @@ import {createContext, ReactNode, useState} from "react";
 export interface JobContextType {
     jobs: Job[];
     setJobs: (jobs: Job[]) => void;
-    getAllJobs: (email: string) => Promise<void>;
+    getAllJobs: (email?: string) => Promise<void>;
     createJob: (job: Partial<Job>) => Promise<void>;
     updateJob: (id: number, attrs: Partial<Job>) => Promise<void>;
     deleteJob: (id: number) => Promise<void>;
@@ -20,7 +20,7 @@ export function JobProvider({children}: JobProviderProps) {
     const [jobs, setJobs] = useState<Job[]>([]);
     const restClient = JobsRestClient.getJobsRestClient();
 
-    const getAllJobs = async (name: string) => {
+    const getAllJobs = async (name?: string) => {
         const jobs = await restClient.getAllJobs(name);
 
         setJobs(jobs);

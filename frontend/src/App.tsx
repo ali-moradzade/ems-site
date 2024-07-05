@@ -8,12 +8,15 @@ import {JobPage} from "./pages/JobPage";
 import {DashboardPage} from "./pages/DashboardPage";
 import {HomePage} from "./pages/HomePage";
 import {useEmployeeContext} from "./hooks/use-employee-context";
+import {useJobContext} from "./hooks/use-job-context";
 
 export function App() {
     const {getAllEmployees} = useEmployeeContext();
+    const {getAllJobs} = useJobContext()
 
     useEffect(() => {
         getAllEmployees().then();
+        getAllJobs().then();
     }, []);
 
     return (
