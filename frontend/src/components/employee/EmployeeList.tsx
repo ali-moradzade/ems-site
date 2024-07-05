@@ -1,5 +1,3 @@
-import {useEmployeeContext} from "../../hooks/use-employee-context";
-
 export function EmployeeList() {
     const employees = [
         {
