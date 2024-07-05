@@ -1,15 +1,17 @@
 import {FormEvent, useRef, useState} from "react";
 import {useEmployeeContext} from "../../hooks/use-employee-context";
+import {useJobContext} from "../../hooks/use-job-context";
 
 export function EmployeeCreate() {
     const {createEmployee} = useEmployeeContext();
+    const {jobs} = useJobContext();
 
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [date, setDate] = useState('');
     const [phone, setPhone] = useState('');
-    const [job, setJob] = useState('Graphic Designer'); // TODO: change when getting jobs dynamically
+    const [job, setJob] = useState(jobs[0]?.name || 'Unemployed');
 
     const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -29,6 +31,14 @@ export function EmployeeCreate() {
         setDate('');
         setPhone('');
     };
+
+    const renderedJobs = jobs.map(job => {
+        return (
+            <option value={job.name} key={job.id}>
+                {job.name}
+            </option>
+        );
+    });
 
     // TODO: handle form validation
     return (
@@ -90,10 +100,7 @@ export function EmployeeCreate() {
                                         value={job}
                                         onChange={e => setJob(e.target.value)}
                                 >
-                                    {/*TODO: handle job*/}
-                                    <option value="Graphic Designer">Graphic Designer</option>
-                                    <option value="Web Designer">Web Designer Designer</option>
-                                    <option value="Web Developer">Web Developer</option>
+                                    {renderedJobs}
                                 </select>
                             </div>
                             <div className="mb-3">

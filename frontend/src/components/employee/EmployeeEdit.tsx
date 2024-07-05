@@ -1,6 +1,7 @@
 import {Employee} from "../../apis/employees";
 import {FormEvent, useRef, useState} from "react";
 import {useEmployeeContext} from "../../hooks/use-employee-context";
+import {useJobContext} from "../../hooks/use-job-context";
 
 interface EmployeeEditProps {
     employee: Employee;
@@ -9,6 +10,7 @@ interface EmployeeEditProps {
 export function EmployeeEdit({employee}: EmployeeEditProps) {
     const {id} = employee;
     const {updateEmployee} = useEmployeeContext();
+    const {jobs} = useJobContext();
 
     const [firstName, setFirstName] = useState(employee.firstName);
     const [lastName, setLastName] = useState(employee.lastName);
@@ -27,6 +29,14 @@ export function EmployeeEdit({employee}: EmployeeEditProps) {
 
         closeRef.current?.click();
     };
+
+    const renderedJobs = jobs.map(job => {
+        return (
+            <option value={job.name} key={job.id}>
+                {job.name}
+            </option>
+        );
+    });
 
     return (
         <div
@@ -86,10 +96,7 @@ export function EmployeeEdit({employee}: EmployeeEditProps) {
                                         value={job}
                                         onChange={e => setJob(e.target.value)}
                                 >
-                                    {/*TODO: handle job*/}
-                                    <option value="Graphic Designer">Graphic Designer</option>
-                                    <option value="Web Designer">Web Designer Designer</option>
-                                    <option value="Web Developer">Web Developer</option>
+                                    {renderedJobs}
                                 </select>
                             </div>
                             <div className="mb-3">
