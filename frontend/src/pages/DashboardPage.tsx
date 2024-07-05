@@ -1,10 +1,12 @@
 import {Dashboard} from "../components/Dashboard";
+import {useEmployeeContext} from "../hooks/use-employee-context";
 
 export function DashboardPage() {
+    const {employees} = useEmployeeContext();
     const cards = [
         {
             title: 'Employees',
-            size: 254,
+            size: employees.length,
             link: '/employees',
         },
         {
