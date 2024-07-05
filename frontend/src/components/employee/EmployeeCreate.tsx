@@ -30,6 +30,7 @@ export function EmployeeCreate() {
         setPhone('');
     };
 
+    // TODO: handle form validation
     return (
         <div className="modal fade" id="add_employee" tabIndex={-1} aria-labelledby="add_employee"
              aria-hidden="true">
