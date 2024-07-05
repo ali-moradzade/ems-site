@@ -4,7 +4,7 @@ import {Route} from "./components/Route";
 import {SignupPage} from "./pages/SignupPage";
 import {LoginPage} from "./pages/LoginPage";
 import {EmployeePage} from "./pages/EmployeePage";
-import {JobsListPage} from "./pages/JobsListPage";
+import {JobPage} from "./pages/JobPage";
 import {DashboardPage} from "./pages/DashboardPage";
 import {HomePage} from "./pages/HomePage";
 import {useEmployeeContext} from "./hooks/use-employee-context";
@@ -36,7 +36,7 @@ export function App() {
                 <EmployeePage/>
             </Route>
             <Route path='/jobs'>
-                <JobsListPage/>
+                <JobPage/>
             </Route>
         </div>
     );
