@@ -21,7 +21,7 @@ export function EmployeeDelete({employee}: EmployeeDeleteProps) {
 
     return (
         <div className="modal fade" id={`delete_employee_${id}`} tabIndex={-1}
-             aria-labelledby={`delete_employee_${id}`} key={id} aria-hidden="true"
+             aria-labelledby={`delete_employee_${id}`} aria-hidden="true"
         >
             <div className="modal-dialog">
                 <div className="modal-content">

@@ -32,8 +32,9 @@ export function EmployeeCreate() {
 
     // TODO: handle form validation
     return (
-        <div className="modal fade" id="add_employee" tabIndex={-1} aria-labelledby="add_employee"
-             aria-hidden="true">
+        <div
+            className="modal fade" id="add_employee" tabIndex={-1} aria-labelledby="add_employee" aria-hidden="true"
+        >
             <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header">

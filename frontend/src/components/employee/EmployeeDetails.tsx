@@ -9,8 +9,7 @@ export function EmployeeDetails({employee}: EmployeeDetailsProps) {
 
     return (
         <div className="modal fade" id={`employee_details_${id}`} tabIndex={-1}
-             aria-labelledby={`employee_details_${id}`}
-             aria-hidden="true" key={id}
+             aria-labelledby={`employee_details_${id}`} aria-hidden="true"
         >
             <div className="modal-dialog">
                 <div className="modal-content">

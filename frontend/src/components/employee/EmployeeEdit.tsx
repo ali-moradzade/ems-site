@@ -29,9 +29,10 @@ export function EmployeeEdit({employee}: EmployeeEditProps) {
     };
 
     return (
-        <div className="modal fade" id={`edit_employee_${id}`} tabIndex={-1} aria-labelledby={`edit_employee_${id}`}
-             key={id}
-             aria-hidden="true">
+        <div
+            className="modal fade" id={`edit_employee_${id}`} tabIndex={-1} aria-labelledby={`edit_employee_${id}`}
+            aria-hidden="true"
+        >
             <div className="modal-dialog">
                 <div className="modal-content">
                     <div className="modal-header">
