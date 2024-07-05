@@ -3,7 +3,6 @@ import axios from "axios";
 export interface Employee {
     id: number;
     email: string;
-    password: string;
     firstName: string;
     lastName: string;
     phone: string;
@@ -17,7 +16,7 @@ export class EmployeesRestClient {
     // TODO: move to config files
     private url = 'http://localhost:8000/employees';
 
-    async getAllEmployees(email: string): Promise<Employee[]> {
+    async getAllEmployees(email?: string): Promise<Employee[]> {
         const res = await axios.get(this.url, {
             params: {
                 email,
@@ -34,7 +33,8 @@ export class EmployeesRestClient {
     }
 
     async createEmployee(
-        employee: Employee
+        // TODO: fix this, create Employee do not need id
+        employee: Partial<Employee>
     ) {
         const res = await axios.post(this.url, employee);
 

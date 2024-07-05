@@ -12,7 +12,7 @@ export class JobsRestClient {
     // TODO: move to config files
     private url = 'http://localhost:8000/jobs';
 
-    async getAllJobs(name: string): Promise<Job[]> {
+    async getAllJobs(name?: string): Promise<Job[]> {
         const res = await axios.get(this.url, {
             params: {
                 name,
@@ -29,7 +29,7 @@ export class JobsRestClient {
     }
 
     async createJob(
-        job: Job
+        job: Partial<Job> // TODO: fix this, we do not need id
     ) {
         const res = await axios.post(this.url, job);
 
