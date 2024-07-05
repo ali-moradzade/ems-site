@@ -5,9 +5,6 @@ export class CreateEmployeeDto {
     email: string;
 
     @IsString()
-    password: string;
-
-    @IsString()
     firstName: string;
 
     @IsString()

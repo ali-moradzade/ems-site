@@ -27,7 +27,7 @@ export class EmployeesService {
     }
 
     async create(
-        email: string, password: string, firstName: string, lastName: string,
+        email: string, firstName: string, lastName: string,
         phone: string, job: string, date: string
     ) {
         const employees = await this.find(email);
@@ -35,8 +35,7 @@ export class EmployeesService {
             throw new BadRequestException('Email in use');
         }
         const employee = this.repo.create({
-            email, password, firstName,
-            lastName, phone, job, date,
+            email, firstName, lastName, phone, job, date,
         });
 
         return this.repo.save(employee);
