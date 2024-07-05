@@ -1,4 +1,4 @@
-import {FormEvent, useState} from "react";
+import {FormEvent, useRef, useState} from "react";
 import {useEmployeeContext} from "../../hooks/use-employee-context";
 
 export function EmployeeCreate() {
@@ -11,11 +11,23 @@ export function EmployeeCreate() {
     const [phone, setPhone] = useState('');
     const [job, setJob] = useState('Graphic Designer'); // TODO: change when getting jobs dynamically
 
+    const closeRef = useRef<HTMLButtonElement>(null);
+
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         createEmployee({
             firstName, lastName, email, date, phone, job
-        }).then(res => console.log(res));
+        }).then();
+
+        // close the modal
+        closeRef.current?.click();
+
+        // clear the fields
+        setFirstName('');
+        setLastName('');
+        setEmail('');
+        setDate('');
+        setPhone('');
     };
 
     return (
@@ -25,8 +37,10 @@ export function EmployeeCreate() {
                 <div className="modal-content">
                     <div className="modal-header">
                         <h1 className="modal-title fs-5">Add Employee Details</h1>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+                        <button
+                            type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                            ref={closeRef}
+                        ></button>
                     </div>
                     <div className="modal-body">
                         <form onSubmit={handleSubmit}>
