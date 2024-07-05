@@ -5,7 +5,7 @@ export interface JobContextType {
     jobs: Job[];
     setJobs: (jobs: Job[]) => void;
     getAllJobs: (email: string) => Promise<void>;
-    createJob: (job: Job) => Promise<void>;
+    createJob: (job: Partial<Job>) => Promise<void>;
     updateJob: (id: number, attrs: Partial<Job>) => Promise<void>;
     deleteJob: (id: number) => Promise<void>;
 }
@@ -26,7 +26,7 @@ export function JobProvider({children}: JobProviderProps) {
         setJobs(jobs);
     };
 
-    const createJob = async (jobData: Job) => {
+    const createJob = async (jobData: Partial<Job>) => {
         const job = await restClient.createJob(jobData);
 
         setJobs([...jobs, job]);

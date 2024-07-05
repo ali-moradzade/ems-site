@@ -29,7 +29,7 @@ export class JobsRestClient {
     }
 
     async createJob(
-        job: Job
+        job: Partial<Job> // TODO: fix this, we do not need id
     ) {
         const res = await axios.post(this.url, job);
 
