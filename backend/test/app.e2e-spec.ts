@@ -8,7 +8,6 @@ import {Job} from "../src/jobs/jobs.entity";
 
 const mockEmployee = {
     email: 'email@gmail.com',
-    password: 'a very unsecure password',
     firstName: 'John',
     lastName: 'Doe',
     phone: '+9809123456789',

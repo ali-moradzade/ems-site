@@ -35,11 +35,11 @@ export class EmployeesController {
         @Body() body: CreateEmployeeDto,
     ) {
         const {
-            email, password, firstName, lastName,
+            email, firstName, lastName,
             phone, job, date
         } = body;
 
-        return this.employeesService.create(email, password, firstName, lastName, phone, job, date);
+        return this.employeesService.create(email, firstName, lastName, phone, job, date);
     }
 
     @Delete(':id')
