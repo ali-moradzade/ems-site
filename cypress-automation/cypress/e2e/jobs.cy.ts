@@ -1,3 +1,5 @@
+import {recurse} from 'cypress-recurse';
+
 function deleteAllJobsHelper(rowCount: number) {
     if (rowCount < 1) {
         return;
@@ -13,10 +15,9 @@ function deleteAllJobsHelper(rowCount: number) {
 function deleteAllJobs() {
     cy.get('table tbody')
         .then(($el) => {
-            const elements = $el.length;
-            cy.log(elements.toString());
+            const elements = $el.length - 1;
 
-            if (elements > 1) {
+            if (elements > 0) {
                 deleteAllJobsHelper(elements);
             }
         });
@@ -25,10 +26,20 @@ function deleteAllJobs() {
 function insertJob(job: { name: string, date: string }) {
     cy.contains('Add Job').click();
 
-    cy.get('#add_job').find('input').eq(0)
-        .type(job.date);
-    cy.get('#add_job').find('input').eq(1)
-        .type(job.name);
+    // Handling flaky inputs
+    recurse(
+        () => cy.get('#add_job').find('input').eq(0)
+            .clear().type(job.date),
+
+        ($input) => $input.val() === job.date,
+    ).should('have.value', job.date);
+
+    recurse(
+        () => cy.get('#add_job').find('input').eq(1)
+            .clear().type(job.name),
+
+        ($input) => $input.val() === job.name,
+    ).should('have.value', job.name);
 
     cy.get('#add_job').find('button').contains('Add Job')
         .click();
@@ -61,18 +72,27 @@ describe('Job', () => {
             };
 
             insertJob(job);
+            insertJob(job);
+            insertJob(job);
+            insertJob(job);
+            insertJob(job);
 
-            cy.get('.modal tr td:nth-child(2)').each(($el, index) => {
+            let firstTime = true; // handle job with duplicate name
+
+            cy.get('tr td:nth-child(2)').each(($el, index) => {
                 const text = $el.text();
 
-                if (text === job.name) {
-                    cy.get('tr td:nth-child(3)').eq(index).click();
+                if (text === job.name && firstTime) {
+                    cy.get('tr td:nth-child(2)').eq(index).next().click({force: true});
+                    firstTime = false;
 
                     for (let key in job) {
-                        cy.get('tr td').contains(job[key]).should('exist');
+                        cy.get('.modal tr td').contains(job[key]).should('exist');
                     }
                 }
             });
+
+            deleteAllJobs();
         });
     });
 });
