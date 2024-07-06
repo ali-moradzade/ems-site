@@ -60,7 +60,10 @@ export function EmployeeList() {
 
     return (
         <div>
-            <table className="table table-striped table-hover bg-light table-bordered rounded shadow small">
+            <table
+                className="table table-striped table-hover bg-light table-bordered rounded shadow small"
+                id="employees"
+            >
                 <thead>
                     <tr>
                         <th>ID</th>
