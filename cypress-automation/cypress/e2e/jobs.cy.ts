@@ -1,51 +1,5 @@
 import {recurse} from 'cypress-recurse';
-
-function deleteAllJobsHelper(rowCount: number) {
-    if (rowCount < 1) {
-        return;
-    }
-
-    cy.get('#jobs_table tr:last').then($el => {
-        const id = $el.find('td:first').text();
-        cy.wrap($el.find('td:last')).click({force: true});
-
-        cy.get(`#delete_job_${id} .btn-danger`).click({force: true}).wait(100)
-            .then(() => deleteAllJobsHelper(--rowCount));
-    });
-}
-
-function deleteAllJobs() {
-    cy.get('#jobs_table tbody')
-        .then(($el) => {
-            const elements = $el.find('tr').length;
-            cy.log(elements.toString());
-
-            if (elements > 0) {
-                deleteAllJobsHelper(elements);
-            }
-        });
-}
-
-function insertJob(job: { name: string, date: string }) {
-    cy.contains('Add Job').click();
-
-    // Handling flaky inputs
-    recurse(
-        () => cy.get('#add_job input[name=date]').clear().type(job.date),
-
-        ($input) => $input.val() === job.date,
-    ).should('have.value', job.date);
-
-    recurse(
-        () => cy.get('#add_job input[name=name]').clear().type(job.name),
-
-        ($input) => $input.val() === job.name,
-    ).should('have.value', job.name);
-
-    cy.get('#add_job .btn-success').click();
-
-    cy.get('#jobs_table > tbody tr td').contains(job.name).should('exist');
-}
+import {deleteAllJobs, insertJob} from "./utils";
 
 describe('Job', () => {
     const url = 'http://localhost:3000/jobs';
@@ -82,7 +36,7 @@ describe('Job', () => {
 
             let firstTime = true; // handle job with duplicate name
 
-            cy.get('#jobs_table tr').each(($el, index) => {
+            cy.get('#jobs_table tr').each(($el ) => {
                 const id = $el.find('td:first').text();
                 const name = $el.find('td:nth-child(2)').text();
 
@@ -101,7 +55,7 @@ describe('Job', () => {
     });
 
     describe('Job Edit', () => {
-        it.only('given job properties, updates the job', () => {
+        it('given job properties, updates the job', () => {
             cy.visit(url);
 
             const job = {
@@ -116,7 +70,7 @@ describe('Job', () => {
 
             insertJob(job);
 
-            cy.get('#jobs_table tr').each(($el, index) => {
+            cy.get('#jobs_table tr').each(($el) => {
                 const id = $el.find('td:nth-child(1)').text();
                 const name = $el.find('td:nth-child(2)').text();
 
