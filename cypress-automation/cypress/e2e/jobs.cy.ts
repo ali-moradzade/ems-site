@@ -5,17 +5,20 @@ function deleteAllJobsHelper(rowCount: number) {
         return;
     }
 
-    cy.get('tbody > tr td:nth-child(5)').last().click({force: true});
-    cy.get('.modal-body > form')?.find('.btn-danger').last().click({force: true})
-        .then(() => {
-            deleteAllJobsHelper(--rowCount);
-        });
+    cy.get('#jobs_table tr:last').then($el => {
+        const id = $el.find('td:first').text();
+        cy.wrap($el.find('td:last')).click({force: true});
+
+        cy.get(`#delete_job_${id} .btn-danger`).click({force: true})
+            .then(() => deleteAllJobsHelper(--rowCount));
+    });
 }
 
 function deleteAllJobs() {
-    cy.get('table tbody')
+    cy.get('#jobs_table tbody')
         .then(($el) => {
-            const elements = $el.length - 1;
+            const elements = $el.find('tr').length;
+            cy.log(elements.toString());
 
             if (elements > 0) {
                 deleteAllJobsHelper(elements);
@@ -28,30 +31,27 @@ function insertJob(job: { name: string, date: string }) {
 
     // Handling flaky inputs
     recurse(
-        () => cy.get('#add_job').find('input').eq(0)
-            .clear().type(job.date),
+        () => cy.get('#add_job input[name=date]').clear().type(job.date),
 
         ($input) => $input.val() === job.date,
     ).should('have.value', job.date);
 
     recurse(
-        () => cy.get('#add_job').find('input').eq(1)
-            .clear().type(job.name),
+        () => cy.get('#add_job input[name=name]').clear().type(job.name),
 
         ($input) => $input.val() === job.name,
     ).should('have.value', job.name);
 
-    cy.get('#add_job').find('button').contains('Add Job')
-        .click();
+    cy.get('#add_job .btn-success').click();
 
-    cy.get('tr td').contains(job.name).should('exist');
+    cy.get('#jobs_table > tbody tr td').contains(job.name).should('exist');
 }
 
 describe('Job', () => {
     const url = 'http://localhost:3000/jobs';
 
     describe('Add Job', () => {
-        it('given job properties, creates job', () => {
+        it.only('given job properties, creates job', () => {
             cy.visit(url);
 
             const job = {
@@ -60,6 +60,8 @@ describe('Job', () => {
             };
 
             insertJob(job);
+
+            deleteAllJobs();
         });
     });
 
@@ -97,7 +99,7 @@ describe('Job', () => {
     });
 
     describe('Job Edit', () => {
-        it.only('given job properties, updates the job', () => {
+        it('given job properties, updates the job', () => {
             cy.visit(url);
 
             const job = {
