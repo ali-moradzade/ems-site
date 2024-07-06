@@ -66,7 +66,7 @@ describe('Job', () => {
     });
 
     describe('Job Details', () => {
-        it.only('shows job details', () => {
+        it('shows job details', () => {
             cy.visit(url);
 
             const job = {
@@ -101,7 +101,7 @@ describe('Job', () => {
     });
 
     describe('Job Edit', () => {
-        it('given job properties, updates the job', () => {
+        it.only('given job properties, updates the job', () => {
             cy.visit(url);
 
             const job = {
@@ -116,33 +116,34 @@ describe('Job', () => {
 
             insertJob(job);
 
-            cy.get('tr td:nth-child(2)').each(($el, index) => {
-                const text = $el.text();
+            cy.get('#jobs_table tr').each(($el, index) => {
+                const id = $el.find('td:nth-child(1)').text();
+                const name = $el.find('td:nth-child(2)').text();
 
-                if (text === job.name) {
-                    cy.get('tr td:nth-child(2)').eq(index).next().next().click();
+                if (name === job.name) {
+                    cy.wrap($el.find('td:nth-child(4)')).click();
 
                     // Handle Flaky Inputs
                     recurse(
-                        () => cy.get('.modal-dialog').find('input').eq(0)
+                        () => cy.get(`#edit_job_${id}_form input[name=date]`)
                             .clear().type(newJob.date),
 
                         ($input) => $input.val() === newJob.date,
                     ).should('have.value', newJob.date);
                     recurse(
-                        () => cy.get('.modal-dialog').find('input').eq(1)
+                        () => cy.get(`#edit_job_${id}_form input[name=name]`)
                             .clear().type(newJob.name),
 
                         ($input) => $input.val() === newJob.name,
                     ).should('have.value', newJob.name);
 
-                    cy.get('.modal-dialog').contains('Update Job').click();
+                    cy.get(`#edit_job_${id}_form`).contains('Update Job').click();
 
-                    cy.get('tr td').contains(newJob.name).should('exist');
+                    cy.get('#jobs_table tr td').contains(newJob.name).should('exist');
                 }
-
-                deleteAllJobs();
             });
+
+            deleteAllJobs();
         });
     });
 });
