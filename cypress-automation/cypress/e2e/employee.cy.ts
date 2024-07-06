@@ -9,22 +9,36 @@ interface Employee {
     date: string;
 }
 
-const mockEmployee: Employee = {
-    email: 'email@gmail.com',
-    firstName: 'John',
-    lastName: 'Doe',
-    phone: '+9809123456789',
-    job: 'Graphic Designer',
-    date: '2022-10-11',
-};
 
 describe('Employee', () => {
+    let job: { name: string; date: string };
+
+    beforeEach(() => {
+        job = {
+            name: 'Web Developer',
+            date: '2023-02-01',
+        };
+
+        cy.visit(urls.jobs).wait(100);
+        deleteAllJobs();
+        insertJob(job);
+
+        cy.visit(urls.employees).wait(100);
+        deleteAllEmployees();
+    });
+
+    afterEach(() => {
+        cy.visit(urls.jobs).wait(100);
+        deleteAllJobs();
+
+        cy.visit(urls.employees).wait(100);
+        deleteAllEmployees();
+    });
+
     describe('Add Employee', () => {
-        it.only('given employee properties, creates employee', () => {
-            const job = {
-                name: 'Web Developer',
-                date: '2023-02-01',
-            };
+        it('given employee properties, creates employee', () => {
+            cy.visit(urls.employees).wait(100);
+
             const employee = {
                 email: 'alimorizz1379@gmail.com',
                 firstName: 'Ali',
@@ -34,47 +48,37 @@ describe('Employee', () => {
                 date: '2022-10-11',
             };
 
-            cy.visit(urls.jobs).wait(100)
-                .then(() => {
-                    deleteAllJobs();
-                    cy.wait(100);
-                    insertJob(job);
-                })
-                .then(() => {
-                    cy.visit(urls.employees).wait(100);
-                    deleteAllEmployees();
-                    insertEmployee(employee);
-                })
-                .then(() => {
-                    cy.visit(urls.jobs).wait(100);
-                    deleteAllJobs();
-                })
-                .then(() => {
-                    cy.visit(urls.employees).wait(100);
-                    deleteAllEmployees();
-                });
+            insertEmployee(employee);
         });
 
-        // it('shows employee details', () => {
-        //     cy.visit(url);
-        //
-        //     // insertMockEmployee();
-        //
-        //     cy.get('tr td:nth-child(3)').each(($el, index) => {
-        //         const text = $el.text();
-        //
-        //         if (text === mockEmployee.email) {
-        //             cy.get('tr td:nth-child(4)').eq(index).click();
-        //
-        //             // Verify details contains all user infos
-        //             for (let key in mockEmployee) {
-        //                 cy.get('tr td').contains(mockEmployee[key]).should('exist');
-        //             }
-        //         }
-        //     });
-        //
-        //     deleteAllEmployees();
-        // });
+        it.only('shows employee details', () => {
+            cy.visit(urls.employees).wait(100);
+
+            const mockEmployee: Employee = {
+                email: 'email@gmail.com',
+                firstName: 'John',
+                lastName: 'Doe',
+                phone: '+9809123456789',
+                job: job.name,
+                date: '2022-10-11',
+            };
+
+            insertEmployee(mockEmployee);
+
+            cy.get('#employees_table tr').each(($el) => {
+                const id = $el.find('td:first').text();
+                const email = $el.find('td:nth-child(3)').text();
+
+                if (email === mockEmployee.email) {
+                    cy.wrap($el.find('td:nth-child(4)')).click({force: true});
+
+                    // Verify details contains all user infos
+                    for (let key in mockEmployee) {
+                        cy.get(`#employee_details_${id}_table tr td`).contains(mockEmployee[key]).should('exist');
+                    }
+                }
+            });
+        });
         //
         // it('given email and name, updates employee', () => {
         //     cy.visit(url);

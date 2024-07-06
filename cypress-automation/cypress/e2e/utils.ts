@@ -46,7 +46,16 @@ export function insertJob(job: { name: string, date: string }) {
     cy.get('#jobs_table > tbody tr td').contains(job.name).should('exist');
 }
 
-export function insertEmployee(employee: Employee) {
+export function insertEmployee(
+    employee: {
+        email: string;
+        firstName: string;
+        lastName: string;
+        phone: string;
+        job: string;
+        date: string;
+    }
+) {
     const {date, firstName, lastName, email, phone, job} = employee;
 
     cy.contains('Add Employee').click();
