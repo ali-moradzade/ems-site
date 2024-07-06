@@ -64,7 +64,7 @@ describe('Job', () => {
     });
 
     describe('Job Details', () => {
-        it.only('shows job details', () => {
+        it('shows job details', () => {
             cy.visit(url);
             const job = {
                 name: 'Graphic Designer',
@@ -93,6 +93,52 @@ describe('Job', () => {
             });
 
             deleteAllJobs();
+        });
+    });
+
+    describe('Job Edit', () => {
+        it.only('given job properties, updates the job', () => {
+            cy.visit(url);
+
+            const job = {
+                name: 'Graphic Designer',
+                date: '2023-02-01',
+            };
+
+            const newJob = {
+                name: 'Web Developer',
+                date: '2022-08-10',
+            };
+
+            insertJob(job);
+
+            cy.get('tr td:nth-child(2)').each(($el, index) => {
+                const text = $el.text();
+
+                if (text === job.name) {
+                    cy.get('tr td:nth-child(2)').eq(index).next().next().click();
+
+                    // Handle Flaky Inputs
+                    recurse(
+                        () => cy.get('.modal-dialog').find('input').eq(0)
+                            .clear().type(newJob.date),
+
+                        ($input) => $input.val() === newJob.date,
+                    ).should('have.value', newJob.date);
+                    recurse(
+                        () => cy.get('.modal-dialog').find('input').eq(1)
+                            .clear().type(newJob.name),
+
+                        ($input) => $input.val() === newJob.name,
+                    ).should('have.value', newJob.name);
+
+                    cy.get('.modal-dialog').contains('Update Job').click();
+
+                    cy.get('tr td').contains(newJob.name).should('exist');
+                }
+
+                deleteAllJobs();
+            });
         });
     });
 });
