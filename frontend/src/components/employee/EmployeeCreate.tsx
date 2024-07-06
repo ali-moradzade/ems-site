@@ -55,48 +55,48 @@ export function EmployeeCreate() {
                         ></button>
                     </div>
                     <div className="modal-body">
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} id="add_employee_form">
                             <div className="mb-3">
                                 <input
                                     type="text" className="form-control form-control-sm" required
-                                    placeholder="Date: yyyy-mm-dd"
+                                    placeholder="Date: yyyy-mm-dd" name="date"
                                     value={date}
                                     onChange={e => setDate(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
                                 <input
-                                    type="text" className="form-control form-control-sm"
-                                    placeholder="Employee First Name" required
+                                    type="text" className="form-control form-control-sm" required
+                                    placeholder="Employee First Name" name="first_name"
                                     value={firstName}
                                     onChange={e => setFirstName(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
                                 <input
-                                    type="text" className="form-control form-control-sm"
-                                    placeholder="Employee Last Name" required
+                                    type="text" className="form-control form-control-sm" required
+                                    placeholder="Employee Last Name" name="last_name"
                                     value={lastName}
                                     onChange={e => setLastName(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
                                 <input
-                                    type="email" className="form-control form-control-sm"
-                                    placeholder="Employee Email" required
+                                    type="email" className="form-control form-control-sm" required
+                                    placeholder="Employee Email" name="email"
                                     value={email}
                                     onChange={e => setEmail(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
-                                <input type="tel" className="form-control form-control-sm"
-                                       placeholder="Employee Phone Number" required
+                                <input type="tel" className="form-control form-control-sm" required
+                                       placeholder="Employee Phone Number" name="phone"
                                        value={phone}
                                        onChange={e => setPhone(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
-                                <select className="form-control form-control-sm"
+                                <select className="form-control form-control-sm" name="job"
                                         value={job}
                                         onChange={e => setJob(e.target.value)}
                                 >
@@ -104,7 +104,7 @@ export function EmployeeCreate() {
                                 </select>
                             </div>
                             <div className="mb-3">
-                                <button type="submit" className="btn btn-sm btn-success w-100">
+                                <button type="submit" className="btn btn-sm btn-success w-100" name="add_employee_btn">
                                     Add Employee
                                 </button>
                             </div>

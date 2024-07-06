@@ -32,14 +32,16 @@ export function EmployeeDelete({employee}: EmployeeDeleteProps) {
                         ></button>
                     </div>
                     <div className="modal-body">
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} id={`delete_employee_${id}_form`}>
                             <div className="mb-3">
-                                <p>Are you sure you want to delete <span
-                                    className="fw-bold">"{`${firstName} ${lastName}`}"</span>? </p>
+                                <p>
+                                    Are you sure you want to delete <span
+                                    className="fw-bold">"{`${firstName} ${lastName}`}"</span>?
+                                </p>
                             </div>
                             <div className="mb-3 float-end">
-                                <button className="btn btn-danger btn-sm">Delete</button>
-                                <button className="btn btn-secondary btn-sm ms-2">Cancel</button>
+                                <button className="btn btn-danger btn-sm" name="delete_btn">Yes</button>
+                                <button className="btn btn-secondary btn-sm ms-2" name="cancel">Cancel</button>
                             </div>
                         </form>
                     </div>
