@@ -1,5 +1,3 @@
-const url = 'http://localhost:3000/employees';
-
 interface Employee {
     email: string;
     firstName: string;
@@ -55,6 +53,8 @@ function deleteAllEmployees() {
 }
 
 describe('Employee', () => {
+    const url = 'http://localhost:3000/employees';
+
     describe('Add Employee', () => {
         it('given employee properties, creates employee', () => {
             const employee = {
