@@ -62,7 +62,7 @@ export function EmployeeList() {
         <div>
             <table
                 className="table table-striped table-hover bg-light table-bordered rounded shadow small"
-                id="employees"
+                id="employees_table"
             >
                 <thead>
                     <tr>
