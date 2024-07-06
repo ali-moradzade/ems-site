@@ -55,44 +55,45 @@ export function EmployeeEdit({employee}: EmployeeEditProps) {
                         ></button>
                     </div>
                     <div className="modal-body">
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} id={`edit_employee_${id}_table`}>
                             <div className="mb-3">
                                 <input type="text" className="form-control form-control-sm" required
+                                       name="date"
                                        value={date}
                                        onChange={e => setDate(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
-                                <input type="text" className="form-control form-control-sm"
-                                       placeholder="First Name" required
+                                <input type="text" className="form-control form-control-sm" required
+                                       placeholder="First Name" name="first_name"
                                        value={firstName}
                                        onChange={e => setFirstName(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
-                                <input type="text" className="form-control form-control-sm"
-                                       placeholder="Last Name" required
+                                <input type="text" className="form-control form-control-sm" required
+                                       placeholder="Last Name" name="last_name"
                                        value={lastName}
                                        onChange={e => setLastName(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
                                 <input
-                                    type="email" className="form-control form-control-sm" placeholder="Email"
-                                    required
+                                    type="email" className="form-control form-control-sm" required
+                                    placeholder="Email" name="email"
                                     value={email}
                                     onChange={e => setEmail(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
-                                <input type="tel" className="form-control form-control-sm"
-                                       placeholder="Phone Number" required
+                                <input type="tel" className="form-control form-control-sm" required
+                                       placeholder="Phone Number" name="phone"
                                        value={phone}
                                        onChange={e => setPhone(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
-                                <select className="form-control form-control-sm"
+                                <select className="form-control form-control-sm" name="job"
                                         value={job}
                                         onChange={e => setJob(e.target.value)}
                                 >
@@ -100,7 +101,9 @@ export function EmployeeEdit({employee}: EmployeeEditProps) {
                                 </select>
                             </div>
                             <div className="mb-3">
-                                <button type="submit" className="btn btn-sm btn-success w-100">
+                                <button type="submit" className="btn btn-sm btn-success w-100"
+                                        name="update_employee_btn"
+                                >
                                     Update Employee
                                 </button>
                             </div>
