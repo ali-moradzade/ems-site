@@ -9,7 +9,7 @@ function deleteAllJobsHelper(rowCount: number) {
         const id = $el.find('td:first').text();
         cy.wrap($el.find('td:last')).click({force: true});
 
-        cy.get(`#delete_job_${id} .btn-danger`).click({force: true})
+        cy.get(`#delete_job_${id} .btn-danger`).click({force: true}).wait(100)
             .then(() => deleteAllJobsHelper(--rowCount));
     });
 }
@@ -51,7 +51,7 @@ describe('Job', () => {
     const url = 'http://localhost:3000/jobs';
 
     describe('Add Job', () => {
-        it.only('given job properties, creates job', () => {
+        it('given job properties, creates job', () => {
             cy.visit(url);
 
             const job = {
@@ -66,8 +66,9 @@ describe('Job', () => {
     });
 
     describe('Job Details', () => {
-        it('shows job details', () => {
+        it.only('shows job details', () => {
             cy.visit(url);
+
             const job = {
                 name: 'Graphic Designer',
                 date: '2023-11-08',
@@ -81,15 +82,16 @@ describe('Job', () => {
 
             let firstTime = true; // handle job with duplicate name
 
-            cy.get('tr td:nth-child(2)').each(($el, index) => {
-                const text = $el.text();
+            cy.get('#jobs_table tr').each(($el, index) => {
+                const id = $el.find('td:first').text();
+                const name = $el.find('td:nth-child(2)').text();
 
-                if (text === job.name && firstTime) {
-                    cy.get('tr td:nth-child(2)').eq(index).next().click({force: true});
+                if (name === job.name && firstTime) {
+                    cy.wrap($el.find('td:nth-child(3)')).click({force: true});
                     firstTime = false;
 
                     for (let key in job) {
-                        cy.get('.modal tr td').contains(job[key]).should('exist');
+                        cy.get(`#job_details_${id}_table tr td`).contains(job[key]).should('exist');
                     }
                 }
             });
