@@ -19,7 +19,9 @@ export function JobDetails({job}: JobDetailsProps) {
                                 aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
-                        <table className="table table-striped table-bordered table-hover">
+                        <table className="table table-striped table-bordered table-hover"
+                               id={`job_details_${id}_table`}
+                        >
                             <tbody>
                                 <tr>
                                     <th>ID</th>

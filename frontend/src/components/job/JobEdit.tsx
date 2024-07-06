@@ -39,24 +39,25 @@ export function JobEdit({job}: JobEditProps) {
                         ></button>
                     </div>
                     <div className="modal-body">
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} id={`edit_job_${id}_form`}>
                             <div className="mb-3">
                                 {/* TODO: fix change type to date */}
                                 <input
-                                    type="text" className="form-control form-control-sm" required placeholder="Date"
+                                    type="text" className="form-control form-control-sm" required
+                                    placeholder="Date" name="date"
                                     value={date}
                                     onChange={e => setDate(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
-                                <input type="text" className="form-control form-control-sm" placeholder="Job Name"
-                                       required
+                                <input type="text" className="form-control form-control-sm" required
+                                       placeholder="Job Name" name="name"
                                        value={name}
                                        onChange={e => setName(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
-                                <button type="submit" className="btn btn-sm btn-success w-100">
+                                <button type="submit" className="btn btn-sm btn-success w-100" name="update_job_btn">
                                     Update Job
                                 </button>
                             </div>

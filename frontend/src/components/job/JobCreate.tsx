@@ -36,25 +36,25 @@ export function JobCreate() {
                         ></button>
                     </div>
                     <div className="modal-body">
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} id="add_job_form">
                             <div className="mb-3">
                                 {/* TODO: fix-> change type:date */}
                                 <input
                                     type="text" className="form-control form-control-sm" required
-                                    placeholder="date: yyyy-mm-dd"
+                                    placeholder="Date: yyyy-mm-dd" name="date"
                                     value={date}
                                     onChange={e => setDate(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
-                                <input type="text" className="form-control form-control-sm"
-                                       placeholder="Job Name" required
+                                <input type="text" className="form-control form-control-sm" required
+                                       placeholder="Job Name" name="name"
                                        value={name}
                                        onChange={e => setName(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
-                                <button type="submit" className="btn btn-sm btn-success w-100">
+                                <button type="submit" className="btn btn-sm btn-success w-100" name="add_job_btn">
                                     Add Job
                                 </button>
                             </div>
