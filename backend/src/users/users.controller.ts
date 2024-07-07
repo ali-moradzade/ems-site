@@ -1,4 +1,16 @@
-import {Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Query} from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    NotFoundException,
+    Param,
+    Patch,
+    Post,
+    Query,
+    Session,
+    UseGuards
+} from '@nestjs/common';
 import {UsersService} from "./users.service";
 import {CreateUserDto} from "./dtos/create-user.dto";
 import {UpdateUserDto} from "./dtos/update-user.dto";
@@ -6,6 +18,9 @@ import {LoginUserDto} from './dtos/login-user.dto';
 import {Serialize} from "../interceptors/serialize.interceptor";
 import {UserDto} from "./dtos/user.dto";
 import {AuthService} from "./auth.service";
+import {AuthGuard} from "../gaurds/auth.guard";
+import {CurrentUser} from "./decorators/current-user.decorator";
+import {User} from "./user.entity";
 
 @Serialize(UserDto)
 @Controller('auth')
@@ -14,6 +29,14 @@ export class UsersController {
         private usersService: UsersService,
         private authService: AuthService,
     ) {
+    }
+
+    @UseGuards(AuthGuard)
+    @Get('whoami')
+    whoAmI(
+        @CurrentUser() user: User,
+    ) {
+        return user;
     }
 
     @Get(':id')
@@ -37,20 +60,36 @@ export class UsersController {
     }
 
     @Post('signup')
-    signup(
+    async signup(
         @Body() body: CreateUserDto,
+        @Session() session: any,
     ) {
         const {email, password, firstName, lastName} = body;
+        const user = await this.authService.signup(email, password, firstName, lastName);
 
-        return this.authService.signup(email, password, firstName, lastName);
+        session.userId = user.id;
+
+        return user;
     }
 
     @Post('login')
     async login(
         @Body() body: LoginUserDto,
+        @Session() session: any,
     ) {
         const {email, password} = body;
-        return this.authService.login(email, password);
+        const user = await this.authService.login(email, password);
+
+        session.userId = user.id;
+
+        return user;
+    }
+
+    @Post('/logout')
+    logout(
+        @Session() session: any,
+    ) {
+        session.userId = null;
     }
 
     @Delete(':id')
