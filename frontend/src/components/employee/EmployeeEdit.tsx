@@ -55,7 +55,7 @@ export function EmployeeEdit({employee}: EmployeeEditProps) {
                         ></button>
                     </div>
                     <div className="modal-body">
-                        <form onSubmit={handleSubmit} id={`edit_employee_${id}_table`}>
+                        <form onSubmit={handleSubmit} id={`edit_employee_${id}_form`}>
                             <div className="mb-3">
                                 <input type="text" className="form-control form-control-sm" required
                                        name="date"
