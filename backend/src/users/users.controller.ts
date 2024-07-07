@@ -2,7 +2,7 @@ import {
     Body,
     Controller,
     Delete,
-    Get,
+    Get, HttpCode,
     NotFoundException,
     Param,
     Patch,
@@ -73,6 +73,7 @@ export class UsersController {
     }
 
     @Post('login')
+    @HttpCode(200)
     async login(
         @Body() body: LoginUserDto,
         @Session() session: any,

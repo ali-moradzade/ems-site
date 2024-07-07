@@ -7,6 +7,8 @@ import {Employee} from "../src/employees/employee.entity";
 import {Job} from "../src/jobs/jobs.entity";
 import {User} from "../src/users/user.entity";
 
+const cookieSession = require('cookie-session');
+
 const mockEmployee = {
     email: 'email@gmail.com',
     firstName: 'John',
@@ -19,13 +21,6 @@ const mockEmployee = {
 const mockJob = {
     name: 'Graphic Designer',
     date: '2023-12-08',
-};
-
-const mockUser = {
-    email: 'email@gmail.com',
-    password: 'a very strong password!',
-    firstName: 'John',
-    lastName: 'Doe',
 };
 
 describe('AppController (e2e)', () => {
@@ -51,6 +46,11 @@ describe('AppController (e2e)', () => {
         }).compile();
 
         app = moduleFixture.createNestApplication();
+
+        app.enableCors();
+        app.use(cookieSession({
+            keys: ['randomNumbersAndLetters'],
+        }));
         app.useGlobalPipes(new ValidationPipe({
             whitelist: true,
         }));
@@ -311,13 +311,20 @@ describe('AppController (e2e)', () => {
         });
     });
 
-    describe('/users', () => {
-        const path = '/users';
+    describe('/auth', () => {
+        const path = '/auth';
 
-        describe('POST /', () => {
-            it('given user properties, should create user', async () => {
+        const mockUser = {
+            email: 'email@gmail.com',
+            password: 'a very strong password!',
+            firstName: 'John',
+            lastName: 'Doe',
+        };
+
+        describe('POST /signup', () => {
+            test('given user properties, should create user', async () => {
                 const res = await request(app.getHttpServer())
-                    .post(path)
+                    .post(`${path}/signup`)
                     .send(mockUser);
 
                 expect(res.statusCode).toEqual(201);
@@ -328,18 +335,45 @@ describe('AppController (e2e)', () => {
             test('given duplicate email, should give 400, BadRequest', async () => {
                 // Create First User
                 await request(app.getHttpServer())
-                    .post(path)
+                    .post(`${path}/signup`)
                     .send(mockUser)
                     .expect(201);
 
                 // Try to create user with same email
                 return request(app.getHttpServer())
-                    .post(path)
+                    .post(`${path}/signup`)
                     .send(mockUser)
                     .expect(400)
                     .then(res => {
-                        expect(res.body.message).toEqual('Email already in use');
+                        expect(res.body.message).toEqual('Email in use');
                         expect(res.body.error).toMatch(/Bad Request/);
+                    });
+            });
+        });
+
+        describe('POST /login', () => {
+            test('non-existent user, can not login', async () => {
+                return request(app.getHttpServer())
+                    .post(`${path}/login`)
+                    .send(mockUser)
+                    .expect(404)
+                    .then(res => expect(res.body.error).toMatch(/Not Found/));
+            });
+
+            test('existent-user, logs in', async () => {
+                // Create User
+                await request(app.getHttpServer())
+                    .post(`${path}/signup`)
+                    .send(mockUser)
+                    .expect(201);
+
+                // Login user
+                return request(app.getHttpServer())
+                    .post(`${path}/login`)
+                    .send({email: mockUser.email, password: mockUser.password})
+                    .expect(200)
+                    .then(res => {
+                        expect(res.body.email).toEqual(mockEmployee.email);
                     });
             });
         });
@@ -362,7 +396,7 @@ describe('AppController (e2e)', () => {
 
                 // Create employee
                 await request(app.getHttpServer())
-                    .post(path)
+                    .post(`${path}/signup`)
                     .send(mockUser)
                     .expect(201);
 
@@ -387,7 +421,7 @@ describe('AppController (e2e)', () => {
             test('given existing user id, returns it', async () => {
                 // Create user
                 const createdRes = await request(app.getHttpServer())
-                    .post(path)
+                    .post(`${path}/signup`)
                     .send(mockUser);
 
                 const user = createdRes.body;
@@ -410,7 +444,7 @@ describe('AppController (e2e)', () => {
 
             test('existent user id, successfully deletes it', async () => {
                 const createdRes = await request(app.getHttpServer())
-                    .post(path)
+                    .post(`${path}/signup`)
                     .send(mockUser)
                     .expect(201);
                 const user = createdRes.body;
@@ -436,7 +470,7 @@ describe('AppController (e2e)', () => {
 
             test('user exists, and giving user firstName, updates user firstName', async () => {
                 const createdRes = await request(app.getHttpServer())
-                    .post(path)
+                    .post(`${path}/signup`)
                     .send(mockUser);
                 const user = createdRes.body;
                 const newFirstName = 'New First Name';

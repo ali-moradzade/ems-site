@@ -32,7 +32,7 @@ export class UsersService {
         const users = await this.find(email);
 
         if (users.length) {
-            throw new BadRequestException('Email already in use');
+            throw new BadRequestException('Email in use');
         }
 
         const user = this.repository.create({
