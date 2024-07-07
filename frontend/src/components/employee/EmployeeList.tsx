@@ -10,7 +10,8 @@ export function EmployeeList() {
         return (
             <tr key={id}>
                 <td>{id}</td>
-                <td>{`${firstName} ${lastName}`}</td>
+                <td>{firstName}</td>
+                <td>{lastName}</td>
                 <td>{email}</td>
                 <td>
                     <button data-bs-toggle="modal" data-bs-target={`#employee_details_${id}`}
@@ -67,7 +68,8 @@ export function EmployeeList() {
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Name</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
                         <th>Email</th>
                         <th>Details</th>
                         <th>Edit</th>
