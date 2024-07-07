@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import {App} from './App';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Provider} from "./context/User";
+import {UserProvider} from "./context/User";
 import {NavigationProvider} from "./context/Navigation";
 import {EmployeeProvider} from "./context/Employee";
 import {JobProvider} from "./context/Job";
@@ -16,11 +16,11 @@ root.render(
     <JobProvider>
         <EmployeeProvider>
             <NavigationProvider>
-                <Provider>
+                <UserProvider>
                     <React.StrictMode>
                         <App/>
                     </React.StrictMode>
-                </Provider>
+                </UserProvider>
             </NavigationProvider>
         </EmployeeProvider>
     </JobProvider>

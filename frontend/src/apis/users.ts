@@ -2,6 +2,7 @@ import axios from "axios";
 
 export interface User {
     email: string;
+    password?: string;
     firstName: string;
     lastName: string;
 }
@@ -34,8 +35,22 @@ export class UserRestClient {
         return res.data;
     }
 
+    async login(email: string, password: string): Promise<User> {
+        const res = await axios.post(`${this.url}/login`, {
+            email, password
+        });
+
+        return res.data;
+    }
+
+    async updateUser(id: number, attrs: Partial<User>): Promise<User> {
+        const res = await axios.patch(`${this.url}/${id}`, attrs);
+
+        return res.data;
+    }
+
     async deleteUser(id: number) {
-        const res = await axios.delete(`${this.url}/${id}`)
+        const res = await axios.delete(`${this.url}/${id}`);
 
         return res.data;
     }
