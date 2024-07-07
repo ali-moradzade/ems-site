@@ -68,10 +68,10 @@ describe('Employee', () => {
 
             cy.get('#employees_table tr').each(($el ) => {
                 const id = $el.find('td:first').text();
-                const email = $el.find('td:nth-child(3)').text();
+                const email = $el.find('td:nth-child(4)').text();
 
                 if (email === employee.email) {
-                    cy.wrap($el.find('td:nth-child(5)')).click()
+                    cy.wrap($el.find('td:nth-child(6)')).click()
 
                     // handle flaky inputs
                     recurse(
