@@ -2,14 +2,17 @@ import {Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Qu
 import {UsersService} from "./users.service";
 import {CreateUserDto} from "./dtos/create-user.dto";
 import {UpdateUserDto} from "./dtos/update-user.dto";
+import {LoginUserDto} from './dtos/login-user.dto';
 import {Serialize} from "../interceptors/serialize.interceptor";
 import {UserDto} from "./dtos/user.dto";
+import {AuthService} from "./auth.service";
 
 @Serialize(UserDto)
-@Controller('users')
+@Controller('auth')
 export class UsersController {
     constructor(
         private usersService: UsersService,
+        private authService: AuthService,
     ) {
     }
 
@@ -33,13 +36,21 @@ export class UsersController {
         return this.usersService.find(email);
     }
 
-    @Post()
-    createUser(
+    @Post('signup')
+    signup(
         @Body() body: CreateUserDto,
     ) {
         const {email, password, firstName, lastName} = body;
 
-        return this.usersService.create(email, password, firstName, lastName);
+        return this.authService.signup(email, password, firstName, lastName);
+    }
+
+    @Post('login')
+    async login(
+        @Body() body: LoginUserDto,
+    ) {
+        const {email, password} = body;
+        return this.authService.login(email, password);
     }
 
     @Delete(':id')
