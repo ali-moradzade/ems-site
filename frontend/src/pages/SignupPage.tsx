@@ -39,7 +39,7 @@ export function SignupPage() {
                                         Fill in the information and sign up in <span
                                         className="fw-bold">ESM</span> website
                                     </p>
-                                    <form id="signup_form">
+                                    <form id="signup_form" onSubmit={handleSubmit}>
                                         <div className="mb-3">
                                             <input type="email" className="form-control form-control mt-2"
                                                    placeholder="Email" required name="email"
