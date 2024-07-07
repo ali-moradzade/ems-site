@@ -1,28 +1,28 @@
 import {recurse} from 'cypress-recurse';
-import {deleteAllJobs, insertJob} from "./utils";
+import {deleteAllJobs, insertJob, urls} from "./utils";
 
 describe('Job', () => {
-    const url = 'http://localhost:3000/jobs';
+    beforeEach(() => {
+        cy.visit(urls.jobs);
+    });
 
-    describe('Add Job', () => {
+    afterEach(() => {
+        deleteAllJobs();
+    });
+
+    describe('Add', () => {
         it('given job properties, creates job', () => {
-            cy.visit(url);
-
             const job = {
                 name: 'Web Developer',
                 date: '2022-10-09',
             };
 
             insertJob(job);
-
-            deleteAllJobs();
         });
     });
 
-    describe('Job Details', () => {
+    describe('Details', () => {
         it('shows job details', () => {
-            cy.visit(url);
-
             const job = {
                 name: 'Graphic Designer',
                 date: '2023-11-08',
@@ -36,7 +36,7 @@ describe('Job', () => {
 
             let firstTime = true; // handle job with duplicate name
 
-            cy.get('#jobs_table tr').each(($el ) => {
+            cy.get('#jobs_table tr').each(($el) => {
                 const id = $el.find('td:first').text();
                 const name = $el.find('td:nth-child(2)').text();
 
@@ -49,15 +49,11 @@ describe('Job', () => {
                     }
                 }
             });
-
-            deleteAllJobs();
         });
     });
 
-    describe('Job Edit', () => {
+    describe('Edit', () => {
         it('given job properties, updates the job', () => {
-            cy.visit(url);
-
             const job = {
                 name: 'Graphic Designer',
                 date: '2023-02-01',
@@ -96,8 +92,6 @@ describe('Job', () => {
                     cy.get('#jobs_table tr td').contains(newJob.name).should('exist');
                 }
             });
-
-            deleteAllJobs();
         });
     });
 });
