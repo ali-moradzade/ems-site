@@ -1,59 +1,17 @@
 import {recurse} from 'cypress-recurse';
-
-function deleteAllJobsHelper(rowCount: number) {
-    if (rowCount < 1) {
-        return;
-    }
-
-    cy.get('tbody > tr td:nth-child(5)').last().click({force: true});
-    cy.get('.modal-body > form')?.find('.btn-danger').last().click({force: true})
-        .then(() => {
-            deleteAllJobsHelper(--rowCount);
-        });
-}
-
-function deleteAllJobs() {
-    cy.get('table tbody')
-        .then(($el) => {
-            const elements = $el.length - 1;
-
-            if (elements > 0) {
-                deleteAllJobsHelper(elements);
-            }
-        });
-}
-
-function insertJob(job: { name: string, date: string }) {
-    cy.contains('Add Job').click();
-
-    // Handling flaky inputs
-    recurse(
-        () => cy.get('#add_job').find('input').eq(0)
-            .clear().type(job.date),
-
-        ($input) => $input.val() === job.date,
-    ).should('have.value', job.date);
-
-    recurse(
-        () => cy.get('#add_job').find('input').eq(1)
-            .clear().type(job.name),
-
-        ($input) => $input.val() === job.name,
-    ).should('have.value', job.name);
-
-    cy.get('#add_job').find('button').contains('Add Job')
-        .click();
-
-    cy.get('tr td').contains(job.name).should('exist');
-}
+import {deleteAllJobs, insertJob, urls} from "./utils";
 
 describe('Job', () => {
-    const url = 'http://localhost:3000/jobs';
+    beforeEach(() => {
+        cy.visit(urls.jobs);
+    });
 
-    describe('Add Job', () => {
+    afterEach(() => {
+        deleteAllJobs();
+    });
+
+    describe('Add', () => {
         it('given job properties, creates job', () => {
-            cy.visit(url);
-
             const job = {
                 name: 'Web Developer',
                 date: '2022-10-09',
@@ -63,9 +21,8 @@ describe('Job', () => {
         });
     });
 
-    describe('Job Details', () => {
+    describe('Details', () => {
         it('shows job details', () => {
-            cy.visit(url);
             const job = {
                 name: 'Graphic Designer',
                 date: '2023-11-08',
@@ -79,27 +36,24 @@ describe('Job', () => {
 
             let firstTime = true; // handle job with duplicate name
 
-            cy.get('tr td:nth-child(2)').each(($el, index) => {
-                const text = $el.text();
+            cy.get('#jobs_table tr').each(($el) => {
+                const id = $el.find('td:first').text();
+                const name = $el.find('td:nth-child(2)').text();
 
-                if (text === job.name && firstTime) {
-                    cy.get('tr td:nth-child(2)').eq(index).next().click({force: true});
+                if (name === job.name && firstTime) {
+                    cy.wrap($el.find('td:nth-child(3)')).click({force: true});
                     firstTime = false;
 
                     for (let key in job) {
-                        cy.get('.modal tr td').contains(job[key]).should('exist');
+                        cy.get(`#job_details_${id}_table tr td`).contains(job[key]).should('exist');
                     }
                 }
             });
-
-            deleteAllJobs();
         });
     });
 
-    describe('Job Edit', () => {
-        it.only('given job properties, updates the job', () => {
-            cy.visit(url);
-
+    describe('Edit', () => {
+        it('given job properties, updates the job', () => {
             const job = {
                 name: 'Graphic Designer',
                 date: '2023-02-01',
@@ -112,33 +66,32 @@ describe('Job', () => {
 
             insertJob(job);
 
-            cy.get('tr td:nth-child(2)').each(($el, index) => {
-                const text = $el.text();
+            cy.get('#jobs_table tr').each(($el) => {
+                const id = $el.find('td:nth-child(1)').text();
+                const name = $el.find('td:nth-child(2)').text();
 
-                if (text === job.name) {
-                    cy.get('tr td:nth-child(2)').eq(index).next().next().click();
+                if (name === job.name) {
+                    cy.wrap($el.find('td:nth-child(4)')).click();
 
                     // Handle Flaky Inputs
                     recurse(
-                        () => cy.get('.modal-dialog').find('input').eq(0)
+                        () => cy.get(`#edit_job_${id}_form input[name=date]`)
                             .clear().type(newJob.date),
 
                         ($input) => $input.val() === newJob.date,
                     ).should('have.value', newJob.date);
                     recurse(
-                        () => cy.get('.modal-dialog').find('input').eq(1)
+                        () => cy.get(`#edit_job_${id}_form input[name=name]`)
                             .clear().type(newJob.name),
 
                         ($input) => $input.val() === newJob.name,
                     ).should('have.value', newJob.name);
 
-                    cy.get('.modal-dialog').contains('Update Job').click();
-
-                    cy.get('tr td').contains(newJob.name).should('exist');
+                    cy.get(`#edit_job_${id}_form`).contains('Update Job').click();
                 }
-
-                deleteAllJobs();
             });
+
+            cy.get('#jobs_table tr td').contains(newJob.name).should('exist');
         });
     });
 });
