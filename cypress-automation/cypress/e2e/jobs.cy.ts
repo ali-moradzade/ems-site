@@ -88,10 +88,10 @@ describe('Job', () => {
                     ).should('have.value', newJob.name);
 
                     cy.get(`#edit_job_${id}_form`).contains('Update Job').click();
-
-                    cy.get('#jobs_table tr td').contains(newJob.name).should('exist');
                 }
             });
+
+            cy.get('#jobs_table tr td').contains(newJob.name).should('exist');
         });
     });
 });

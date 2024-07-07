@@ -1,4 +1,5 @@
 import {deleteAllEmployees, deleteAllJobs, insertEmployee, insertJob, urls} from "./utils";
+import {recurse} from "cypress-recurse";
 
 interface Employee {
     email: string;
@@ -8,7 +9,6 @@ interface Employee {
     job: string;
     date: string;
 }
-
 
 describe('Employee', () => {
     const job = {
@@ -34,8 +34,8 @@ describe('Employee', () => {
         deleteAllJobs();
     });
 
-    describe('Add Employee', () => {
-        it.only('given employee properties, creates employee', () => {
+    describe('Add', () => {
+        it('given employee properties, creates employee', () => {
             const employee = {
                 email: 'alimorizz1379@gmail.com',
                 firstName: 'Ali',
@@ -47,37 +47,56 @@ describe('Employee', () => {
 
             insertEmployee(employee);
         });
-        //
-        // it('given email and name, updates employee', () => {
-        //     cy.visit(url);
-        //
-        //     // insertMockEmployee();
-        //
-        //     const email = 'newEmail@gmail.com';
-        //     const firstName = 'New John';
-        //
-        //     cy.get('tr td:nth-child(3)').each(($el, index) => {
-        //         const text = $el.text();
-        //
-        //         if (text === mockEmployee.email) {
-        //
-        //             cy.get('tr :nth-child(5)').eq(index + 1).click();
-        //
-        //             cy.get('.modal-dialog').find('input').eq(1).clear().type(firstName);
-        //             cy.get('.modal-dialog').find('input').eq(3).clear().type(email);
-        //
-        //             cy.get('.modal-dialog').contains('Update Employee').click();
-        //
-        //             cy.get('tr td').contains(firstName).should('exist');
-        //             cy.get('tr td').contains(email).should('exist');
-        //         }
-        //     });
-        //
-        //     deleteAllEmployees();
-        // });
+
     });
 
-    describe('Employee Details', () => {
+    describe('Edit', () => {
+        it.only('given email and name, updates employee', () => {
+            const employee = {
+                email: 'alimorizz1379@gmail.com',
+                firstName: 'Ali',
+                lastName: 'Moradzade',
+                phone: '+9809123456789',
+                job: job.name,
+                date: '2022-10-11',
+            };
+
+            insertEmployee(employee);
+
+            const newEmail = 'newEmail@gmail.com';
+            const newFirstName = 'New John';
+
+            cy.get('#employees_table tr').each(($el ) => {
+                const id = $el.find('td:first').text();
+                const email = $el.find('td:nth-child(3)').text();
+
+                if (email === employee.email) {
+                    cy.wrap($el.find('td:nth-child(5)')).click()
+
+                    // handle flaky inputs
+                    recurse(
+                        () => cy.get(`#edit_employee_${id}_form input[name=first_name]`)
+                            .clear().type(newFirstName),
+
+                        ($input) => $input.val() === newFirstName,
+                    ).should('have.value', newFirstName);
+                    recurse(
+                        () => cy.get(`#edit_employee_${id}_form input[name=email]`)
+                            .clear().type(newEmail),
+
+                        ($input) => $input.val() === newEmail,
+                    ).should('have.value', newEmail);
+
+                    cy.get(`#edit_employee_${id}_form`).contains('Update Employee').click()
+                }
+            });
+
+            cy.get('#employees_table tr td').contains(newFirstName).should('exist')
+            cy.get('#employees_table tr td').contains(newEmail).should('exist')
+        });
+    });
+
+    describe('Details', () => {
         it('shows employee details', () => {
             cy.visit(urls.employees);
 
