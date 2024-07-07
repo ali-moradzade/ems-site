@@ -2,7 +2,10 @@ import {Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Qu
 import {UsersService} from "./users.service";
 import {CreateUserDto} from "./dtos/create-user.dto";
 import {UpdateUserDto} from "./dtos/update-user.dto";
+import {Serialize} from "../interceptors/serialize.interceptor";
+import {UserDto} from "./dtos/user.dto";
 
+@Serialize(UserDto)
 @Controller('users')
 export class UsersController {
     constructor(
