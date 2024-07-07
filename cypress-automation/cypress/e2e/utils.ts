@@ -23,6 +23,13 @@ export function deleteAllJobs() {
                 deleteAllJobsHelper(elements);
             }
         });
+
+    // Verify all elements deleted and table is empty
+    cy.get('#jobs_table tbody')
+        .then(($el) => {
+            const elements = $el.find('tr').length;
+            expect(elements).to.eq(0);
+        });
 }
 
 export function insertJob(job: { name: string, date: string }) {
@@ -122,6 +129,13 @@ export function deleteAllEmployees() {
             if (elements > 0) {
                 deleteAllEmployeesHelper(elements);
             }
+        });
+
+    // Verify all elements deleted and table is empty
+    cy.get('#employees_table tbody')
+        .then(($el) => {
+            const elements = $el.find('tr').length;
+            expect(elements).to.eq(0);
         });
 }
 
