@@ -66,12 +66,12 @@ describe('Employee', () => {
             const newEmail = 'newEmail@gmail.com';
             const newFirstName = 'New John';
 
-            cy.get('#employees_table tr').each(($el ) => {
+            cy.get('#employees_table tr').each(($el) => {
                 const id = $el.find('td:first').text();
                 const email = $el.find('td:nth-child(4)').text();
 
                 if (email === employee.email) {
-                    cy.wrap($el.find('td:nth-child(6)')).click()
+                    cy.wrap($el.find('td:nth-child(6)')).click();
 
                     // handle flaky inputs
                     recurse(
@@ -87,17 +87,17 @@ describe('Employee', () => {
                         ($input) => $input.val() === newEmail,
                     ).should('have.value', newEmail);
 
-                    cy.get(`#edit_employee_${id}_form`).contains('Update Employee').click()
+                    cy.get(`#edit_employee_${id}_form`).contains('Update Employee').click();
                 }
             });
 
-            cy.get('#employees_table tr td').contains(newFirstName).should('exist')
-            cy.get('#employees_table tr td').contains(newEmail).should('exist')
+            cy.get('#employees_table tr td').contains(newFirstName).should('exist');
+            cy.get('#employees_table tr td').contains(newEmail).should('exist');
         });
     });
 
     describe('Details', () => {
-        it.only('shows employee details', () => {
+        it('shows employee details', () => {
             cy.visit(urls.employees);
 
             const mockEmployee: Employee = {
