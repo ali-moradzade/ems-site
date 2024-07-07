@@ -1,13 +1,36 @@
 import {WelcomePanel} from "../components/WelcomePanel";
 import {Link} from "../components/Link";
+import {FormEvent, useState} from "react";
+import {useUserContext} from "../hooks/use-user-context";
+import {useNavigationContext} from "../hooks/use-navigation-context";
 
 export function SignupPage() {
+    const {signup} = useUserContext();
+    const {navigate} = useNavigationContext();
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        signup(email, password, firstName, lastName).then();
+
+        setEmail('');
+        setPassword('');
+        setFirstName('');
+        setLastName('');
+
+        navigate('/dashboard');
+    };
+
     return (
         <div>
             <WelcomePanel/>
             <div className="row justify-content-center mt-5">
                 <div className="col-4">
-                    <div className="card shadow">
+                    <div className="card shadow" id="signup_card">
                         <div className="card-body">
                             <div className="card-title">
                                 <h3>Signup</h3>
@@ -16,34 +39,42 @@ export function SignupPage() {
                                         Fill in the information and sign up in <span
                                         className="fw-bold">ESM</span> website
                                     </p>
-                                    <form>
+                                    <form id="signup_form">
                                         <div className="mb-3">
-                                            <input placeholder="First Name" type="text" id="signupFirstName"
-                                                   className="form-control form-control mt-2"
-                                                   required/>
+                                            <input type="email" className="form-control form-control mt-2"
+                                                   placeholder="Email" required name="email"
+                                                   value={email}
+                                                   onChange={e => setEmail(e.target.value)}
+                                            />
                                         </div>
                                         <div className="mb-3">
-                                            <input placeholder="Last Name" type="text" id="signupLastName"
-                                                   className="form-control form-control mt-2"
-                                                   required/>
+                                            <input type="password" className="form-control form-control mt-2"
+                                                   placeholder="Password" required name="password"
+                                                   value={password}
+                                                   onChange={e => setPassword(e.target.value)}
+                                            />
                                         </div>
                                         <div className="mb-3">
-                                            <input placeholder="Email" type="email" id="signupEmail"
-                                                   className="form-control form-control mt-2"
-                                                   required/>
+                                            <input type="text" className="form-control form-control mt-2"
+                                                   placeholder="First Name" required name="first_name"
+                                                   value={firstName}
+                                                   onChange={e => setFirstName(e.target.value)}
+                                            />
                                         </div>
                                         <div className="mb-3">
-                                            <input placeholder="Password" type="password" id="signupPassword"
-                                                   className="form-control form-control mt-2"
-                                                   required/>
+                                            <input type="text" className="form-control form-control mt-2"
+                                                   placeholder="Last Name" required
+                                                   value={lastName}
+                                                   onChange={e => setLastName(e.target.value)}
+                                            />
                                         </div>
                                         <div className="mb-3 d-grid">
-                                            <input type="submit" className="btn btn-success" value="Signup"/>
+                                            <input type="submit" className="btn btn-success" value="signup"/>
                                         </div>
                                     </form>
                                     <div className="text-center text-muted mt-4 small">
-                                        Already a User? <Link to={'/login'}
-                                                                     className="text-decoration-none">Login</Link>
+                                        Already a User?
+                                        <Link to={'/login'} className="text-decoration-none">Login</Link>
                                     </div>
                                 </div>
                             </div>
