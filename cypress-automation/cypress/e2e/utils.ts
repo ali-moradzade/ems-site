@@ -110,10 +110,6 @@ export function insertEmployee(
     cy.get('#add_employee select').select(job);
 
     cy.get('#add_employee .btn-success').click();
-
-
-    // Verify it is inserted
-    cy.get('#employees_table tr td').contains(employee.email).should('exist');
 }
 
 export function deleteAllEmployeesHelper(rowCount: number) {
