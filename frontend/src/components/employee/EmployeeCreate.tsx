@@ -1,6 +1,8 @@
 import {FormEvent, useRef, useState} from "react";
 import {useEmployeeContext} from "../../hooks/use-employee-context";
 import {useJobContext} from "../../hooks/use-job-context";
+import {isPhoneNumber} from "class-validator";
+import {AxiosError} from "axios";
 
 export function EmployeeCreate() {
     const {createEmployee} = useEmployeeContext();
@@ -13,23 +15,69 @@ export function EmployeeCreate() {
     const [phone, setPhone] = useState('');
     const [job, setJob] = useState(jobs[0]?.name || 'Unemployed');
 
+    const [error, setError] = useState<string | null>(null);
+    const [validationErrors, setValidationErrors] = useState({
+        firstName: false,
+        lastName: false,
+        email: false,
+        date: false,
+        phone: false,
+    });
+
     const closeRef = useRef<HTMLButtonElement>(null);
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        createEmployee({
-            firstName, lastName, email, date, phone, job
-        }).then();
 
-        // close the modal
-        closeRef.current?.click();
+        setError(null);
+        setValidationErrors({
+            firstName: false,
+            lastName: false,
+            email: false,
+            date: false,
+            phone: false,
+        });
 
-        // clear the fields
-        setFirstName('');
-        setLastName('');
-        setEmail('');
-        setDate('');
-        setPhone('');
+        let hasErrors = false;
+
+        // Date validation
+        const dateRegex = /^\d{4}(-)(((0)[0-9])|((1)[0-2]))(-)([0-2][0-9]|(3)[0-1])$/;
+        if (!dateRegex.test(date)) {
+            // setError('Date must be in yyyy-mm-dd format');
+            setValidationErrors(prev => ({...prev, date: true}));
+            hasErrors = true;
+        }
+
+        // Phone validation
+        if (!isPhoneNumber(phone)) {
+            // setError('Invalid phone number, Please enter a valid phone number, including +98 (Iran)');
+            setValidationErrors(prev => ({...prev, phone: true}));
+            hasErrors = true;
+        }
+
+        if (hasErrors) {
+            return;
+        }
+
+        try {
+            await createEmployee({
+                firstName, lastName, email, date, phone, job
+            });
+
+            // close the modal
+            closeRef.current?.click();
+
+            // clear the fields
+            setFirstName('');
+            setLastName('');
+            setEmail('');
+            setDate('');
+            setPhone('');
+        } catch (err: any) {
+            err = err as AxiosError;
+
+            setError(`Creation failed: ${err.response.data.message}`);
+        }
     };
 
     const renderedJobs = jobs.map(job => {
@@ -40,7 +88,6 @@ export function EmployeeCreate() {
         );
     });
 
-    // TODO: handle form validation
     return (
         <div
             className="modal fade" id="add_employee" tabIndex={-1} aria-labelledby="add_employee" aria-hidden="true"
@@ -55,14 +102,20 @@ export function EmployeeCreate() {
                         ></button>
                     </div>
                     <div className="modal-body">
+                        {error && (
+                            <div className="alert alert-danger" role="alert">
+                                {error}
+                            </div>
+                        )}
                         <form onSubmit={handleSubmit} id="add_employee_form">
                             <div className="mb-3">
                                 <input
-                                    type="text" className="form-control form-control-sm" required
-                                    placeholder="Date: yyyy-mm-dd" name="date"
+                                    type="text" required placeholder="Date: yyyy-mm-dd" name="date"
+                                    className={`form-control form-control-sm ${validationErrors.date ? 'is-invalid' : ''}`}
                                     value={date}
                                     onChange={e => setDate(e.target.value)}
                                 />
+                                {validationErrors.date && <div className="invalid-feedback">Invalid date format.</div>}
                             </div>
                             <div className="mb-3">
                                 <input
@@ -89,11 +142,17 @@ export function EmployeeCreate() {
                                 />
                             </div>
                             <div className="mb-3">
-                                <input type="tel" className="form-control form-control-sm" required
-                                       placeholder="Employee Phone Number" name="phone"
-                                       value={phone}
-                                       onChange={e => setPhone(e.target.value)}
+                                <input
+                                    type="text" required placeholder="Phone Number" name="phone"
+                                    className={`form-control form-control-sm ${validationErrors.phone ? 'is-invalid' : ''}`}
+                                    value={phone}
+                                    onChange={e => setPhone(e.target.value)}
                                 />
+                                {validationErrors.phone &&
+                                    <div className="invalid-feedback">
+                                        Invalid phone number, format: +989912345678
+                                    </div>
+                                }
                             </div>
                             <div className="mb-3">
                                 <select className="form-control form-control-sm" name="job"
