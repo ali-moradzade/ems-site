@@ -49,37 +49,41 @@ export function SignupPage() {
                                         className="fw-bold">ESM</span> website
                                     </p>
                                     {error && (
-                                        <div className="alert alert-danger" role="alert">
+                                        <div className="alert alert-danger" role="alert" id="signup_alert">
                                             {error}
                                         </div>
                                     )}
                                     <form id="signup_form" onSubmit={handleSubmit}>
                                         <div className="mb-3">
-                                            <input type="email" className="form-control form-control mt-2"
-                                                   placeholder="Email" required name="email"
-                                                   value={email}
-                                                   onChange={e => setEmail(e.target.value)}
+                                            <input
+                                                type="email" className="form-control form-control mt-2"
+                                                placeholder="Email" required name="email"
+                                                value={email}
+                                                onChange={e => setEmail(e.target.value)}
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <input type="password" className="form-control form-control mt-2"
-                                                   placeholder="Password" required name="password"
-                                                   value={password}
-                                                   onChange={e => setPassword(e.target.value)}
+                                            <input
+                                                type="password" className="form-control form-control mt-2"
+                                                placeholder="Password" required name="password"
+                                                value={password}
+                                                onChange={e => setPassword(e.target.value)}
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <input type="text" className="form-control form-control mt-2"
-                                                   placeholder="First Name" required name="first_name"
-                                                   value={firstName}
-                                                   onChange={e => setFirstName(e.target.value)}
+                                            <input
+                                                type="text" className="form-control form-control mt-2"
+                                                placeholder="First Name" required name="first_name"
+                                                value={firstName}
+                                                onChange={e => setFirstName(e.target.value)}
                                             />
                                         </div>
                                         <div className="mb-3">
-                                            <input type="text" className="form-control form-control mt-2"
-                                                   placeholder="Last Name" required
-                                                   value={lastName}
-                                                   onChange={e => setLastName(e.target.value)}
+                                            <input
+                                                type="text" className="form-control form-control mt-2"
+                                                placeholder="Last Name" required
+                                                value={lastName}
+                                                onChange={e => setLastName(e.target.value)}
                                             />
                                         </div>
                                         <div className="mb-3 d-grid">
@@ -88,8 +92,8 @@ export function SignupPage() {
                                     </form>
                                     <div className="text-center text-muted mt-4 small">
                                         Already a User? <Link to={'/login'} className="text-decoration-none">
-                                            Login
-                                        </Link>
+                                        Login
+                                    </Link>
                                     </div>
                                 </div>
                             </div>
