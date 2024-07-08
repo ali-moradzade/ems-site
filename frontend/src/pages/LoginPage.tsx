@@ -3,6 +3,7 @@ import {Link} from "../components/Link";
 import {useUserContext} from "../hooks/use-user-context";
 import {useNavigationContext} from "../hooks/use-navigation-context";
 import {FormEvent, useState} from "react";
+import {AxiosError} from "axios";
 
 export function LoginPage() {
     const {login} = useUserContext();
@@ -10,15 +11,24 @@ export function LoginPage() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        login(email, password).then();
+        setError(null);
 
-        setEmail('');
-        setPassword('');
+        try {
+            await login(email, password);
 
-        navigate('/dashboard');
+            setEmail('');
+            setPassword('');
+
+            navigate('/dashboard');
+        } catch (err: any) {
+            err = err as AxiosError;
+
+            setError(`Login failed: ${err.response.data.message}`);
+        }
     };
 
     return (
@@ -32,6 +42,11 @@ export function LoginPage() {
                                 <h3>Login</h3>
                                 <div className="card-text">
                                     <p className="small text-muted">Login with your username &amp; password</p>
+                                    {error && (
+                                        <div className="alert alert-danger" role="alert">
+                                            {error}
+                                        </div>
+                                    )}
                                     <form id="login_form" onSubmit={handleSubmit}>
                                         <div className="mb-3">
                                             <input type="email" className="form-control form-control mt-2"
@@ -53,8 +68,9 @@ export function LoginPage() {
                                         </div>
                                     </form>
                                     <div className="text-center text-muted small mt-4">
-                                        Don't have an account?
-                                        <Link to={'/signup'} className="text-decoration-none">Signup</Link>
+                                        Don't have an account? <Link to={'/signup'} className="text-decoration-none">
+                                            Signup
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
