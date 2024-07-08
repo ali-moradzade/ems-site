@@ -43,7 +43,6 @@ export function JobEdit({job}: JobEditProps) {
 
             setError(`Creation failed: ${e.response.data.message}`);
         }
-
     };
 
     return (
@@ -62,7 +61,7 @@ export function JobEdit({job}: JobEditProps) {
                     </div>
                     <div className="modal-body">
                         {error &&
-                            <div className="alert alert-danger" role="alert">
+                            <div className="alert alert-danger" role="alert" id={`edit_job_${id}_alert`}>
                                 {error}
                             </div>
                         }
@@ -76,16 +75,17 @@ export function JobEdit({job}: JobEditProps) {
                                     onChange={e => setDate(e.target.value)}
                                 />
                                 {hasDateError &&
-                                    <div className="invalid-feedback">
+                                    <div className="invalid-feedback" id={`edit_job_${id}_invalid_date`}>
                                         Invalid date
                                     </div>
                                 }
                             </div>
                             <div className="mb-3">
-                                <input type="text" className="form-control form-control-sm" required
-                                       placeholder="Job Name" name="name"
-                                       value={name}
-                                       onChange={e => setName(e.target.value)}
+                                <input
+                                    type="text" className="form-control form-control-sm" required
+                                    placeholder="Job Name" name="name"
+                                    value={name}
+                                    onChange={e => setName(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
