@@ -1,4 +1,4 @@
-import {deleteAllEmployees, deleteAllJobs, insertEmployee, insertJob, urls} from "./utils";
+import {deleteAllEmployees, deleteAllJobs, insertEmployee, insertJob, urls, recurseDelay} from "./utils";
 import {recurse} from "cypress-recurse";
 
 interface Employee {
@@ -15,6 +15,8 @@ describe('Employee', () => {
         name: 'Web Developer',
         date: '2023-02-01',
     };
+
+    const recurseDelay = 10;
 
     beforeEach(() => {
         cy.visit(urls.employees);
@@ -79,12 +81,14 @@ describe('Employee', () => {
                             .clear().type(newFirstName),
 
                         ($input) => $input.val() === newFirstName,
+                        {delay: recurseDelay}
                     ).should('have.value', newFirstName);
                     recurse(
                         () => cy.get(`#edit_employee_${id}_form input[name=email]`)
                             .clear().type(newEmail),
 
                         ($input) => $input.val() === newEmail,
+                        {delay: recurseDelay}
                     ).should('have.value', newEmail);
 
                     cy.get(`#edit_employee_${id}_form`).contains('Update Employee').click();

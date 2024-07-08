@@ -1,5 +1,7 @@
 import {recurse} from "cypress-recurse";
 
+export const recurseDelay = 10;
+
 export function deleteAllJobsHelper(rowCount: number) {
     if (rowCount < 1) {
         return;
@@ -40,12 +42,14 @@ export function insertJob(job: { name: string, date: string }) {
         () => cy.get('#add_job input[name=date]').clear().type(job.date),
 
         ($input) => $input.val() === job.date,
+        {delay: recurseDelay}
     ).should('have.value', job.date);
 
     recurse(
         () => cy.get('#add_job input[name=name]').clear().type(job.name),
 
         ($input) => $input.val() === job.name,
+        {delay: recurseDelay}
     ).should('have.value', job.name);
 
     cy.get('#add_job .btn-success').click();
@@ -72,30 +76,35 @@ export function insertEmployee(
         () => cy.get('#add_employee input[name=date]').clear().type(date),
 
         ($input) => $input.val() === date,
+        {delay: recurseDelay}
     ).should('have.value', date);
 
     recurse(
         () => cy.get('#add_employee input[name=first_name]').clear().type(firstName),
 
         ($input) => $input.val() === firstName,
+        {delay: recurseDelay}
     ).should('have.value', firstName);
 
     recurse(
         () => cy.get('#add_employee input[name=last_name]').clear().type(lastName),
 
         ($input) => $input.val() === lastName,
+        {delay: recurseDelay}
     ).should('have.value', lastName);
 
     recurse(
         () => cy.get('#add_employee input[name=email]').clear().type(email),
 
         ($input) => $input.val() === email,
+        {delay: recurseDelay}
     ).should('have.value', email);
 
     recurse(
         () => cy.get('#add_employee input[name=phone]').clear().type(phone),
 
         ($input) => $input.val() === phone,
+        {delay: recurseDelay}
     ).should('have.value', phone);
 
     cy.get('#add_employee select').select(job);

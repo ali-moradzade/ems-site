@@ -1,7 +1,8 @@
 import {recurse} from 'cypress-recurse';
-import {deleteAllJobs, insertJob, urls} from "./utils";
+import {deleteAllJobs, insertJob, urls, recurseDelay} from "./utils";
 
 describe('Job', () => {
+
     beforeEach(() => {
         cy.visit(urls.jobs);
     });
@@ -79,12 +80,14 @@ describe('Job', () => {
                             .clear().type(newJob.date),
 
                         ($input) => $input.val() === newJob.date,
+                        {delay: recurseDelay},
                     ).should('have.value', newJob.date);
                     recurse(
                         () => cy.get(`#edit_job_${id}_form input[name=name]`)
                             .clear().type(newJob.name),
 
                         ($input) => $input.val() === newJob.name,
+                        {delay: recurseDelay},
                     ).should('have.value', newJob.name);
 
                     cy.get(`#edit_job_${id}_form`).contains('Update Job').click();
