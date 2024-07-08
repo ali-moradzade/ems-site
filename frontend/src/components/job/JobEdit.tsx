@@ -1,6 +1,7 @@
 import {Job} from "../../apis/jobs";
 import {FormEvent, useRef, useState} from "react";
 import {useJobContext} from "../../hooks/use-job-context";
+import {AxiosError} from "axios";
 
 interface JobEditProps {
     job: Job;
@@ -13,15 +14,36 @@ export function JobEdit({job}: JobEditProps) {
     const [name, setName] = useState(job.name);
     const [date, setDate] = useState(job.date);
 
+    const [error, setError] = useState<null | string>(null);
+    const [hasDateError, setHasDateError] = useState(false);
+
     const closeRef = useRef<HTMLButtonElement>(null);
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        updateJob(id, {
-            name, date,
-        }).then();
 
-        closeRef.current?.click();
+        setError(null);
+        setHasDateError(false);
+
+        // Date validation
+        const dateRegex = /^\d{4}(-)(((0)[0-9])|((1)[0-2]))(-)([0-2][0-9]|(3)[0-1])$/;
+        if (!dateRegex.test(date)) {
+            setHasDateError(true);
+            return;
+        }
+
+        try {
+            await updateJob(id, {
+                name, date,
+            });
+
+            closeRef.current?.click();
+        } catch (e: any) {
+            e = e as AxiosError;
+
+            setError(`Creation failed: ${e.response.data.message}`);
+        }
+
     };
 
     return (
@@ -39,15 +61,25 @@ export function JobEdit({job}: JobEditProps) {
                         ></button>
                     </div>
                     <div className="modal-body">
+                        {error &&
+                            <div className="alert alert-danger" role="alert">
+                                {error}
+                            </div>
+                        }
                         <form onSubmit={handleSubmit} id={`edit_job_${id}_form`}>
                             <div className="mb-3">
                                 {/* TODO: fix change type to date */}
                                 <input
-                                    type="text" className="form-control form-control-sm" required
-                                    placeholder="Date" name="date"
+                                    type="text" required placeholder="Date" name="date"
+                                    className={`form-control form-control-sm ${hasDateError ? 'is-invalid' : ''}`}
                                     value={date}
                                     onChange={e => setDate(e.target.value)}
                                 />
+                                {hasDateError &&
+                                    <div className="invalid-feedback">
+                                        Invalid date
+                                    </div>
+                                }
                             </div>
                             <div className="mb-3">
                                 <input type="text" className="form-control form-control-sm" required
