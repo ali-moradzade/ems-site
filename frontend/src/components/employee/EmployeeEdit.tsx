@@ -49,14 +49,12 @@ export function EmployeeEdit({employee}: EmployeeEditProps) {
         // Date validation
         const dateRegex = /^\d{4}(-)(((0)[0-9])|((1)[0-2]))(-)([0-2][0-9]|(3)[0-1])$/;
         if (!dateRegex.test(date)) {
-            // setError('Date must be in yyyy-mm-dd format');
             setValidationErrors(prev => ({...prev, date: true}));
             hasErrors = true;
         }
 
         // Phone validation
         if (!isPhoneNumber(phone)) {
-            // setError('Invalid phone number, Please enter a valid phone number, including +98 (Iran)');
             setValidationErrors(prev => ({...prev, phone: true}));
             hasErrors = true;
         }
@@ -103,7 +101,7 @@ export function EmployeeEdit({employee}: EmployeeEditProps) {
                     </div>
                     <div className="modal-body">
                         {error &&
-                            <div className="alert alert-danger" role="alert">
+                            <div className="alert alert-danger" role="alert" id={`edit_employee_${id}_alert`}>
                                 {error}
                             </div>
                         }
@@ -116,7 +114,7 @@ export function EmployeeEdit({employee}: EmployeeEditProps) {
                                     onChange={e => setDate(e.target.value)}
                                 />
                                 {validationErrors.date &&
-                                    <div className="invalid-feedback">
+                                    <div className="invalid-feedback" id={`edit_employee_${id}_invalid_date`}>
                                         Invalid date format
                                     </div>
                                 }
@@ -153,7 +151,7 @@ export function EmployeeEdit({employee}: EmployeeEditProps) {
                                     onChange={e => setPhone(e.target.value)}
                                 />
                                 {validationErrors.phone &&
-                                    <div className="invalid-feedback">
+                                    <div className="invalid-feedback" id={`edit_employee_${id}_invalid_phone`}>
                                         Invalid phone number, format: +989912345678
                                     </div>
                                 }

@@ -57,13 +57,13 @@ export function JobCreate() {
                     </div>
                     <div className="modal-body">
                         {error &&
-                            <div className="alert alert-danger" role="alert">
+                            <div className="alert alert-danger" role="alert" id="add_job_alert">
                                 {error}
                             </div>
                         }
                         <form onSubmit={handleSubmit} id="add_job_form">
                             <div className="mb-3">
-                            {/* TODO: fix-> change type:date */}
+                                {/* TODO: fix-> change type:date */}
                                 <input
                                     type="text" required placeholder="Date: yyyy-mm-dd" name="date"
                                     className={`form-control form-control-sm ${hasDateError ? 'is-invalid' : ''}`}
@@ -71,16 +71,17 @@ export function JobCreate() {
                                     onChange={e => setDate(e.target.value)}
                                 />
                                 {hasDateError &&
-                                    <div className="invalid-feedback">
+                                    <div className="invalid-feedback" id="add_job_invalid_date">
                                         Invalid date
                                     </div>
                                 }
                             </div>
                             <div className="mb-3">
-                                <input type="text" className="form-control form-control-sm" required
-                                       placeholder="Job Name" name="name"
-                                       value={name}
-                                       onChange={e => setName(e.target.value)}
+                                <input
+                                    type="text" className="form-control form-control-sm" required
+                                    placeholder="Job Name" name="name"
+                                    value={name}
+                                    onChange={e => setName(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
