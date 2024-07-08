@@ -2,6 +2,8 @@ import {Employee} from "../../apis/employees";
 import {FormEvent, useRef, useState} from "react";
 import {useEmployeeContext} from "../../hooks/use-employee-context";
 import {useJobContext} from "../../hooks/use-job-context";
+import {isPhoneNumber} from "class-validator";
+import {AxiosError} from "axios";
 
 interface EmployeeEditProps {
     employee: Employee;
@@ -19,15 +21,60 @@ export function EmployeeEdit({employee}: EmployeeEditProps) {
     const [phone, setPhone] = useState(employee.phone);
     const [job, setJob] = useState(employee.job);
 
+    const [error, setError] = useState<string | null>(null);
+    const [validationErrors, setValidationErrors] = useState({
+        firstName: false,
+        lastName: false,
+        email: false,
+        date: false,
+        phone: false,
+    });
+
     const closeRef = useRef<HTMLButtonElement>(null);
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        updateEmployee(id, {
-            firstName, lastName, email, date, phone, job,
-        }).then();
 
-        closeRef.current?.click();
+        setError(null);
+        setValidationErrors({
+            firstName: false,
+            lastName: false,
+            email: false,
+            date: false,
+            phone: false,
+        });
+
+        let hasErrors = false;
+
+        // Date validation
+        const dateRegex = /^\d{4}(-)(((0)[0-9])|((1)[0-2]))(-)([0-2][0-9]|(3)[0-1])$/;
+        if (!dateRegex.test(date)) {
+            // setError('Date must be in yyyy-mm-dd format');
+            setValidationErrors(prev => ({...prev, date: true}));
+            hasErrors = true;
+        }
+
+        // Phone validation
+        if (!isPhoneNumber(phone)) {
+            // setError('Invalid phone number, Please enter a valid phone number, including +98 (Iran)');
+            setValidationErrors(prev => ({...prev, phone: true}));
+            hasErrors = true;
+        }
+
+        if (hasErrors) {
+            return;
+        }
+
+        try {
+            await updateEmployee(id, {
+                firstName, lastName, email, date, phone, job,
+            });
+
+            closeRef.current?.click();
+        } catch (e: any) {
+            e = e as AxiosError;
+            setError(`Update failed: ${e.response.data.message}`);
+        }
     };
 
     const renderedJobs = jobs.map(job => {
@@ -55,26 +102,39 @@ export function EmployeeEdit({employee}: EmployeeEditProps) {
                         ></button>
                     </div>
                     <div className="modal-body">
+                        {error &&
+                            <div className="alert alert-danger" role="alert">
+                                {error}
+                            </div>
+                        }
                         <form onSubmit={handleSubmit} id={`edit_employee_${id}_form`}>
                             <div className="mb-3">
-                                <input type="text" className="form-control form-control-sm" required
-                                       name="date"
-                                       value={date}
-                                       onChange={e => setDate(e.target.value)}
+                                <input
+                                    type="text" required name="date" placeholder="Date: yyyy-mm-dd"
+                                    className={`form-control form-control-sm ${validationErrors.date ? 'is-invalid' : ''}`}
+                                    value={date}
+                                    onChange={e => setDate(e.target.value)}
+                                />
+                                {validationErrors.date &&
+                                    <div className="invalid-feedback">
+                                        Invalid date format
+                                    </div>
+                                }
+                            </div>
+                            <div className="mb-3">
+                                <input
+                                    type="text" className="form-control form-control-sm" required
+                                    placeholder="First Name" name="first_name"
+                                    value={firstName}
+                                    onChange={e => setFirstName(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
-                                <input type="text" className="form-control form-control-sm" required
-                                       placeholder="First Name" name="first_name"
-                                       value={firstName}
-                                       onChange={e => setFirstName(e.target.value)}
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <input type="text" className="form-control form-control-sm" required
-                                       placeholder="Last Name" name="last_name"
-                                       value={lastName}
-                                       onChange={e => setLastName(e.target.value)}
+                                <input
+                                    type="text" className="form-control form-control-sm" required
+                                    placeholder="Last Name" name="last_name"
+                                    value={lastName}
+                                    onChange={e => setLastName(e.target.value)}
                                 />
                             </div>
                             <div className="mb-3">
@@ -86,11 +146,17 @@ export function EmployeeEdit({employee}: EmployeeEditProps) {
                                 />
                             </div>
                             <div className="mb-3">
-                                <input type="tel" className="form-control form-control-sm" required
-                                       placeholder="Phone Number" name="phone"
-                                       value={phone}
-                                       onChange={e => setPhone(e.target.value)}
+                                <input
+                                    type="tel" required placeholder="Phone Number" name="phone"
+                                    className={`form-control form-control-sm ${validationErrors.phone ? 'is-invalid' : ''}`}
+                                    value={phone}
+                                    onChange={e => setPhone(e.target.value)}
                                 />
+                                {validationErrors.phone &&
+                                    <div className="invalid-feedback">
+                                        Invalid phone number, format: +989912345678
+                                    </div>
+                                }
                             </div>
                             <div className="mb-3">
                                 <select className="form-control form-control-sm" name="job"

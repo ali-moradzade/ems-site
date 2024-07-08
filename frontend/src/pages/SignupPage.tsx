@@ -3,6 +3,7 @@ import {Link} from "../components/Link";
 import {FormEvent, useState} from "react";
 import {useUserContext} from "../hooks/use-user-context";
 import {useNavigationContext} from "../hooks/use-navigation-context";
+import {AxiosError} from "axios";
 
 export function SignupPage() {
     const {signup} = useUserContext();
@@ -12,17 +13,25 @@ export function SignupPage() {
     const [password, setPassword] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
+    const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        signup(email, password, firstName, lastName).then();
 
-        setEmail('');
-        setPassword('');
-        setFirstName('');
-        setLastName('');
+        try {
+            await signup(email, password, firstName, lastName);
 
-        navigate('/dashboard');
+            setEmail('');
+            setPassword('');
+            setFirstName('');
+            setLastName('');
+
+            navigate('/dashboard');
+        } catch (err: any) {
+            err = err as AxiosError;
+
+            setError(`Login failed: ${err.response.data.message}`);
+        }
     };
 
     return (
@@ -39,6 +48,11 @@ export function SignupPage() {
                                         Fill in the information and sign up in <span
                                         className="fw-bold">ESM</span> website
                                     </p>
+                                    {error && (
+                                        <div className="alert alert-danger" role="alert">
+                                            {error}
+                                        </div>
+                                    )}
                                     <form id="signup_form" onSubmit={handleSubmit}>
                                         <div className="mb-3">
                                             <input type="email" className="form-control form-control mt-2"
@@ -73,8 +87,9 @@ export function SignupPage() {
                                         </div>
                                     </form>
                                     <div className="text-center text-muted mt-4 small">
-                                        Already a User?
-                                        <Link to={'/login'} className="text-decoration-none">Login</Link>
+                                        Already a User? <Link to={'/login'} className="text-decoration-none">
+                                            Login
+                                        </Link>
                                     </div>
                                 </div>
                             </div>
