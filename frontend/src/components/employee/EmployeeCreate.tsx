@@ -115,7 +115,7 @@ export function EmployeeCreate() {
                                     value={date}
                                     onChange={e => setDate(e.target.value)}
                                 />
-                                {validationErrors.date && <div className="invalid-feedback">Invalid date format.</div>}
+                                {validationErrors.date && <div className="invalid-feedback">Invalid date format</div>}
                             </div>
                             <div className="mb-3">
                                 <input
