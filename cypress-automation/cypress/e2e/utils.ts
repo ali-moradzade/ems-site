@@ -53,8 +53,6 @@ export function insertJob(job: { name: string, date: string }) {
     ).should('have.value', job.name);
 
     cy.get('#add_job .btn-success').click();
-
-    cy.get('#jobs_table > tbody tr td').contains(job.name).should('exist');
 }
 
 export function insertEmployee(

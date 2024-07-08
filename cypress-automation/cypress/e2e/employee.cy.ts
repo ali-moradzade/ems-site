@@ -16,7 +16,7 @@ describe('Employee', () => {
         date: '2023-02-01',
     };
 
-    const employee = {
+    const employee: Employee = {
         email: 'alimorizz1379@gmail.com',
         firstName: 'Ali',
         lastName: 'Moradzade',
@@ -71,7 +71,7 @@ describe('Employee', () => {
             cy.get('#add_employee').find('.btn-close').click();
         });
 
-        it.only('given duplicate email, alerts with proper message', () => {
+        it('given duplicate email, alerts', () => {
             insertEmployee(employee);
             cy.get('#employees_table tr td').contains(employee.email).should('exist');
 
