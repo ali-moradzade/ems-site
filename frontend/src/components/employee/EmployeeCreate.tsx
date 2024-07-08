@@ -103,7 +103,7 @@ export function EmployeeCreate() {
                     </div>
                     <div className="modal-body">
                         {error && (
-                            <div className="alert alert-danger" role="alert">
+                            <div className="alert alert-danger" role="alert" id="add_employee_alert">
                                 {error}
                             </div>
                         )}
@@ -115,7 +115,11 @@ export function EmployeeCreate() {
                                     value={date}
                                     onChange={e => setDate(e.target.value)}
                                 />
-                                {validationErrors.date && <div className="invalid-feedback">Invalid date format</div>}
+                                {validationErrors.date &&
+                                    <div className="invalid-feedback" id="add_employee_invalid_date">
+                                        Invalid date format
+                                    </div>
+                                }
                             </div>
                             <div className="mb-3">
                                 <input
@@ -149,7 +153,7 @@ export function EmployeeCreate() {
                                     onChange={e => setPhone(e.target.value)}
                                 />
                                 {validationErrors.phone &&
-                                    <div className="invalid-feedback">
+                                    <div className="invalid-feedback" id="add_employee_invalid_phone">
                                         Invalid phone number, format: +989912345678
                                     </div>
                                 }
