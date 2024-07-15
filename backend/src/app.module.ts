@@ -7,14 +7,18 @@ import {Job} from "./jobs/jobs.entity";
 import {UsersModule} from './users/users.module';
 import {User} from "./users/user.entity";
 import {APP_PIPE} from "@nestjs/core";
+import {ConfigModule} from "@nestjs/config";
+import {validate} from './env-validation'
 
 const cookieSession = require('cookie-session');
 
 @Module({
     imports: [
-        EmployeesModule,
-        JobsModule,
-        UsersModule,
+        ConfigModule.forRoot({
+            isGlobal: true,
+            envFilePath: `.env.${process.env.NODE_ENV}`,
+            validate,
+        }),
         TypeOrmModule.forRoot({
             type: 'sqlite',
             database: 'db.sqlite',
@@ -25,6 +29,9 @@ const cookieSession = require('cookie-session');
             ],
             synchronize: true,
         }),
+        EmployeesModule,
+        JobsModule,
+        UsersModule,
     ],
     controllers: [],
     providers: [
