@@ -1,6 +1,7 @@
+import {beforeEach, describe, expect, it, test} from 'vitest';
 import {Test, TestingModule} from '@nestjs/testing';
 import {INestApplication, ValidationPipe} from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import {AppModule} from '../src/app.module';
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {Employee} from "../src/employees/employee.entity";
