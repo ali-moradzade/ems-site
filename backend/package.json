@@ -14,10 +14,10 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "vitest",
+    "test": "vitest --run --reporter verbose",
     "test:watch": "vitest --watch",
     "test:cov": "vitest --coverage",
-    "test:e2e": "vitest --config ./test/vitest-e2e.config.ts"
+    "test:e2e": "vitest --run --reporter verbose --config ./test/vitest-e2e.config.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
