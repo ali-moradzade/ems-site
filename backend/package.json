@@ -17,7 +17,7 @@
     "test": "NODE_ENV=test vitest --run --reporter verbose",
     "test:watch": "NODE_ENV=test vitest --watch",
     "test:cov": "NODE_ENV=test vitest --coverage",
-    "test:e2e": "NODE_ENV=test vitest --run --reporter verbose --config ./test/vitest-e2e.config.ts --maxWorkers=1"
+    "test:e2e": "NODE_ENV=test vitest --run --reporter verbose --config ./test/vitest-e2e.config.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

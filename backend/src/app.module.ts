@@ -1,11 +1,8 @@
 import {MiddlewareConsumer, Module, ValidationPipe} from '@nestjs/common';
-import {TypeOrmModule} from '@nestjs/typeorm';
+import {TypeOrmModule} from './datasource/typeorm.module';
 import {EmployeesModule} from './employees/employees.module';
 import {JobsModule} from './jobs/jobs.module';
-import {Employee} from "./employees/employee.entity";
-import {Job} from "./jobs/jobs.entity";
 import {UsersModule} from './users/users.module';
-import {User} from "./users/user.entity";
 import {APP_PIPE} from "@nestjs/core";
 import {ConfigModule} from "@nestjs/config";
 import {validate} from './env-validation'
@@ -19,16 +16,7 @@ const cookieSession = require('cookie-session');
             envFilePath: `.env.${process.env.NODE_ENV}`,
             validate,
         }),
-        TypeOrmModule.forRoot({
-            type: 'sqlite',
-            database: 'db.sqlite',
-            entities: [
-                Employee,
-                Job,
-                User,
-            ],
-            synchronize: true,
-        }),
+        TypeOrmModule,
         EmployeesModule,
         JobsModule,
         UsersModule,

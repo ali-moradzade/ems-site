@@ -1,14 +1,8 @@
 import {beforeEach, describe, expect, it, test} from 'vitest';
 import {Test, TestingModule} from '@nestjs/testing';
-import {INestApplication, ValidationPipe} from '@nestjs/common';
+import {INestApplication} from '@nestjs/common';
 import request from 'supertest';
 import {AppModule} from '../src/app.module';
-import {TypeOrmModule} from "@nestjs/typeorm";
-import {Employee} from "../src/employees/employee.entity";
-import {Job} from "../src/jobs/jobs.entity";
-import {User} from "../src/users/user.entity";
-
-const cookieSession = require('cookie-session');
 
 const mockEmployee = {
     email: 'email@gmail.com',
@@ -31,18 +25,6 @@ describe('AppController (e2e)', () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [
                 AppModule,
-                TypeOrmModule.forRoot({
-                    type: 'sqlite',
-                    database: 'db.sqlite',
-                    entities: [
-                        Employee,
-                        Job,
-                        User,
-                    ],
-                    synchronize: true,
-                    // Wipes the db
-                    dropSchema: true,
-                }),
             ],
         }).compile();
 
