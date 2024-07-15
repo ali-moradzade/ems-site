@@ -48,14 +48,6 @@ describe('AppController (e2e)', () => {
 
         app = moduleFixture.createNestApplication();
 
-        app.enableCors();
-        app.use(cookieSession({
-            keys: ['randomNumbersAndLetters'],
-        }));
-        app.useGlobalPipes(new ValidationPipe({
-            whitelist: true,
-        }));
-
         await app.init();
     });
 
