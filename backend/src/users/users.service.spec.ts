@@ -63,5 +63,15 @@ describe('UsersService', () => {
 
             expect(user).toBeNull()
         });
+
+        test('user with that id exists, returns it', async () => {
+            const {email, password, firstName, lastName} = mockUser;
+
+            const user = await service.create(email, password, firstName, lastName);
+            const result = await service.findOne(user.id);
+
+            expect(user.email).toEqual(result.email)
+            expect(user.firstName).toEqual(result.firstName)
+        })
     });
 });

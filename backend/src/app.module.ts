@@ -1,11 +1,12 @@
 import {MiddlewareConsumer, Module, ValidationPipe} from '@nestjs/common';
-import {TypeOrmModule} from './datasource/typeorm.module';
 import {EmployeesModule} from './employees/employees.module';
 import {JobsModule} from './jobs/jobs.module';
 import {UsersModule} from './users/users.module';
 import {APP_PIPE} from "@nestjs/core";
-import {ConfigModule} from "@nestjs/config";
-import {validate} from './env-validation'
+import {ConfigModule, ConfigService} from "@nestjs/config";
+import {validate} from './env-validation';
+import {createDataSourceOptions} from "../typeorm.config";
+import {TypeOrmModule} from "@nestjs/typeorm";
 
 const cookieSession = require('cookie-session');
 
@@ -16,7 +17,11 @@ const cookieSession = require('cookie-session');
             envFilePath: `.env.${process.env.NODE_ENV}`,
             validate,
         }),
-        TypeOrmModule,
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigModule],
+            useFactory: async (configService: ConfigService) => createDataSourceOptions(configService),
+            inject: [ConfigService],
+        }),
         EmployeesModule,
         JobsModule,
         UsersModule,
