@@ -22,5 +22,5 @@ export class Employee {
     job: string;
 
     @Column()
-    date: string;
+    date: Date;
 }

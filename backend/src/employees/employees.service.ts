@@ -2,6 +2,7 @@ import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common
 import {InjectRepository} from "@nestjs/typeorm";
 import {Employee} from "./employee.entity";
 import {Repository} from "typeorm";
+import {CreateEmployeeDto} from "./dtos/create-employee.dto";
 
 @Injectable()
 export class EmployeesService {
@@ -26,17 +27,15 @@ export class EmployeesService {
         });
     }
 
-    async create(
-        email: string, firstName: string, lastName: string,
-        phone: string, job: string, date: string
-    ) {
+    async create(createEmployeeDto: CreateEmployeeDto) {
+        const {email} = createEmployeeDto;
+
         const employees = await this.find(email);
         if (employees.length) {
             throw new BadRequestException('Email in use');
         }
-        const employee = this.repo.create({
-            email, firstName, lastName, phone, job, date,
-        });
+
+        const employee = this.repo.create(createEmployeeDto);
 
         return this.repo.save(employee);
     }

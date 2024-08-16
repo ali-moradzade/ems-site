@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Query} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Patch, Post, Query} from '@nestjs/common';
 import {EmployeesService} from "./employees.service";
 import {UpdateEmployeeDto} from "./dtos/update-employee.dto";
 import {CreateEmployeeDto} from "./dtos/create-employee.dto";
@@ -14,13 +14,7 @@ export class EmployeesController {
     async findEmployee(
         @Param('id') id: string,
     ) {
-        const employee = await this.employeesService.findOne(parseInt(id));
-
-        if (!employee) {
-            throw new NotFoundException('Employee not found');
-        }
-
-        return employee;
+        return this.employeesService.findOne(parseInt(id));
     }
 
     @Get()
@@ -34,12 +28,7 @@ export class EmployeesController {
     createEmployee(
         @Body() body: CreateEmployeeDto,
     ) {
-        const {
-            email, firstName, lastName,
-            phone, job, date
-        } = body;
-
-        return this.employeesService.create(email, firstName, lastName, phone, job, date);
+        return this.employeesService.create(body);
     }
 
     @Delete(':id')
