@@ -17,7 +17,6 @@ export class Employee {
     @Column()
     phone: string;
 
-    // TODO: Add foreign reference to job
     @Column()
     job: string;
 

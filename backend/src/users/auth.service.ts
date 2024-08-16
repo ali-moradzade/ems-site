@@ -2,7 +2,7 @@ import {BadRequestException, Injectable, NotFoundException, UnauthorizedExceptio
 import {JwtService} from '@nestjs/jwt';
 import {UsersService} from "./users.service";
 import * as bcrypt from 'bcrypt';
-import {AuthTokenDto} from "../dtos/AuthToken.dto";
+import {UserTokenDto} from "../dtos/userToken.dto";
 
 @Injectable()
 export class AuthService {
@@ -14,7 +14,7 @@ export class AuthService {
     ) {
     }
 
-    createJwtToken(user: AuthTokenDto) {
+    createJwtToken(user: UserTokenDto) {
         return this.jwtService.sign(user);
     }
 
@@ -41,7 +41,7 @@ export class AuthService {
             throw new UnauthorizedException('Invalid credentials');
         }
 
-        const tokenProperties: AuthTokenDto = {
+        const tokenProperties: UserTokenDto = {
             id: user.id,
             email,
         };

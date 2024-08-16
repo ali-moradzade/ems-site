@@ -1,6 +1,6 @@
 import {IsEmail, IsNumber} from "class-validator";
 
-export class AuthTokenDto {
+export class UserTokenDto {
     @IsNumber()
     id: number;
 

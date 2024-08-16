@@ -1,6 +1,6 @@
 import {ExecutionContext} from '@nestjs/common';
 import {AuthGuard} from "@nestjs/passport";
-import {AuthTokenDto} from "../dtos/AuthToken.dto";
+import {UserTokenDto} from "../dtos/userToken.dto";
 
 export class UserGuard extends AuthGuard('jwt') {
     async canActivate(context: ExecutionContext) {
@@ -10,7 +10,7 @@ export class UserGuard extends AuthGuard('jwt') {
         }
 
         const request = context.switchToHttp().getRequest();
-        const user = request.user as AuthTokenDto;
+        const user = request.user as UserTokenDto;
 
         return !!user;
     }
