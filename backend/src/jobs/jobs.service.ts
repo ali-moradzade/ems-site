@@ -22,7 +22,7 @@ export class JobsService {
         return this.repo.findBy({name});
     }
 
-    create(name: string, date: string) {
+    create(name: string, date: Date) {
         const job = this.repo.create({name, date});
         return this.repo.save(job);
     }

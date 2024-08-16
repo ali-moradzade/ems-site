@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Query} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Patch, Post, Query} from '@nestjs/common';
 import {JobsService} from "./jobs.service";
 import {CreateJobDto} from "./dtos/create-job.dto";
 import {UpdateJobDto} from "./dtos/update-job.dto";
@@ -14,13 +14,7 @@ export class JobsController {
     async findJob(
         @Param('id') id: string,
     ) {
-        const job = await this.jobsService.findOne(parseInt(id));
-
-        if (!job) {
-            throw new NotFoundException('Job not found');
-        }
-
-        return job;
+        return this.jobsService.findOne(parseInt(id));
     }
 
     @Get()

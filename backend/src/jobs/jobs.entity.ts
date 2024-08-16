@@ -9,6 +9,6 @@ export class Job {
     name: string;
 
     @Column()
-    date: string;
+    date: Date;
 }
 
