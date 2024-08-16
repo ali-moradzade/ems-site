@@ -1,13 +1,17 @@
-import {IsEmail, IsPhoneNumber, IsString, Matches} from "class-validator";
+import {IsDate, IsEmail, IsNotEmpty, IsPhoneNumber, IsString} from "class-validator";
+import {BadRequestException} from "@nestjs/common";
+import {Transform} from "class-transformer";
 
 export class CreateEmployeeDto {
     @IsEmail()
     email: string;
 
     @IsString()
+    @IsNotEmpty()
     firstName: string;
 
     @IsString()
+    @IsNotEmpty()
     lastName: string;
 
     @IsString()
@@ -15,12 +19,20 @@ export class CreateEmployeeDto {
     phone: string;
 
     @IsString()
+    @IsNotEmpty()
     job: string;
 
-    @IsString()
-    @Matches(/^\d{4}(-)(((0)[0-9])|((1)[0-2]))(-)([0-2][0-9]|(3)[0-1])$/i, {
-        message: "$property must be formatted as yyyy-mm-dd"
+    @IsNotEmpty()
+    @Transform(({value}) => {
+        const date = new Date(value);
+
+        if (isNaN(date.getTime())) {
+            throw new BadRequestException('Invalid date format, date should be: YYYY-MM-DD');
+        }
+
+        return date;
     })
-    date: string;
+    @IsDate()
+    date: Date;
 }
 
