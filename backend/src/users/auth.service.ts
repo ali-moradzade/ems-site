@@ -1,15 +1,21 @@
-import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
+import {BadRequestException, Injectable, NotFoundException, UnauthorizedException} from '@nestjs/common';
+import {JwtService} from '@nestjs/jwt';
 import {UsersService} from "./users.service";
-import {randomBytes, scrypt as _scrypt} from 'crypto';
-import {promisify} from 'util';
-
-const scrypt = promisify(_scrypt);
+import * as bcrypt from 'bcrypt';
+import {AuthTokenDto} from "../dtos/AuthToken.dto";
 
 @Injectable()
 export class AuthService {
+    private readonly saltOrRounds = 10;
+
     constructor(
         private usersService: UsersService,
+        private jwtService: JwtService,
     ) {
+    }
+
+    createJwtToken(user: AuthTokenDto) {
+        return this.jwtService.sign(user);
     }
 
     async signup(email: string, password: string, firstName: string, lastName: string) {
@@ -19,12 +25,9 @@ export class AuthService {
             throw new BadRequestException('Email in use');
         }
 
-        const salt = randomBytes(8).toString('hex');
-        const hash = (await scrypt(password, salt, 32)) as Buffer;
+        const hash = await bcrypt.hash(password, this.saltOrRounds);
 
-        const result = `${salt}.${hash.toString('hex')}`;
-
-        return await this.usersService.create(email, result, firstName, lastName);
+        return await this.usersService.create(email, hash, firstName, lastName);
     }
 
     async login(email: string, password: string) {
@@ -34,13 +37,15 @@ export class AuthService {
             throw new NotFoundException('User not found');
         }
 
-        const [salt, storedHash] = user.password.split('.');
-        const hash = (await scrypt(password, salt, 32)) as Buffer;
-
-        if (storedHash !== hash.toString('hex')) {
-            throw new BadRequestException('Invalid credentials');
+        if (!(await bcrypt.compare(password, user.password))) {
+            throw new UnauthorizedException('Invalid credentials');
         }
 
-        return user;
+        const tokenProperties: AuthTokenDto = {
+            id: user.id,
+            email,
+        };
+
+        return this.createJwtToken(tokenProperties);
     }
 }
