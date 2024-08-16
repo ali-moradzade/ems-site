@@ -18,7 +18,7 @@ import {LoginUserDto} from './dtos/login-user.dto';
 import {Serialize} from "../interceptors/serialize.interceptor";
 import {UserDto} from "./dtos/user.dto";
 import {AuthService} from "./auth.service";
-import {AuthGuard} from "../gaurds/auth.guard";
+import {UserGuard} from "../gaurds/user.guard";
 import {CurrentUser} from "./decorators/current-user.decorator";
 import {User} from "./user.entity";
 
@@ -31,7 +31,7 @@ export class UsersController {
     ) {
     }
 
-    @UseGuards(AuthGuard)
+    @UseGuards(UserGuard)
     @Get('whoami')
     whoAmI(
         @CurrentUser() user: User,
