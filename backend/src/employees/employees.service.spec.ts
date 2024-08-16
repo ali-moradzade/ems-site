@@ -88,4 +88,22 @@ describe('EmployeesService', () => {
             await expect(service.update(id, properties)).rejects.toThrow(/not found/);
         });
     });
+
+    describe('remove', () => {
+        test('existing employee, removes it', async () => {
+            vi.spyOn(mockRepo, 'findOneBy').mockResolvedValue(employeeMock);
+            const id = employeeMock.id;
+
+            const employee = await service.remove(id);
+
+            expect(employee).toBeDefined();
+            expect(employee.id).toEqual(id);
+        });
+
+        test('non-existent employee with that id, throws NotFoundException', async () => {
+            const id = 1000;
+
+            await expect(service.remove(id)).rejects.toThrow(/not found/);
+        });
+    });
 });
