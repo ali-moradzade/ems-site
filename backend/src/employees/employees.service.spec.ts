@@ -26,6 +26,7 @@ describe('EmployeesService', () => {
             findBy: vi.fn().mockResolvedValue([]),
             create: vi.fn().mockResolvedValue(employeeMock),
             save: vi.fn().mockResolvedValue(employeeMock),
+            remove: vi.fn().mockResolvedValue(employeeMock),
         };
 
         const module: TestingModule = await Test.createTestingModule({
@@ -49,7 +50,7 @@ describe('EmployeesService', () => {
 
     describe('create', () => {
         test('valid properties, creates employee', async () => {
-            const employee = await service.create(employeeMock)
+            const employee = await service.create(employeeMock);
 
             expect(employee).toBeDefined();
             expect(employee.id).toEqual(employeeMock.id);
@@ -57,16 +58,34 @@ describe('EmployeesService', () => {
 
         test('existing employee with email, throws BadRequestException', async () => {
             vi.spyOn(mockRepo, 'findBy').mockResolvedValue([employeeMock]);
-            const createEmployeeDto: CreateEmployeeDto = {
-                email: 'email@gmail.com',
-                firstName: 'name',
-                lastName: 'name',
-                phone: 'phone',
-                job: 'job',
-                date: new Date(),
-            };
+            const createEmployeeDto: CreateEmployeeDto = employeeMock;
 
             await expect(service.create(createEmployeeDto)).rejects.toThrow(/Email in use/);
+        });
+    });
+
+    describe('update', () => {
+        test('existing employee, updates it', async () => {
+            vi.spyOn(mockRepo, 'findOneBy').mockResolvedValue(employeeMock);
+            vi.spyOn(mockRepo, 'save').mockImplementation((arg: any) => Promise.resolve(arg));
+            const id = employeeMock.id;
+            const properties: Partial<Employee> = {
+                firstName: 'new-firstName',
+            };
+
+            const employee = await service.update(id, properties);
+
+            expect(employee).toBeDefined();
+            expect(employee.firstName).toEqual(properties.firstName);
+        });
+
+        test('non-existent employee with that id, throws NotFoundException', async () => {
+            const id = 1000;
+            const properties: Partial<Employee> = {
+                firstName: 'new-firstName',
+            };
+
+            await expect(service.update(id, properties)).rejects.toThrow(/not found/);
         });
     });
 });
