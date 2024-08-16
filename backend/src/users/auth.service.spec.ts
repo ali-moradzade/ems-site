@@ -78,10 +78,10 @@ describe('AuthService', () => {
             const {email, password, firstName, lastName} = mockUser;
 
             await service.signup(email, password, firstName, lastName);
-            const user = await service.login(email, password);
+            const token = await service.login(email, password);
 
-            expect(user).toBeDefined();
-            expect(user.email).toEqual(email);
+            expect(token).toBeDefined();
+            expect(token).toBeTypeOf('string');
         });
 
         test('user not signed up, throws error: NotFoundException', async () => {

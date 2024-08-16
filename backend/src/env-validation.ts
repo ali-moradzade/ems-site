@@ -7,6 +7,9 @@ import {plainToInstance} from "class-transformer";
 class EnvironmentVariables {
     @IsString()
     DB_NAME: string;
+
+    @IsString()
+    JWT_SECRET_KEY: string;
 }
 
 export function validate(config: Record<string, unknown>) {

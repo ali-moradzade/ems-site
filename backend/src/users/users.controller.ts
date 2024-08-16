@@ -1,28 +1,15 @@
-import {
-    Body,
-    Controller,
-    Delete,
-    Get, HttpCode,
-    NotFoundException,
-    Param,
-    Patch,
-    Post,
-    Query,
-    Session,
-    UseGuards
-} from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
 import {UsersService} from "./users.service";
 import {CreateUserDto} from "./dtos/create-user.dto";
 import {UpdateUserDto} from "./dtos/update-user.dto";
 import {LoginUserDto} from './dtos/login-user.dto';
-import {Serialize} from "../interceptors/serialize.interceptor";
 import {UserDto} from "./dtos/user.dto";
 import {AuthService} from "./auth.service";
 import {UserGuard} from "../gaurds/user.guard";
 import {CurrentUser} from "./decorators/current-user.decorator";
-import {User} from "./user.entity";
+import {AuthTokenDto} from "../dtos/AuthToken.dto";
+import {Serialize} from "../decorators/serialize.decorator";
 
-@Serialize(UserDto)
 @Controller('auth')
 export class UsersController {
     constructor(
@@ -34,25 +21,21 @@ export class UsersController {
     @UseGuards(UserGuard)
     @Get('whoami')
     whoAmI(
-        @CurrentUser() user: User,
+        @CurrentUser() user: AuthTokenDto,
     ) {
         return user;
     }
 
     @Get(':id')
+    @Serialize(UserDto)
     async findUser(
         @Param('id') id: string,
     ) {
-        const user = await this.usersService.findOne(parseInt(id));
-
-        if (!user) {
-            throw new NotFoundException('User not found');
-        }
-
-        return user;
+        return this.usersService.findOne(parseInt(id));
     }
 
     @Get()
+    @Serialize(UserDto)
     findAllUsers(
         @Query('email') email: string
     ) {
@@ -60,47 +43,31 @@ export class UsersController {
     }
 
     @Post('signup')
+    @Serialize(UserDto)
     async signup(
-        @Body() body: CreateUserDto,
-        @Session() session: any,
+        @Body() {email, password, firstName, lastName}: CreateUserDto,
     ) {
-        const {email, password, firstName, lastName} = body;
-        const user = await this.authService.signup(email, password, firstName, lastName);
-
-        session.userId = user.id;
-
-        return user;
+        return this.authService.signup(email, password, firstName, lastName);
     }
 
     @Post('login')
     @HttpCode(200)
     async login(
-        @Body() body: LoginUserDto,
-        @Session() session: any,
+        @Body() {email, password}: LoginUserDto,
     ) {
-        const {email, password} = body;
-        const user = await this.authService.login(email, password);
-
-        session.userId = user.id;
-
-        return user;
-    }
-
-    @Post('/logout')
-    logout(
-        @Session() session: any,
-    ) {
-        session.userId = null;
+        return this.authService.login(email, password);
     }
 
     @Delete(':id')
+    @Serialize(UserDto)
     deleteUser(
         @Param('id') id: string,
     ) {
         return this.usersService.remove(parseInt(id));
     }
 
-    @Patch(':id')
+    @Put(':id')
+    @Serialize(UserDto)
     updateUser(
         @Param('id') id: string,
         @Body() body: UpdateUserDto,

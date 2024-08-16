@@ -61,7 +61,7 @@ describe('UsersService', () => {
         test('no users, returns null', async () => {
             const user = await service.findOne(1);
 
-            expect(user).toBeNull()
+            expect(user).toBeNull();
         });
 
         test('user with that id exists, returns it', async () => {
@@ -70,8 +70,8 @@ describe('UsersService', () => {
             const user = await service.create(email, password, firstName, lastName);
             const result = await service.findOne(user.id);
 
-            expect(user.email).toEqual(result.email)
-            expect(user.firstName).toEqual(result.firstName)
-        })
+            expect(user.email).toEqual(result.email);
+            expect(user.firstName).toEqual(result.firstName);
+        });
     });
 });
