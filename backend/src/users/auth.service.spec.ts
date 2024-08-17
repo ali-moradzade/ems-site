@@ -4,9 +4,7 @@ import {AuthService} from './auth.service';
 import {UsersService} from "./users.service";
 import {User} from "./user.entity";
 import {BadRequestException, NotFoundException} from "@nestjs/common";
-import {JwtModule} from "@nestjs/jwt";
-import {ConfigModule, ConfigService} from "@nestjs/config";
-import {validate} from "../env-validation";
+import {JwtService} from "@nestjs/jwt";
 
 describe('AuthService', () => {
     let service: AuthService;
@@ -38,23 +36,14 @@ describe('AuthService', () => {
         };
 
         const module: TestingModule = await Test.createTestingModule({
-            imports: [
-                ConfigModule.forRoot({
-                    isGlobal: true,
-                    envFilePath: `.env.${process.env.NODE_ENV}`,
-                    validate,
-                }),
-                JwtModule.registerAsync({
-                    imports: [ConfigModule],
-                    useFactory: async (configService: ConfigService) => ({
-                        secret: configService.get<string>('JWT_SECRET_KEY'),
-                        signOptions: {expiresIn: '1d'},
-                    }),
-                    inject: [ConfigService],
-                }),
-            ],
             providers: [
                 AuthService,
+                {
+                    provide: JwtService,
+                    useValue: {
+                        sign: vi.fn().mockReturnValue('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjIxNTUsImV')
+                    }
+                },
                 {
                     provide: UsersService,
                     useValue: usersServiceMock,
