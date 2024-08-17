@@ -20,26 +20,27 @@ describe('/jobs', () => {
         }).compile();
 
         app = moduleFixture.createNestApplication();
-
         await app.init();
     });
 
     describe('POST /', () => {
         test('given the job, creates it', async () => {
-            return request(app.getHttpServer())
+            const res = await request(app.getHttpServer())
                 .post(path)
-                .send(mockJob)
-                .expect(201)
-                .then(res => expect(res.body.name).toEqual(mockJob.name));
+                .send(mockJob);
+
+            expect(res.statusCode).toEqual(201);
+            expect(res.body.name).toEqual(mockJob.name);
         });
     });
 
     describe('GET /', () => {
         test('no existing job, given job name, returns []', async () => {
-            return request(app.getHttpServer())
-                .get(path)
-                .expect(200)
-                .then(res => expect(res.body).toEqual([]));
+            const res = await request(app.getHttpServer())
+                .get(path);
+
+            expect(res.statusCode).toEqual(200);
+            expect(res.body).toEqual([]);
         });
 
         test('with existing job, given job name, returns job with that name', async () => {
@@ -60,38 +61,43 @@ describe('/jobs', () => {
     });
 
     describe('GET /:id', () => {
-        test('no existing job, returns 404, Not Found', async () => {
-            return request(app.getHttpServer())
-                .get(`${path}/12345`)
-                .expect(404)
-                .then(res => expect(res.body.error).toMatch(/Not Found/));
+        test('no existing job, returns empty object', async () => {
+            const res = await request(app.getHttpServer())
+                .get(`${path}/12345`);
+
+            expect(res.statusCode).toEqual(200);
+            expect(res.body).toEqual({});
         });
 
         test('with existing job, given job id, returns that job', async () => {
             const createdRes = await request(app.getHttpServer())
                 .post(path)
-                .send(mockJob);
+                .send(mockJob)
+                .expect(201);
             const job = createdRes.body;
 
-            return request(app.getHttpServer())
-                .get(`${path}/${job.id}`)
-                .expect(200)
-                .then(res => expect(res.body.name).toEqual(mockJob.name));
+            const res = await request(app.getHttpServer())
+                .get(`${path}/${job.id}`);
+
+            expect(res.statusCode).toEqual(200);
+            expect(res.body.name).toEqual(mockJob.name);
         });
     });
 
     describe('DELETE /:id', () => {
-        test('not existing job, returns 404, Not Found', async () => {
-            return request(app.getHttpServer())
-                .delete(`${path}/12345`)
-                .expect(404)
-                .then(res => expect(res.body.error).toMatch(/Not Found/));
+        test('no existing job, returns 404, Not Found', async () => {
+            const res = await request(app.getHttpServer())
+                .delete(`${path}/12345`);
+
+            expect(res.statusCode).toEqual(404);
+            expect(res.body.error).toMatch(/Not Found/);
         });
 
         test('existing job, given job id, deletes the job', async () => {
             const createdRes = await request(app.getHttpServer())
                 .post(path)
-                .send(mockJob);
+                .send(mockJob)
+                .expect(201);
             const job = createdRes.body;
 
             const res = await request(app.getHttpServer())
@@ -102,24 +108,26 @@ describe('/jobs', () => {
         });
     });
 
-    describe('PATCH /:id', () => {
+    describe('PUT /:id', () => {
         test('given no job with that id, returns 404, Not Found', async () => {
-            return request(app.getHttpServer())
-                .patch(`${path}/12345`)
-                .send({name: 'hello'})
-                .expect(404)
-                .then(res => expect(res.body.error).toMatch(/Not Found/));
+            const res = await request(app.getHttpServer())
+                .put(`${path}/12345`)
+                .send({name: 'hello'});
+
+            expect(res.statusCode).toEqual(404);
+            expect(res.body.error).toMatch(/Not Found/);
         });
 
         test('existing job, updates the job', async () => {
             const createdRes = await request(app.getHttpServer())
                 .post(path)
-                .send(mockJob);
+                .send(mockJob)
+                .expect(201);
             const job = createdRes.body;
             const newName = 'Web Designer';
 
             const res = await request(app.getHttpServer())
-                .patch(`${path}/${job.id}`)
+                .put(`${path}/${job.id}`)
                 .send({
                     name: newName,
                 });

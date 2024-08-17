@@ -1,15 +1,18 @@
 import {BadRequestException} from "@nestjs/common";
-import {IsDate, IsNotEmpty, IsOptional, IsString} from "class-validator";
+import {IsDate, IsOptional, IsString} from "class-validator";
 import {Transform} from "class-transformer";
 
 export class UpdateJobDto {
     @IsOptional()
     @IsString()
-    name: string;
+    name?: string;
 
     @IsOptional()
-    @IsNotEmpty()
     @Transform(({value}) => {
+        if (!value) {
+            return;
+        }
+
         const date = new Date(value);
 
         if (isNaN(date.getTime())) {
@@ -19,5 +22,5 @@ export class UpdateJobDto {
         return date;
     })
     @IsDate()
-    date: Date;
+    date?: Date;
 }

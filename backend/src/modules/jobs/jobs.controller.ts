@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, Param, Patch, Post, Query} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post, Put, Query} from '@nestjs/common';
 import {JobsService} from "./jobs.service";
 import {CreateJobDto} from "./dtos/create-job.dto";
 import {UpdateJobDto} from "./dtos/update-job.dto";
@@ -38,7 +38,7 @@ export class JobsController {
         return this.jobsService.remove(parseInt(id));
     }
 
-    @Patch(':id')
+    @Put(':id')
     updateJob(
         @Param('id') id: string,
         @Body() body: UpdateJobDto
