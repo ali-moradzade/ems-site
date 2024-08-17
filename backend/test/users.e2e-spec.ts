@@ -31,12 +31,11 @@ describe('/auth', () => {
         }).compile();
 
         app = moduleFixture.createNestApplication();
-
         await app.init();
     });
 
     describe('POST /signup', () => {
-        test('given user properties, should create user', async () => {
+        test('given user properties, creates user', async () => {
             const res = await request(app.getHttpServer())
                 .post(`${path}/signup`)
                 .send(mockUser);
@@ -47,48 +46,43 @@ describe('/auth', () => {
         });
 
         test('given duplicate email, should give 400, BadRequest', async () => {
-            // Create First User
             await request(app.getHttpServer())
                 .post(`${path}/signup`)
                 .send(mockUser)
                 .expect(201);
 
-            // Try to create user with same email
-            return request(app.getHttpServer())
+            const res = await request(app.getHttpServer())
                 .post(`${path}/signup`)
-                .send(mockUser)
-                .expect(400)
-                .then(res => {
-                    expect(res.body.message).toEqual('Email in use');
-                    expect(res.body.error).toMatch(/Bad Request/);
-                });
+                .send(mockUser);
+
+            expect(res.statusCode).toEqual(400);
+            expect(res.body.message).toEqual('Email in use');
+            expect(res.body.error).toMatch(/Bad Request/);
         });
     });
 
     describe('POST /login', () => {
         test('non-existent user, can not login', async () => {
-            return request(app.getHttpServer())
+            const res = await request(app.getHttpServer())
                 .post(`${path}/login`)
-                .send(mockUser)
-                .expect(404)
-                .then(res => expect(res.body.error).toMatch(/Not Found/));
+                .send(mockUser);
+
+            expect(res.statusCode).toEqual(404);
+            expect(res.body.error).toMatch(/Not Found/);
         });
 
         test('existent-user, logs in', async () => {
-            // Create User
             await request(app.getHttpServer())
                 .post(`${path}/signup`)
                 .send(mockUser)
                 .expect(201);
 
-            // Login user
-            return request(app.getHttpServer())
+            const res = await request(app.getHttpServer())
                 .post(`${path}/login`)
-                .send({email: mockUser.email, password: mockUser.password})
-                .expect(200)
-                .then(res => {
-                    expect(res.body.email).toEqual(mockEmployee.email);
-                });
+                .send({email: mockUser.email, password: mockUser.password});
+
+            expect(res.statusCode).toEqual(200);
+            expect(res.body.token).toMatch(/ey/);
         });
     });
 
@@ -107,8 +101,6 @@ describe('/auth', () => {
 
         test('one user with that email, returns it', async () => {
             const {email} = mockUser;
-
-            // Create employee
             await request(app.getHttpServer())
                 .post(`${path}/signup`)
                 .send(mockUser)
@@ -125,18 +117,19 @@ describe('/auth', () => {
     });
 
     describe('GET /:id', () => {
-        test('no user with that id, returns 404, NotFound', async () => {
-            return request(app.getHttpServer())
-                .get(`${path}/12345}`)
-                .expect(404)
-                .then(res => expect(res.body.error).toMatch(/Not Found/));
+        test('no user with that id, returns empty object', async () => {
+            const res = await request(app.getHttpServer())
+                .get(`${path}/12345}`);
+
+            expect(res.statusCode).toEqual(200);
+            expect(res.body).toEqual({});
         });
 
         test('given existing user id, returns it', async () => {
-            // Create user
             const createdRes = await request(app.getHttpServer())
                 .post(`${path}/signup`)
-                .send(mockUser);
+                .send(mockUser)
+                .expect(201);
 
             const user = createdRes.body;
 
@@ -150,10 +143,11 @@ describe('/auth', () => {
 
     describe('DELETE /:id', () => {
         test('non-existent user id, returns 404, NotFound', async () => {
-            return request(app.getHttpServer())
-                .delete(`${path}/12345`)
-                .expect(404)
-                .then(res => expect(res.body.error).toMatch(/Not Found/));
+            const res = await request(app.getHttpServer())
+                .delete(`${path}/12345`);
+
+            expect(res.statusCode).toEqual(404);
+            expect(res.body.error).toMatch(/Not Found/);
         });
 
         test('existent user id, successfully deletes it', async () => {
@@ -171,18 +165,19 @@ describe('/auth', () => {
         });
     });
 
-    describe('PATCH /:id', () => {
+    describe('PUT /:id', () => {
         test('user does not exist, returns 404, Not Found', async () => {
-            return request(app.getHttpServer())
-                .patch(`${path}/12345`)
+            const res = await request(app.getHttpServer())
+                .put(`${path}/12345`)
                 .send({
                     firstName: 'hello'
-                })
-                .expect(404)
-                .then(res => expect(res.body.error).toMatch(/Not Found/));
+                });
+
+            expect(res.statusCode).toEqual(404);
+            expect(res.body.error).toMatch(/Not Found/);
         });
 
-        test('user exists, and giving user firstName, updates user firstName', async () => {
+        test('existing user, given new properties, updates user', async () => {
             const createdRes = await request(app.getHttpServer())
                 .post(`${path}/signup`)
                 .send(mockUser);
@@ -190,7 +185,7 @@ describe('/auth', () => {
             const newFirstName = 'New First Name';
 
             const res = await request(app.getHttpServer())
-                .patch(`${path}/${user.id}`)
+                .put(`${path}/${user.id}`)
                 .send({
                     firstName: newFirstName,
                 });

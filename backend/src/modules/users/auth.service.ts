@@ -46,6 +46,8 @@ export class AuthService {
             email,
         };
 
-        return this.createJwtToken(tokenProperties);
+        return {
+            token: this.createJwtToken(tokenProperties)
+        };
     }
 }
