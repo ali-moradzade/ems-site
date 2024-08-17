@@ -51,7 +51,7 @@ export class UserRestClient {
     }
 
     async updateUser(id: number, attrs: Partial<User>): Promise<User> {
-        const res = await axios.patch(`${this.url}/${id}`, attrs);
+        const res = await axios.put(`${this.url}/${id}`, attrs);
 
         return res.data;
     }

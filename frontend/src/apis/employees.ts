@@ -40,7 +40,7 @@ export class EmployeesRestClient {
     }
 
     async updateEmployee(id: number, attrs: Partial<Employee>): Promise<Employee> {
-        const res = await axios.patch(`${this.url}/${id}`, {
+        const res = await axios.put(`${this.url}/${id}`, {
             ...attrs
         });
 
