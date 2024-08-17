@@ -9,10 +9,11 @@ import {DashboardPage} from "./pages/DashboardPage";
 import {HomePage} from "./pages/HomePage";
 import {useEmployeeContext} from "./hooks/use-employee-context";
 import {useJobContext} from "./hooks/use-job-context";
+import {ProtectedRoute} from "./components/ProtectedRoute";
 
 export function App() {
     const {getAllEmployees} = useEmployeeContext();
-    const {getAllJobs} = useJobContext()
+    const {getAllJobs} = useJobContext();
 
     useEffect(() => {
         getAllEmployees().then();
@@ -23,24 +24,24 @@ export function App() {
         <div className="container-fluid px-0">
             <Navbar/>
 
-            <Route path='/'>
-                <HomePage/>
-            </Route>
-            <Route path='/signup'>
+            <Route path="/signup">
                 <SignupPage/>
             </Route>
-            <Route path='/login'>
+            <Route path="/login">
                 <LoginPage/>
             </Route>
-            <Route path='/dashboard'>
+            <ProtectedRoute path="/">
+                <HomePage/>
+            </ProtectedRoute>
+            <ProtectedRoute path="/dashboard">
                 <DashboardPage/>
-            </Route>
-            <Route path='/employees'>
+            </ProtectedRoute>
+            <ProtectedRoute path="/employees">
                 <EmployeePage/>
-            </Route>
-            <Route path='/jobs'>
+            </ProtectedRoute>
+            <ProtectedRoute path="/jobs">
                 <JobPage/>
-            </Route>
+            </ProtectedRoute>
         </div>
     );
 }
