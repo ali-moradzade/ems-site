@@ -1,16 +1,17 @@
-import {beforeEach, describe, expect, test} from 'vitest';
+import {beforeEach, describe, expect, test, vi} from 'vitest';
 import {Test, TestingModule} from '@nestjs/testing';
 import {UsersService} from './users.service';
 import {Repository} from "typeorm";
 import {User} from "./user.entity";
 import {getRepositoryToken} from "@nestjs/typeorm";
-import {AppModule} from "../app.module";
 import {BadRequestException} from '@nestjs/common';
 
 describe('UsersService', () => {
     let service: UsersService;
+    let repositoryMock: Partial<Repository<User>>;
 
-    const mockUser = {
+    const userMock = {
+        id: 1,
         email: 'mock@mock.com',
         password: 'mockedPassword239723',
         firstName: 'mockFirstName',
@@ -18,15 +19,19 @@ describe('UsersService', () => {
     };
 
     beforeEach(async () => {
+        repositoryMock = {
+            findOneBy: vi.fn().mockResolvedValue(null),
+            findBy: vi.fn().mockResolvedValue([]),
+            create: vi.fn(),
+            save: vi.fn(),
+        };
+
         const module: TestingModule = await Test.createTestingModule({
-            imports: [
-                AppModule,
-            ],
             providers: [
                 UsersService,
                 {
                     provide: getRepositoryToken(User),
-                    useClass: Repository,
+                    useValue: repositoryMock,
                 }
             ],
         }).compile();
@@ -40,7 +45,9 @@ describe('UsersService', () => {
 
     describe('create', () => {
         test('given user properties, creates user', async () => {
-            const {email, password, firstName, lastName} = mockUser;
+            vi.spyOn(repositoryMock, 'create').mockReturnValue(userMock);
+            vi.spyOn(repositoryMock, 'save').mockResolvedValue(userMock);
+            const {email, password, firstName, lastName} = userMock;
 
             const user = await service.create(email, password, firstName, lastName);
 
@@ -49,29 +56,36 @@ describe('UsersService', () => {
         });
 
         test('creating user with duplicate email, throws error', async () => {
-            const {email, password, firstName, lastName} = mockUser;
-
-            await service.create(email, password, firstName, lastName);
+            vi.spyOn(repositoryMock, 'findBy').mockResolvedValue([userMock]);
+            const {email, password, firstName, lastName} = userMock;
 
             await expect(service.create(email, password, firstName, lastName)).rejects.toThrow(BadRequestException);
         });
     });
 
-    describe('findOne', () => {
-        test('no users, returns null', async () => {
-            const user = await service.findOne(1);
+    describe('update', () => {
+        test('existing user, updates it', async () => {
+            vi.spyOn(repositoryMock, 'findOneBy').mockResolvedValue(userMock);
+            vi.spyOn(repositoryMock, 'save').mockImplementation((user: any) => Promise.resolve(user));
+            const id = userMock.id;
+            const attrs = {
+                firstName: 'new-firstName'
+            };
 
-            expect(user).toBeNull();
+            const user = await service.update(id, attrs);
+
+            expect(user).toBeDefined();
+            expect(user.firstName).toEqual(attrs.firstName);
         });
 
-        test('user with that id exists, returns it', async () => {
-            const {email, password, firstName, lastName} = mockUser;
+        test('non-existing user, throws NotFoundException', async () => {
+            vi.spyOn(repositoryMock, 'findOneBy').mockResolvedValue(null);
+            const id = userMock.id;
+            const attrs = {
+                firstName: 'new-firstName'
+            };
 
-            const user = await service.create(email, password, firstName, lastName);
-            const result = await service.findOne(user.id);
-
-            expect(user.email).toEqual(result.email);
-            expect(user.firstName).toEqual(result.firstName);
-        });
+            await expect(service.update(id, attrs)).rejects.toThrow(/not found/);
+        })
     });
 });
