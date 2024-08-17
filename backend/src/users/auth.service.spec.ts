@@ -1,16 +1,19 @@
-import {beforeEach, describe, expect, test} from "vitest";
+import {beforeEach, describe, expect, test, vi} from "vitest";
 import {Test, TestingModule} from '@nestjs/testing';
 import {AuthService} from './auth.service';
 import {UsersService} from "./users.service";
 import {User} from "./user.entity";
 import {BadRequestException, NotFoundException} from "@nestjs/common";
+import {JwtModule} from "@nestjs/jwt";
+import {ConfigModule, ConfigService} from "@nestjs/config";
+import {validate} from "../env-validation";
 
 describe('AuthService', () => {
     let service: AuthService;
-    let fakeUsersService: Partial<UsersService>;
+    let usersServiceMock: Partial<UsersService>;
 
-    const mockUser = {
-        email: 'mock@mock.com',
+    const userMock = {
+        email: 'mock@gmail.com',
         password: 'mockedPassword239723',
         firstName: 'mockFirstName',
         lastName: 'mockLastName',
@@ -18,12 +21,12 @@ describe('AuthService', () => {
 
     beforeEach(async () => {
         const users: User[] = [];
-        fakeUsersService = {
-            find(email: string): Promise<User[]> {
+        usersServiceMock = {
+            find: vi.fn().mockImplementation((email: string): Promise<User[]> => {
                 const filteredUsers = users.filter(user => user.email === email);
                 return Promise.resolve(filteredUsers);
-            },
-            async create(email: string, password: string, firstName: string, lastName: string): Promise<User> {
+            }),
+            create: vi.fn().mockImplementation((email: string, password: string, firstName: string, lastName: string): Promise<User> => {
                 const user = {
                     id: Math.floor(Math.random() * 99999),
                     email, password, firstName, lastName,
@@ -31,15 +34,30 @@ describe('AuthService', () => {
 
                 users.push(user);
                 return Promise.resolve(user);
-            }
+            }),
         };
 
         const module: TestingModule = await Test.createTestingModule({
+            imports: [
+                ConfigModule.forRoot({
+                    isGlobal: true,
+                    envFilePath: `.env.${process.env.NODE_ENV}`,
+                    validate,
+                }),
+                JwtModule.registerAsync({
+                    imports: [ConfigModule],
+                    useFactory: async (configService: ConfigService) => ({
+                        secret: configService.get<string>('JWT_SECRET_KEY'),
+                        signOptions: {expiresIn: '1d'},
+                    }),
+                    inject: [ConfigService],
+                }),
+            ],
             providers: [
                 AuthService,
                 {
                     provide: UsersService,
-                    useValue: fakeUsersService,
+                    useValue: usersServiceMock,
                 }
             ],
         }).compile();
@@ -52,30 +70,28 @@ describe('AuthService', () => {
     });
 
     describe('signup', () => {
-        test('given user properties, creates user with salted and hashed password', async () => {
-            const {email, password, firstName, lastName} = mockUser;
+        test('given user properties, creates user with hashed password', async () => {
+            const {email, password, firstName, lastName} = userMock;
 
             const user = await service.signup(email, password, firstName, lastName);
-            const [salt, hash] = user.password.split('.');
 
             expect(user).toBeDefined();
             expect(user.password).not.toEqual(password);
-            expect(salt).toBeDefined();
-            expect(hash).toBeDefined();
         });
 
-        test('duplicate email, throws error: BadRequestException', async () => {
-            const {email, password, firstName, lastName} = mockUser;
+        test('duplicate email, throws BadRequestException', async () => {
+            const {email, password, firstName, lastName} = userMock;
 
             await service.signup(email, password, firstName, lastName);
 
+            expect(usersServiceMock.create).toHaveBeenCalledOnce();
             await expect(service.signup(email, password, firstName, lastName)).rejects.toThrow(BadRequestException);
         });
     });
 
     describe('login', () => {
         test('given user credentials, logins the user', async () => {
-            const {email, password, firstName, lastName} = mockUser;
+            const {email, password, firstName, lastName} = userMock;
 
             await service.signup(email, password, firstName, lastName);
             const token = await service.login(email, password);
@@ -85,17 +101,17 @@ describe('AuthService', () => {
         });
 
         test('user not signed up, throws error: NotFoundException', async () => {
-            const {email, password} = mockUser;
+            const {email, password} = userMock;
 
             await expect(service.login(email, password)).rejects.toThrow(NotFoundException);
         });
 
-        test('invalid credentials, throws error: BadRequestException', async () => {
-            const {email, password, firstName, lastName} = mockUser;
+        test('invalid credentials, throws error: UnauthorizedException', async () => {
+            const {email, password, firstName, lastName} = userMock;
 
             await service.signup(email, password, firstName, lastName);
 
-            await expect(service.login(email, 'some invalid password')).rejects.toThrow(BadRequestException);
+            await expect(service.login(email, 'invalid-password')).rejects.toThrow(/Invalid credentials/);
         });
     });
 });

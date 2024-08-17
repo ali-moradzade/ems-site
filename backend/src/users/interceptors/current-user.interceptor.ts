@@ -1,6 +1,7 @@
 import {CallHandler, ExecutionContext, Injectable, NestInterceptor} from "@nestjs/common";
 import {UsersService} from "../users.service";
 import {Observable} from "rxjs";
+import {UserTokenDto} from "../../dtos/userToken.dto";
 
 @Injectable()
 export class CurrentUserInterceptor implements NestInterceptor {
@@ -11,10 +12,10 @@ export class CurrentUserInterceptor implements NestInterceptor {
 
     async intercept(context: ExecutionContext, next: CallHandler<any>): Promise<Observable<any>> {
         const req = context.switchToHttp().getRequest();
-        const {userId} = req.session;
+        const {id} = req.user as UserTokenDto;
 
-        if (userId) {
-            req.currentUser = await this.usersService.findOne(userId);
+        if (id) {
+            req.currentUser = await this.usersService.findOne(id);
         }
 
         return next.handle();
