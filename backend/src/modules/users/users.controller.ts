@@ -5,10 +5,10 @@ import {UpdateUserDto} from "./dtos/update-user.dto";
 import {LoginUserDto} from './dtos/login-user.dto';
 import {UserDto} from "./dtos/user.dto";
 import {AuthService} from "./auth.service";
-import {UserGuard} from "../gaurds/user.guard";
+import {UserGuard} from "../../gaurds/user.guard";
 import {CurrentUser} from "./decorators/current-user.decorator";
-import {UserTokenDto} from "../dtos/userToken.dto";
-import {Serialize} from "../decorators/serialize.decorator";
+import {UserTokenDto} from "../../dtos/userToken.dto";
+import {Serialize} from "../../decorators/serialize.decorator";
 
 @Controller('auth')
 export class UsersController {

@@ -1,8 +1,8 @@
 import {DataSourceOptions} from 'typeorm';
 import {ConfigService} from '@nestjs/config';
-import {Employee} from "./src/employees/employee.entity";
-import {Job} from "./src/jobs/jobs.entity";
-import {User} from "./src/users/user.entity";
+import {Employee} from "./src/modules/employees/employee.entity";
+import {Job} from "./src/modules/jobs/jobs.entity";
+import {User} from "./src/modules/users/user.entity";
 
 export const createDataSourceOptions = (config: ConfigService): DataSourceOptions => {
     return {

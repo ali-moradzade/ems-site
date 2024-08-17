@@ -2,7 +2,7 @@ import {BadRequestException, Injectable, NotFoundException, UnauthorizedExceptio
 import {JwtService} from '@nestjs/jwt';
 import {UsersService} from "./users.service";
 import * as bcrypt from 'bcrypt';
-import {UserTokenDto} from "../dtos/userToken.dto";
+import {UserTokenDto} from "../../dtos/userToken.dto";
 
 @Injectable()
 export class AuthService {
