@@ -1,13 +1,22 @@
 import {WelcomePanel} from "../components/WelcomePanel";
 import {Link} from "../components/Link";
-import {useUserContext} from "../hooks/use-user-context";
 import {useNavigationContext} from "../hooks/use-navigation-context";
-import {FormEvent, useState} from "react";
+import {FormEvent, useEffect, useState} from "react";
 import {AxiosError} from "axios";
+import {useAuthContext} from "../hooks/use-auth-context";
+import {UserRestClient} from "../apis/users";
+import {useUserContext} from "../hooks/use-user-context";
 
 export function LoginPage() {
-    const {login} = useUserContext();
+    const {token, setToken} = useAuthContext();
     const {navigate} = useNavigationContext();
+    const {setUserByEmail} = useUserContext();
+
+    useEffect(() => {
+        if (token) {
+            navigate("/dashboard");
+        }
+    }, [token, navigate]);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -16,11 +25,14 @@ export function LoginPage() {
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(null);
+        const restClient = UserRestClient.getUsersRestClient();
 
         try {
-            await login(email, password);
+            const {token} = await restClient.login(email, password);
 
-            setEmail('');
+            setToken(token);
+            setUserByEmail(email);
+
             setPassword('');
 
             navigate('/dashboard');

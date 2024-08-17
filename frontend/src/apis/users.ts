@@ -42,7 +42,7 @@ export class UserRestClient {
         return res.data;
     }
 
-    async login(email: string, password: string): Promise<User> {
+    async login(email: string, password: string): Promise<{token: string}> {
         const res = await axios.post(`${this.url}/login`, {
             email, password
         });

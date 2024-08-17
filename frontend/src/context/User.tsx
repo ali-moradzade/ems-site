@@ -4,8 +4,7 @@ import {User, UserRestClient} from "../apis/users";
 interface UserContextType {
     user: User;
     setUser: (user: User) => void;
-    signup: (email: string, password: string, firstName: string, lastName: string) => Promise<void>;
-    login: (email: string, password: string) => Promise<void>;
+    setUserByEmail: (email: string) => void;
 }
 
 export const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -16,25 +15,19 @@ export function UserProvider({children}: { children: ReactNode }) {
         firstName: 'mock',
         lastName: 'mock',
     });
+
     const restClient = UserRestClient.getUsersRestClient();
 
-    const signup = async (email: string, password: string, firstName: string, lastName: string) => {
-        const user = await restClient.signup(email, password, firstName, lastName);
+    const setUserByEmail = async (email: string) => {
+        const users = await restClient.getAllUsers(email);
 
-        setUser(user);
-    };
-
-    const login = async (email: string, password: string) => {
-        const user = await restClient.login(email, password);
-
-        setUser(user);
+        setUser(users[0]);
     };
 
     const value = {
         user,
         setUser,
-        signup,
-        login,
+        setUserByEmail,
     };
 
     return (
