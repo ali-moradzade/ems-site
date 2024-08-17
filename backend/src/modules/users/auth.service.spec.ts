@@ -83,7 +83,7 @@ describe('AuthService', () => {
             const {email, password, firstName, lastName} = userMock;
 
             await service.signup(email, password, firstName, lastName);
-            const token = await service.login(email, password);
+            const {token} = await service.login(email, password);
 
             expect(token).toBeDefined();
             expect(token).toBeTypeOf('string');
