@@ -41,21 +41,18 @@ describe('/employees', () => {
         });
 
         test('given duplicate email, should give 400, BadRequest', async () => {
-            // Create First User
             await request(app.getHttpServer())
                 .post(path)
                 .send(mockEmployee)
                 .expect(201);
 
-            // Try to create user with same email
-            return request(app.getHttpServer())
+            const res = await request(app.getHttpServer())
                 .post(path)
-                .send(mockEmployee)
-                .expect(400)
-                .then(res => {
-                    expect(res.body.message).toEqual('Email in use');
-                    expect(res.body.error).toMatch(/Bad Request/);
-                });
+                .send(mockEmployee);
+
+            expect(res.statusCode).toEqual(400);
+            expect(res.body.message).toEqual('Email in use');
+            expect(res.body.error).toMatch(/Bad Request/);
         });
     });
 
@@ -74,8 +71,6 @@ describe('/employees', () => {
 
         test('one employee with that email, returns it', async () => {
             const {email} = mockEmployee;
-
-            // Create employee
             await request(app.getHttpServer())
                 .post(path)
                 .send(mockEmployee)
@@ -92,15 +87,15 @@ describe('/employees', () => {
     });
 
     describe('GET /:id', () => {
-        test('not employee with that id, returns 404, NotFound', async () => {
-            return request(app.getHttpServer())
-                .get(`${path}/12345}`)
-                .expect(404)
-                .then(res => expect(res.body.error).toMatch(/Not Found/));
+        test('not employee with that id, returns empty object', async () => {
+            const res = await request(app.getHttpServer())
+                .get(`${path}/12345}`);
+
+            expect(res.statusCode).toEqual(200);
+            expect(res.body).toEqual({});
         });
 
         test('given existing employee id, returns it', async () => {
-            // Create user
             const createdRes = await request(app.getHttpServer())
                 .post(path)
                 .send(mockEmployee);
@@ -117,10 +112,11 @@ describe('/employees', () => {
 
     describe('DELETE /:id', () => {
         test('non-existent employee id, returns 404, NotFound', async () => {
-            return request(app.getHttpServer())
-                .delete(`${path}/12345`)
-                .expect(404)
-                .then(res => expect(res.body.error).toMatch(/Not Found/));
+            const res = await request(app.getHttpServer())
+                .delete(`${path}/12345`);
+
+            expect(res.statusCode).toEqual(404);
+            expect(res.body.error).toMatch(/Not Found/);
         });
 
         test('existent employee id, successfully deletes it', async () => {
@@ -138,18 +134,19 @@ describe('/employees', () => {
         });
     });
 
-    describe('PATCH /:id', () => {
+    describe('PUT /:id', () => {
         test('employee does not exist, returns 404, Not Found', async () => {
-            return request(app.getHttpServer())
-                .patch(`${path}/12345`)
+            const res = await request(app.getHttpServer())
+                .put(`${path}/12345`)
                 .send({
                     firstName: 'hello'
-                })
-                .expect(404)
-                .then(res => expect(res.body.error).toMatch(/Not Found/));
+                });
+
+            expect(res.statusCode).toEqual(404);
+            expect(res.body.error).toMatch(/Not Found/);
         });
 
-        test('employee exists, and giving employee firstName, updates employee firstName', async () => {
+        test('employee exists, giving employee firstName, updates employee firstName', async () => {
             const createdRes = await request(app.getHttpServer())
                 .post(path)
                 .send(mockEmployee);
@@ -157,7 +154,7 @@ describe('/employees', () => {
             const newFirstName = 'New First Name';
 
             const res = await request(app.getHttpServer())
-                .patch(`${path}/${employee.id}`)
+                .put(`${path}/${employee.id}`)
                 .send({
                     firstName: newFirstName,
                 });
