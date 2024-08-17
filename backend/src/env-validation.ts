@@ -5,9 +5,15 @@ import {plainToInstance} from "class-transformer";
  * Define env schema here
  */
 class EnvironmentVariables {
+    /**
+     * Database
+     */
     @IsString()
     DB_NAME: string;
 
+    /**
+     * Authentication
+     */
     @IsString()
     JWT_SECRET_KEY: string;
 }
