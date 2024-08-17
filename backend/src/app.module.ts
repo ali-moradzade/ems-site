@@ -1,30 +1,38 @@
-import {Module} from '@nestjs/common';
-import {TypeOrmModule} from '@nestjs/typeorm';
-import {EmployeesModule} from './employees/employees.module';
-import {JobsModule} from './jobs/jobs.module';
-import {Employee} from "./employees/employee.entity";
-import {Job} from "./jobs/jobs.entity";
-import {UsersModule} from './users/users.module';
-import {User} from "./users/user.entity";
+import {Module, ValidationPipe} from '@nestjs/common';
+import {EmployeesModule} from './modules/employees/employees.module';
+import {JobsModule} from './modules/jobs/jobs.module';
+import {UsersModule} from './modules/users/users.module';
+import {APP_PIPE} from "@nestjs/core";
+import {ConfigModule, ConfigService} from "@nestjs/config";
+import {validate} from './env-validation';
+import {createDataSourceOptions} from "../typeorm.config";
+import {TypeOrmModule} from "@nestjs/typeorm";
 
 @Module({
     imports: [
+        ConfigModule.forRoot({
+            isGlobal: true,
+            envFilePath: `.env.${process.env.NODE_ENV}`,
+            validate,
+        }),
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigModule],
+            useFactory: async (configService: ConfigService) => createDataSourceOptions(configService),
+            inject: [ConfigService],
+        }),
         EmployeesModule,
         JobsModule,
         UsersModule,
-        TypeOrmModule.forRoot({
-            type: 'sqlite',
-            database: 'db.sqlite',
-            entities: [
-                Employee,
-                Job,
-                User,
-            ],
-            synchronize: true,
-        }),
     ],
     controllers: [],
-    providers: [],
+    providers: [
+        {
+            provide: APP_PIPE,
+            useValue: new ValidationPipe({
+                whitelist: true,
+            })
+        },
+    ],
 })
 export class AppModule {
 }
