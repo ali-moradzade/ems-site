@@ -1,4 +1,5 @@
 import axios from "axios";
+import {CONFIG} from "../config";
 
 export interface Employee {
     id: number;
@@ -12,9 +13,7 @@ export interface Employee {
 
 export class EmployeesRestClient {
     private static uniqueInstance: EmployeesRestClient;
-
-    // TODO: move to config files
-    private url = 'http://localhost:8000/employees';
+    private url = `${CONFIG.BACKEND_URL}/employees`
 
     async getAllEmployees(email?: string): Promise<Employee[]> {
         const res = await axios.get(this.url, {
@@ -33,7 +32,6 @@ export class EmployeesRestClient {
     }
 
     async createEmployee(
-        // TODO: fix this, create Employee do not need id
         employee: Partial<Employee>
     ) {
         const res = await axios.post(this.url, employee);

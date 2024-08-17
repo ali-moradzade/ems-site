@@ -7,21 +7,24 @@ import {UserProvider} from "./context/User";
 import {NavigationProvider} from "./context/Navigation";
 import {EmployeeProvider} from "./context/Employee";
 import {JobProvider} from "./context/Job";
+import {AuthProvider} from "./context/Auth";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
 
 root.render(
-    <JobProvider>
-        <EmployeeProvider>
-            <NavigationProvider>
-                <UserProvider>
-                    <React.StrictMode>
-                        <App/>
-                    </React.StrictMode>
-                </UserProvider>
-            </NavigationProvider>
-        </EmployeeProvider>
-    </JobProvider>
+    <NavigationProvider>
+        <AuthProvider>
+            <JobProvider>
+                <EmployeeProvider>
+                    <UserProvider>
+                        <React.StrictMode>
+                            <App/>
+                        </React.StrictMode>
+                    </UserProvider>
+                </EmployeeProvider>
+            </JobProvider>
+        </AuthProvider>
+    </NavigationProvider>
 );

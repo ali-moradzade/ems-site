@@ -1,4 +1,5 @@
 import axios from "axios";
+import {CONFIG} from "../config";
 
 export interface Job {
     id: number;
@@ -8,9 +9,15 @@ export interface Job {
 
 export class JobsRestClient {
     private static uniqueInstance: JobsRestClient;
+    private url = `${CONFIG.BACKEND_URL}/jobs`;
 
-    // TODO: move to config files
-    private url = 'http://localhost:8000/jobs';
+    static getJobsRestClient() {
+        if (!this.uniqueInstance) {
+            this.uniqueInstance = new JobsRestClient();
+        }
+
+        return this.uniqueInstance;
+    }
 
     async getAllJobs(name?: string): Promise<Job[]> {
         const res = await axios.get(this.url, {
@@ -29,7 +36,7 @@ export class JobsRestClient {
     }
 
     async createJob(
-        job: Partial<Job> // TODO: fix this, we do not need id
+        job: {name: string, date: string},
     ) {
         const res = await axios.post(this.url, job);
 
@@ -48,13 +55,5 @@ export class JobsRestClient {
         const res = await axios.delete(`${this.url}/${id}`);
 
         return res.data;
-    }
-
-    static getJobsRestClient() {
-        if (!this.uniqueInstance) {
-            this.uniqueInstance = new JobsRestClient();
-        }
-
-        return this.uniqueInstance;
     }
 }
