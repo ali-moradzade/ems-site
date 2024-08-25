@@ -70,7 +70,7 @@ export function JobEdit({job}: JobEditProps) {
                                 <input
                                     type="text" required placeholder="Date" name="date"
                                     className={`form-control form-control-sm ${hasDateError ? 'is-invalid' : ''}`}
-                                    value={date.toString().split('T')[0]}
+                                    value={date.split('T')[0]}
                                     onChange={e => setDate(e.target.value)}
                                 />
                                 {hasDateError &&
