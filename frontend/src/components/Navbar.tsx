@@ -1,19 +1,26 @@
 import {useUserContext} from "../hooks/use-user-context";
 import React from "react";
-import { FaSearch } from "react-icons/fa";
+import {FaSearch} from "react-icons/fa";
 import {Link} from "./Link";
 import {useNavigationContext} from "../hooks/use-navigation-context";
+import {useAuthContext} from "../hooks/use-auth-context";
 
 export function Navbar() {
     const {user} = useUserContext()!;
     const {firstName, lastName} = user;
-    const {currentPath} = useNavigationContext();
+    const {setToken} = useAuthContext();
+    const {currentPath, navigate} = useNavigationContext();
 
     if (['/', '/signup', '/login'].includes(currentPath)) {
         return (
             <div></div>
         );
     }
+
+    const handleLogout = () => {
+        setToken(null);
+        navigate('/login');
+    };
 
     const linkItems = [
         {
@@ -64,7 +71,12 @@ export function Navbar() {
                             </button>
                         </div>
                     </form>
-                    <button className="btn btn-sm btn-warning ms-3">Logout</button>
+                    <button
+                        className="btn btn-sm btn-warning ms-3"
+                        onClick={handleLogout}
+                    >
+                        Logout
+                    </button>
                 </div>
             </div>
         </nav>

@@ -1,13 +1,22 @@
 import {WelcomePanel} from "../components/WelcomePanel";
 import {Link} from "../components/Link";
-import {FormEvent, useState} from "react";
+import {FormEvent, useEffect, useState} from "react";
 import {useUserContext} from "../hooks/use-user-context";
 import {useNavigationContext} from "../hooks/use-navigation-context";
 import {AxiosError} from "axios";
+import {UserRestClient} from "../apis/users";
+import {useAuthContext} from "../hooks/use-auth-context";
 
 export function SignupPage() {
-    const {signup} = useUserContext();
+    const {token, setToken} = useAuthContext();
     const {navigate} = useNavigationContext();
+    const {setUser} = useUserContext();
+
+    useEffect(() => {
+        if (token) {
+            navigate("/dashboard");
+        }
+    }, [token, navigate]);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -17,9 +26,15 @@ export function SignupPage() {
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        const restClient = UserRestClient.getUsersRestClient();
 
         try {
-            await signup(email, password, firstName, lastName);
+            const user = await restClient.signup(email, password, firstName, lastName);
+            setUser(user);
+
+            // TODO: return token from signup
+            const {token} = await restClient.login(email, password);
+            setToken(token);
 
             setEmail('');
             setPassword('');

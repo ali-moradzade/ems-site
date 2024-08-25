@@ -67,11 +67,10 @@ export function JobEdit({job}: JobEditProps) {
                         }
                         <form onSubmit={handleSubmit} id={`edit_job_${id}_form`}>
                             <div className="mb-3">
-                                {/* TODO: fix change type to date */}
                                 <input
                                     type="text" required placeholder="Date" name="date"
                                     className={`form-control form-control-sm ${hasDateError ? 'is-invalid' : ''}`}
-                                    value={date}
+                                    value={date.split('T')[0]}
                                     onChange={e => setDate(e.target.value)}
                                 />
                                 {hasDateError &&

@@ -29,7 +29,7 @@ export function JobDetails({job}: JobDetailsProps) {
                                 </tr>
                                 <tr>
                                     <th>Job Added Date</th>
-                                    <td>{date}</td>
+                                    <td>{date.split('T')[0]}</td>
                                 </tr>
                                 <tr>
                                     <th>Name</th>

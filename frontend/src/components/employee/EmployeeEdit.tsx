@@ -110,7 +110,7 @@ export function EmployeeEdit({employee}: EmployeeEditProps) {
                                 <input
                                     type="text" required name="date" placeholder="Date: yyyy-mm-dd"
                                     className={`form-control form-control-sm ${validationErrors.date ? 'is-invalid' : ''}`}
-                                    value={date}
+                                    value={date.split('T')[0]}
                                     onChange={e => setDate(e.target.value)}
                                 />
                                 {validationErrors.date &&
