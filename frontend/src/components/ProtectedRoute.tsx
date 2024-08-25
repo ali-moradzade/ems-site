@@ -13,7 +13,11 @@ export function ProtectedRoute({children, path}: RouteProps) {
 
     useEffect(() => {
         if (!token) {
-            navigate("/login");
+            if (['/signup', '/login'].includes(currentPath)) {
+                navigate(currentPath);
+            } else {
+                navigate('/login')
+            }
         }
     }, [token, navigate]);
 
