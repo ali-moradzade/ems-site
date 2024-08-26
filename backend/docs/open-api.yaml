@@ -3,3 +3,313 @@ info:
   version: '1.0'
   title: Employee Management Site Backend
   description: Open API specifications for ems backend APIs
+
+paths:
+  /auth/signup:
+    post:
+      summary: Sign up user
+      description: Signs up user with specified properties
+      tags:
+        - Users
+      security:
+        - UserGuard: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/User"
+      responses:
+        200:
+          description: Created user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        400:
+          description: Bad request, you did not provide properties correctly
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+  /auth/login:
+    post:
+      summary: User Login
+      description: Logins user and returns JWT token
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  example: password
+      responses:
+        200:
+          description: Logged in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    format: bearer
+        400:
+          description: Bad request, you did not provide properties correctly
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        401:
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Unauthorized"
+  /whoami:
+    get:
+      summary: Get Current User
+      description: Returns current logged in user
+      tags:
+        - Users
+      security:
+        - UserGuard: [ ]
+      parameters:
+        - $ref: "#/components/parameters/UserIdPathParam"
+      responses:
+        200:
+          description: User properties
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        401:
+          description: You did not provide token or token is invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Unauthorized"
+        400:
+          description: Bad request, you did not provide properties correctly
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+  /auth:
+    get:
+      summary: Get All Users
+      description: Returns all users, optionally you can specify `email` query param
+      tags:
+        - Users
+      security:
+        - UserGuard: [ ]
+      parameters:
+        - name: email
+          in: query
+          description: Email
+          schema:
+            type: string
+            format: email
+      responses:
+        200:
+          description: List of users
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsersList"
+        401:
+          description: You did not provide token or token is invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Unauthorized"
+  /auth/{userId}:
+    get:
+      summary: Get User
+      description: Returns user with the specified `userId`
+      tags:
+        - Users
+      security:
+        - UserGuard: [ ]
+      parameters:
+        - $ref: "#/components/parameters/UserIdPathParam"
+      responses:
+        200:
+          description: User properties
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        401:
+          description: You did not provide token or token is invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Unauthorized"
+        400:
+          description: Bad request, you did not provide properties correctly
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+    put:
+      summary: Update User
+      description: Updates specified user with `userId`, with new properties
+      tags:
+        - Users
+      security:
+        - UserGuard: [ ]
+      parameters:
+        - $ref: "#/components/parameters/UserIdPathParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/User"
+      responses:
+        200:
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        401:
+          description: You did not provide token or token is invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Unauthorized"
+        400:
+          description: Bad request, you did not provide properties correctly
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        404:
+          description: Not found, did not found user with this id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFound"
+    delete:
+      summary: Delete User
+      description: Deletes specified user with `userId`
+      tags:
+        - Users
+      security:
+        - UserGuard: [ ]
+      parameters:
+        - $ref: "#/components/parameters/UserIdPathParam"
+      responses:
+        200:
+          description: Deleted user properties
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        401:
+          description: You did not provide token or token is invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Unauthorized"
+        400:
+          description: Bad request, you did not provide properties correctly
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        404:
+          description: Not found, did not found user with this id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFound"
+
+components:
+  securitySchemes:
+    UserGuard:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: This API requires a valid JWT token
+  parameters:
+    UserIdPathParam:
+      name: userId
+      in: path
+      description: User Id
+      required: true
+      schema:
+        type: string
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+          readOnly: true
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+          writeOnly: true
+        firstName:
+          type: string
+          example: firstName
+        lastName:
+          type: string
+          example: lastName
+    UsersList:
+      type: array
+      description: List of Users
+      items:
+        $ref: "#/components/schemas/User"
+    Unauthorized:
+      type: object
+      properties:
+        statusCode:
+          type: number
+          example: 401
+        message:
+          type: string
+          example: Unauthorized
+    BadRequest:
+      type: object
+      properties:
+        statusCode:
+          type: number
+          example: 400
+        message:
+          type: array
+          example:
+            - Error Message 1
+            - Error Message 2
+        error:
+          type: string
+          example: Bad Request
+    NotFound:
+      type: object
+      properties:
+        statusCode:
+          type: number
+          example: 404
+        message:
+          type: string
+          example: "*** not found"
+        error:
+          type: string
+          example: Not Found
