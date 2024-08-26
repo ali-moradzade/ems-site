@@ -355,6 +355,125 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NotFound"
+  /employees:
+    get:
+      summary: Get All Employees
+      description: Returns all employees
+      tags:
+        - Employees
+      parameters:
+        - name: email
+          in: query
+          description: Employee email
+          schema:
+            type: string
+            format: email
+      responses:
+        200:
+          description: List of employees
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmployeesList"
+    post:
+      summary: Create Employee
+      description: Creates a new employee with specified properties
+      tags:
+        - Employees
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/Employee"
+      responses:
+        200:
+          description: Created employee
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+        400:
+          description: Bad request, you did not provide properties correctly
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+  /employees/{employeeId}:
+    get:
+      summary: Get Employee
+      description: Returns employee with the specified `employeeId`
+      tags:
+        - Employees
+      parameters:
+        - $ref: "#/components/parameters/EmployeeIdPathParam"
+      responses:
+        200:
+          description: Employee properties
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+    put:
+      summary: Update Employee
+      description: Updates specified employee with `employeeId`, with new properties
+      tags:
+        - Employees
+      parameters:
+        - $ref: "#/components/parameters/EmployeeIdPathParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/Employee"
+      responses:
+        200:
+          description: Updated employee
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+        400:
+          description: Bad request, you did not provide properties correctly
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        404:
+          description: Not found, did not found employee with this id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFound"
+    delete:
+      summary: Delete Employee
+      description: Deletes specified employee with `employeeId`
+      tags:
+        - Employees
+      parameters:
+        - $ref: "#/components/parameters/EmployeeIdPathParam"
+      responses:
+        200:
+          description: Deleted employee properties
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+        400:
+          description: Bad request, you did not provide properties correctly
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        404:
+          description: Not found, did not found employee with this id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFound"
 
 components:
   securitySchemes:
@@ -375,6 +494,13 @@ components:
       name: jobId
       in: path
       description: Job Id
+      required: true
+      schema:
+        type: string
+    EmployeeIdPathParam:
+      name: employeeId
+      in: path
+      description: Employee Id
       required: true
       schema:
         type: string
@@ -422,6 +548,36 @@ components:
       description: List of Jobs
       items:
         $ref: "#/components/schemas/Job"
+    Employee:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+          readOnly: true
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+          example: firstName
+        lastName:
+          type: string
+          example: lastName
+        phone:
+          type: string
+          format: phone
+        job:
+          type: string
+          example: Software Developer
+        date:
+          type: string
+          format: date
+    EmployeesList:
+      type: array
+      description: List of Employees
+      items:
+        $ref: "#/components/schemas/Employee"
     Unauthorized:
       type: object
       properties:
