@@ -236,6 +236,125 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NotFound"
+  /jobs:
+    get:
+      summary: Get All Jobs
+      description: Returns all jobs
+      tags:
+        - Jobs
+      parameters:
+        - name: name
+          in: query
+          description: Job name
+          schema:
+            type: string
+            example: Software Enginner
+      responses:
+        200:
+          description: List of jobs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JobsList"
+    post:
+      summary: Create Job
+      description: Creates a new job with specified properties
+      tags:
+        - Jobs
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/Job"
+      responses:
+        200:
+          description: Created job
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        400:
+          description: Bad request, you did not provide properties correctly
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+  /jobs/{jobId}:
+    get:
+      summary: Get Job
+      description: Returns job with the specified `jobId`
+      tags:
+        - Jobs
+      parameters:
+        - $ref: "#/components/parameters/JobIdPathParam"
+      responses:
+        200:
+          description: Job properties
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+    put:
+      summary: Update Job
+      description: Updates specified job with `jobId`, with new properties
+      tags:
+        - Jobs
+      parameters:
+        - $ref: "#/components/parameters/JobIdPathParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: "#/components/schemas/Job"
+      responses:
+        200:
+          description: Updated job
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        400:
+          description: Bad request, you did not provide properties correctly
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        404:
+          description: Not found, did not found job with this id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFound"
+    delete:
+      summary: Delete Job
+      description: Deletes specified job with `jobId`
+      tags:
+        - Jobs
+      parameters:
+        - $ref: "#/components/parameters/JobIdPathParam"
+      responses:
+        200:
+          description: Deleted job properties
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+        400:
+          description: Bad request, you did not provide properties correctly
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BadRequest"
+        404:
+          description: Not found, did not found job with this id
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFound"
 
 components:
   securitySchemes:
@@ -249,6 +368,13 @@ components:
       name: userId
       in: path
       description: User Id
+      required: true
+      schema:
+        type: string
+    JobIdPathParam:
+      name: jobId
+      in: path
+      description: Job Id
       required: true
       schema:
         type: string
@@ -278,6 +404,24 @@ components:
       description: List of Users
       items:
         $ref: "#/components/schemas/User"
+    Job:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+          readOnly: true
+        name:
+          type: string
+          example: Web Developer
+        date:
+          type: string
+          format: date
+    JobsList:
+      type: array
+      description: List of Jobs
+      items:
+        $ref: "#/components/schemas/Job"
     Unauthorized:
       type: object
       properties:
