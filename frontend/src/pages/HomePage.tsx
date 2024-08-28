@@ -14,15 +14,17 @@ export function HomePage() {
                                     <h2>Welcome to Employee Management Site!</h2>
                                 </div>
 
-                                <div className="card-text" style={{height: '400px'}}>
-                                    <p className="small text-muted">
-                                        {/*TODO: ADD SITE DESCRIPTION*/}
-                                        Site description goes here ...
-                                    </p>
+                                {/*<div className="card-text" style={{height: '400px'}}>*/}
+                                {/*    <p className="small text-muted">*/}
+                                {/*        /!*TODO: ADD SITE DESCRIPTION*!/*/}
+                                {/*        Site description goes here ...*/}
+                                {/*    </p>*/}
 
 
+                                {/*</div>*/}
+                                <div className="card-text" style={{height: '200px'}}>
                                 </div>
-                                <div className="text-end">
+                                <div className="text-center">
                                     <Link to={'/signup'} className="btn btn-success card-link w-25">
                                         Signup
                                     </Link>
