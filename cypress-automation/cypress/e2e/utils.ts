@@ -142,6 +142,32 @@ export function deleteAllEmployees() {
         });
 }
 
+export function login() {
+    cy.visit(urls.login);
+    const user = {
+        email: 'test@gmail.com',
+        password: '1234',
+    };
+
+    // handle flaky inputs
+    recurse(
+        () => cy.get('input[type=email]')
+            .clear().type(user.email),
+
+        ($input) => $input.val() === user.email,
+        {delay: recurseDelay}
+    ).should('have.value', user.email);
+    recurse(
+        () => cy.get('input[type=password]')
+            .clear().type(user.password),
+
+        ($input) => $input.val() === user.password,
+        {delay: recurseDelay}
+    ).should('have.value', user.password);
+
+    cy.get('input[type=submit]').click();
+}
+
 
 export const urls = {
     jobs: 'http://localhost:3000/jobs',

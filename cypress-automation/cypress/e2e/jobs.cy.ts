@@ -1,5 +1,5 @@
 import {recurse} from 'cypress-recurse';
-import {deleteAllJobs, insertJob, recurseDelay, urls} from "./utils";
+import {deleteAllJobs, insertJob, login, recurseDelay} from "./utils";
 
 describe('Job', () => {
     const job = {
@@ -8,7 +8,8 @@ describe('Job', () => {
     };
 
     beforeEach(() => {
-        cy.visit(urls.jobs);
+        login();
+        cy.get('.navbar .nav-link').contains('Jobs').click();
     });
 
     afterEach(() => {
