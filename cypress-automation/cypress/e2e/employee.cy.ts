@@ -1,4 +1,4 @@
-import {deleteAllEmployees, deleteAllJobs, insertEmployee, insertJob, recurseDelay, urls} from "./utils";
+import {deleteAllEmployees, deleteAllJobs, insertEmployee, insertJob, login, recurseDelay, urls} from "./utils";
 import {recurse} from "cypress-recurse";
 
 interface Employee {
@@ -26,7 +26,7 @@ describe('Employee', () => {
     };
 
     beforeEach(() => {
-        cy.visit(urls.employees);
+        login();
 
         cy.get('.navbar .nav-link').contains('Jobs').click();
         deleteAllJobs();

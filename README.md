@@ -49,7 +49,7 @@ You can view backend Open API Specification by going into `/docs` route. (`http:
 
 ## E2E Testing
 
-You can run the end to end tests for this application as follows:
+You can run the end-to-end tests for this application as follows:
 
 ```bash
 cd cypress-automation
@@ -63,4 +63,8 @@ this pattern:
 
 - Bug: fix/backend/**name**; fix/front-end/**name**; fix/cypress/**name**
 - Feature: feat/backend/**name**; feat/front-end/**name**; feat/cypress/**name**
+
+## Application Screenshots
+
+You can view application screenshots inside `.assets/screenshots` directory.
 
