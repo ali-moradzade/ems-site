@@ -1,10 +1,10 @@
 # Employee Management Site
 
-This site is a simple sites to manage `employees` and `jobs`
+This site is a simple site to manage `employees` and `jobs`
 
 ## Usage
 
-You can install dependencies for both front & backend by going to their directories and run
+You can install dependencies for both front & backend by going to their directories and running:
 
 ```bash
 npm install
