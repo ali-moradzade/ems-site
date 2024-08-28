@@ -25,8 +25,34 @@ describe('Employee', () => {
         date: '2022-10-11',
     };
 
+    // before(() => {
+    // });
+
     beforeEach(() => {
-        cy.visit(urls.employees);
+        cy.visit(urls.login);
+        const user = {
+            email: 'test@gmail.com',
+            password: '1234',
+        };
+
+        // handle flaky inputs
+        recurse(
+            () => cy.get('input[type=email]')
+                .clear().type(user.email),
+
+            ($input) => $input.val() === user.email,
+            {delay: recurseDelay}
+        ).should('have.value', user.email);
+        recurse(
+            () => cy.get('input[type=password]')
+                .clear().type(user.password),
+
+            ($input) => $input.val() === user.password,
+            {delay: recurseDelay}
+        ).should('have.value', user.password);
+
+        cy.get('input[type=submit]').click();
+        // cy.visit(urls.employees);
 
         cy.get('.navbar .nav-link').contains('Jobs').click();
         deleteAllJobs();

@@ -17,7 +17,7 @@ export function EmployeeEdit({employee}: EmployeeEditProps) {
     const [firstName, setFirstName] = useState(employee.firstName);
     const [lastName, setLastName] = useState(employee.lastName);
     const [email, setEmail] = useState(employee.email);
-    const [date, setDate] = useState(employee.date);
+    const [date, setDate] = useState(employee.date.split('T')[0]);
     const [phone, setPhone] = useState(employee.phone);
     const [job, setJob] = useState(employee.job);
 

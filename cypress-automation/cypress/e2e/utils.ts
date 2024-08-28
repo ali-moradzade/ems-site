@@ -146,5 +146,6 @@ export function deleteAllEmployees() {
 export const urls = {
     jobs: 'http://localhost:3000/jobs',
     employees: 'http://localhost:3000/employees',
+    login: 'http://localhost:3000/login',
 };
 

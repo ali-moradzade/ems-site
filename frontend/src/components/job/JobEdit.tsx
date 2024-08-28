@@ -12,7 +12,7 @@ export function JobEdit({job}: JobEditProps) {
     const {updateJob} = useJobContext();
 
     const [name, setName] = useState(job.name);
-    const [date, setDate] = useState(job.date);
+    const [date, setDate] = useState(job.date.split('T')[0]);
 
     const [error, setError] = useState<null | string>(null);
     const [hasDateError, setHasDateError] = useState(false);
