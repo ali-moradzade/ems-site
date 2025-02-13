@@ -50,6 +50,7 @@ export type {Job} from './apis/jobs';
 export {
     useGetAllUsersQuery,
     useGetUserQuery,
+    useUserProfileQuery,
     useSignupMutation,
     useLoginMutation,
     useUpdateUserMutation,

@@ -1,20 +1,22 @@
 import {WelcomePanel} from "../components/WelcomePanel";
 import {FormEvent, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import {useAppDispatch, useAppSelector, useLoginMutation} from "../store";
-import {setToken} from "../store/slices/authSlice";
+import {useAppDispatch, useAppSelector, useLoginMutation, useUserProfileQuery} from "../store";
+import {setCredentials} from "../store/slices/authSlice";
 
 export function LoginPage() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const token = useAppSelector(state => state.auth.token);
     const [login, {isLoading, error}] = useLoginMutation();
+    const {data: user} = useUserProfileQuery();
 
     useEffect(() => {
-        if (token) {
+        if (user) {
+            dispatch(setCredentials({token, user}));
             navigate("/dashboard");
         }
-    }, [token, navigate]);
+    }, [user, token, dispatch, navigate]);
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -24,7 +26,7 @@ export function LoginPage() {
         try {
             const {token} = await login({email, password}).unwrap();
 
-            dispatch(setToken(token));
+            dispatch(setCredentials({token, user: null}));
             setPassword('');
 
             navigate('/dashboard');

@@ -14,7 +14,16 @@ export interface AuthResponse {
 
 export const usersApi = createApi({
     reducerPath: "usersApi",
-    baseQuery: fetchBaseQuery({baseUrl: `${CONFIG.BACKEND_URL}/auth`}),
+    baseQuery: fetchBaseQuery({
+        baseUrl: `${CONFIG.BACKEND_URL}/auth`,
+        prepareHeaders: (headers, {getState}) => {
+            const token = (getState() as any).auth.token;
+            if (token) {
+                headers.set("Authorization", `Bearer ${token}`);
+            }
+            return headers;
+        },
+    }),
     endpoints: (builder) => ({
         getAllUsers: builder.query<User[], string | undefined>({
             query: (email) => ({
@@ -24,6 +33,9 @@ export const usersApi = createApi({
         }),
         getUser: builder.query<User, number>({
             query: (id) => `/${id}`,
+        }),
+        userProfile: builder.query<User, void>({
+            query: () => `/whoami`,
         }),
         signup: builder.mutation<AuthResponse, User>({
             query: (user) => ({
@@ -59,6 +71,7 @@ export const usersApi = createApi({
 export const {
     useGetAllUsersQuery,
     useGetUserQuery,
+    useUserProfileQuery,
     useSignupMutation,
     useLoginMutation,
     useUpdateUserMutation,
