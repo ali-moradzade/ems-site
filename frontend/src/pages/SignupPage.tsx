@@ -1,15 +1,14 @@
 import {WelcomePanel} from "../components/WelcomePanel";
-import {Link} from "../components/Link";
-import {FormEvent, useEffect, useState} from "react";
+import React, {FormEvent, useEffect, useState} from "react";
 import {useUserContext} from "../hooks/use-user-context";
-import {useNavigationContext} from "../hooks/use-navigation-context";
 import {AxiosError} from "axios";
 import {UserRestClient} from "../apis/users";
 import {useAuthContext} from "../hooks/use-auth-context";
+import {Link, useNavigate} from "react-router-dom";
 
 export function SignupPage() {
     const {token, setToken} = useAuthContext();
-    const {navigate} = useNavigationContext();
+    const navigate = useNavigate();
     const {setUser} = useUserContext();
 
     useEffect(() => {

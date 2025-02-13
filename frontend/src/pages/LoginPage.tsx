@@ -1,15 +1,14 @@
 import {WelcomePanel} from "../components/WelcomePanel";
-import {Link} from "../components/Link";
-import {useNavigationContext} from "../hooks/use-navigation-context";
 import {FormEvent, useEffect, useState} from "react";
 import {AxiosError} from "axios";
 import {useAuthContext} from "../hooks/use-auth-context";
 import {UserRestClient} from "../apis/users";
 import {useUserContext} from "../hooks/use-user-context";
+import {Link, useNavigate} from "react-router-dom";
 
 export function LoginPage() {
     const {token, setToken} = useAuthContext();
-    const {navigate} = useNavigationContext();
+    const navigate = useNavigate();
     const {setUserByEmail} = useUserContext();
 
     useEffect(() => {

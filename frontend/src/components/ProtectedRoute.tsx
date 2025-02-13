@@ -1,35 +1,19 @@
-import {ReactNode, useEffect} from "react";
-import {useNavigationContext} from "../hooks/use-navigation-context";
+import {ReactNode} from "react";
 import {useAuthContext} from "../hooks/use-auth-context";
+import {Navigate} from "react-router-dom";
 
 interface RouteProps {
     children: ReactNode;
-    path: string;
 }
 
-export function ProtectedRoute({children, path}: RouteProps) {
+export function ProtectedRoute({children}: RouteProps) {
     const {token} = useAuthContext();
-    const {currentPath, navigate} = useNavigationContext();
 
-    useEffect(() => {
-        if (!token) {
-            if (['/signup', '/login'].includes(currentPath)) {
-                navigate(currentPath);
-            } else {
-                navigate('/login')
-            }
-        }
-    }, [token, navigate]);
-
-    if (path === currentPath && token) {
-        return (
-            <div>
-                {children}
-            </div>
-        );
+    if (!token) {
+        return <Navigate to="/login" replace/>;
     }
 
-    return (
-        <div></div>
-    );
+    return <>
+        {children}
+    </>;
 }

@@ -1,17 +1,17 @@
 import {useUserContext} from "../hooks/use-user-context";
 import React from "react";
 import {FaSearch} from "react-icons/fa";
-import {Link} from "./Link";
-import {useNavigationContext} from "../hooks/use-navigation-context";
 import {useAuthContext} from "../hooks/use-auth-context";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 
 export function Navbar() {
     const {user} = useUserContext()!;
     const {firstName, lastName} = user;
     const {setToken} = useAuthContext();
-    const {currentPath, navigate} = useNavigationContext();
+    const location = useLocation();
+    const navigate = useNavigate();
 
-    if (['/', '/signup', '/login'].includes(currentPath)) {
+    if (['/', '/signup', '/login'].includes(location.pathname)) {
         return (
             <div></div>
         );
@@ -39,7 +39,6 @@ export function Navbar() {
                 <Link
                     to={item.path}
                     className="nav-link"
-                    activeClassName="active"
                 >
                     {item.label}
                 </Link>
