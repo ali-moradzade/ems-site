@@ -22,7 +22,6 @@ export function LoginPage() {
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-
             const {token} = await login({email, password}).unwrap();
 
             dispatch(setToken(token));

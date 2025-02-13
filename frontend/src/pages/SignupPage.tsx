@@ -1,15 +1,15 @@
 import {WelcomePanel} from "../components/WelcomePanel";
 import React, {FormEvent, useEffect, useState} from "react";
-import {useUserContext} from "../hooks/use-user-context";
-import {AxiosError} from "axios";
-import {UserRestClient} from "../apis/users";
-import {useAuthContext} from "../hooks/use-auth-context";
 import {Link, useNavigate} from "react-router-dom";
+import {useAppDispatch, useAppSelector, useLoginMutation, useSignupMutation} from "../store";
+import {setToken} from "../store/slices/authSlice";
 
 export function SignupPage() {
-    const {token, setToken} = useAuthContext();
+    const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const {setUser} = useUserContext();
+    const token = useAppSelector(state => state.auth.token);
+    const [signup, {isLoading, error}] = useSignupMutation();
+    const [login] = useLoginMutation();
 
     useEffect(() => {
         if (token) {
@@ -21,19 +21,15 @@ export function SignupPage() {
     const [password, setPassword] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const restClient = UserRestClient.getUsersRestClient();
 
         try {
-            const user = await restClient.signup(email, password, firstName, lastName);
-            setUser(user);
+            await signup({email, password, firstName, lastName}).unwrap();
 
-            // TODO: return token from signup
-            const {token} = await restClient.login(email, password);
-            setToken(token);
+            const {token} = await login({email, password}).unwrap();
+            dispatch(setToken(token));
 
             setEmail('');
             setPassword('');
@@ -42,9 +38,7 @@ export function SignupPage() {
 
             navigate('/dashboard');
         } catch (err: any) {
-            err = err as AxiosError;
-
-            setError(`Login failed: ${err.response.data.message}`);
+            console.error(err?.message || 'Error signing up user');
         }
     };
 
@@ -64,7 +58,7 @@ export function SignupPage() {
                                     </p>
                                     {error && (
                                         <div className="alert alert-danger" role="alert" id="signup_alert">
-                                            {error}
+                                            {(error as any)?.data?.message || 'Error signing up user'}
                                         </div>
                                     )}
                                     <form id="signup_form" onSubmit={handleSubmit}>
@@ -101,7 +95,14 @@ export function SignupPage() {
                                             />
                                         </div>
                                         <div className="mb-3 d-grid">
-                                            <input type="submit" className="btn btn-success" value="signup"/>
+                                            <button type="submit" className="btn btn-success" disabled={isLoading}>
+                                                {isLoading ? (
+                                                    <span className="spinner-border spinner-border-sm" role="status"
+                                                          aria-hidden="true"></span>
+                                                ) : (
+                                                    'Signup'
+                                                )}
+                                            </button>
                                         </div>
                                     </form>
                                     <div className="text-center text-muted mt-4 small">
