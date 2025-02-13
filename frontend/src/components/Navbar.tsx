@@ -1,15 +1,17 @@
-import {useUserContext} from "../hooks/use-user-context";
 import React from "react";
 import {FaSearch} from "react-icons/fa";
-import {useAuthContext} from "../hooks/use-auth-context";
 import {Link, useLocation, useNavigate} from "react-router-dom";
+import {useAppDispatch} from "../store";
+import {logout} from "../store/slices/authSlice";
 
 export function Navbar() {
-    const {user} = useUserContext()!;
-    const {firstName, lastName} = user;
-    const {setToken} = useAuthContext();
+    const dispatch = useAppDispatch();
     const location = useLocation();
     const navigate = useNavigate();
+
+    // TODO: fix later
+    const firstName = 'MOCK';
+    const lastName = 'MOCK';
 
     if (['/', '/signup', '/login'].includes(location.pathname)) {
         return (
@@ -18,7 +20,7 @@ export function Navbar() {
     }
 
     const handleLogout = () => {
-        setToken(null);
+        dispatch(logout());
         navigate('/login');
     };
 
