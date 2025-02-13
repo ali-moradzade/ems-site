@@ -1,17 +1,15 @@
 import React from "react";
 import {FaSearch} from "react-icons/fa";
 import {Link, useLocation, useNavigate} from "react-router-dom";
-import {useAppDispatch} from "../store";
+import {useAppDispatch, useUserProfileQuery} from "../store";
 import {logout} from "../store/slices/authSlice";
 
 export function Navbar() {
     const dispatch = useAppDispatch();
     const location = useLocation();
     const navigate = useNavigate();
-
-    // TODO: fix later
-    const firstName = 'MOCK';
-    const lastName = 'MOCK';
+    const {data: user = {firstName: 'MOCK', lastName: 'MOCK'}} = useUserProfileQuery();
+    const {firstName, lastName} = user;
 
     if (['/', '/signup', '/login'].includes(location.pathname)) {
         return (

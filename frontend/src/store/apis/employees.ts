@@ -16,12 +16,14 @@ export const employeesApi = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: `${CONFIG.BACKEND_URL}/employees`
     }),
+    tagTypes: ['Employees'],
     endpoints: (builder) => ({
         getAllEmployees: builder.query<Employee[], string | undefined>({
             query: (email) => ({
                 url: "",
                 params: email ? {email} : {},
             }),
+            providesTags: ['Employees']
         }),
         createEmployee: builder.mutation<Employee, Partial<Employee>>({
             query: (employee) => ({
@@ -29,6 +31,7 @@ export const employeesApi = createApi({
                 method: "POST",
                 body: employee,
             }),
+            invalidatesTags: (result, error) => (result ? ['Employees'] : [])
         }),
         updateEmployee: builder.mutation<Employee, { id: number; attrs: Partial<Employee> }>({
             query: ({id, attrs}) => ({
@@ -36,12 +39,14 @@ export const employeesApi = createApi({
                 method: "PUT",
                 body: attrs,
             }),
+            invalidatesTags: (result, error, {id}) => (result ? ['Employees'] : [])
         }),
         deleteEmployee: builder.mutation<Employee, number>({
             query: (id) => ({
                 url: `/${id}`,
                 method: "DELETE",
             }),
+            invalidatesTags: (result, error) => (result ? ['Employees'] : [])
         }),
     })
 });

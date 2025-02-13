@@ -15,7 +15,7 @@ export interface AuthResponse {
 export const usersApi = createApi({
     reducerPath: "usersApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: `${CONFIG.BACKEND_URL}/auth`,
+        baseUrl: `${CONFIG.BACKEND_URL}`,
         prepareHeaders: (headers, {getState}) => {
             const token = (getState() as any).auth.token;
             if (token) {
@@ -25,43 +25,28 @@ export const usersApi = createApi({
         },
     }),
     endpoints: (builder) => ({
-        getAllUsers: builder.query<User[], string | undefined>({
-            query: (email) => ({
-                url: "",
-                params: email ? {email} : {},
-            }),
-        }),
-        getUser: builder.query<User, number>({
-            query: (id) => `/${id}`,
-        }),
         userProfile: builder.query<User, void>({
             query: () => `/whoami`,
         }),
         signup: builder.mutation<AuthResponse, User>({
             query: (user) => ({
-                url: "/signup",
+                url: "/auth/signup",
                 method: "POST",
                 body: user,
             }),
         }),
         login: builder.mutation<AuthResponse, { email: string; password: string }>({
             query: (credentials) => ({
-                url: "/login",
+                url: "/auth/login",
                 method: "POST",
                 body: credentials,
             }),
         }),
         updateUser: builder.mutation<User, { id: number; attrs: Partial<User> }>({
             query: ({id, attrs}) => ({
-                url: `/${id}`,
+                url: `/auth/${id}`,
                 method: "PUT",
                 body: attrs,
-            }),
-        }),
-        deleteUser: builder.mutation<void, number>({
-            query: (id) => ({
-                url: `/${id}`,
-                method: "DELETE",
             }),
         }),
     }),
@@ -69,11 +54,8 @@ export const usersApi = createApi({
 
 // Export hooks for usage in components
 export const {
-    useGetAllUsersQuery,
-    useGetUserQuery,
     useUserProfileQuery,
     useSignupMutation,
     useLoginMutation,
     useUpdateUserMutation,
-    useDeleteUserMutation,
 } = usersApi;
