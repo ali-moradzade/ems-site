@@ -8,6 +8,8 @@ import {EmployeeProvider} from "./context/Employee";
 import {JobProvider} from "./context/Job";
 import {AuthProvider} from "./context/Auth";
 import {BrowserRouter} from "react-router-dom";
+import {Provider} from "react-redux";
+import {store} from "./store";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -15,16 +17,18 @@ const root = ReactDOM.createRoot(
 
 root.render(
     <BrowserRouter>
-        <AuthProvider>
-            <JobProvider>
-                <EmployeeProvider>
-                    <UserProvider>
-                        <React.StrictMode>
-                            <App/>
-                        </React.StrictMode>
-                    </UserProvider>
-                </EmployeeProvider>
-            </JobProvider>
-        </AuthProvider>
+        <Provider store={store}>
+            <AuthProvider>
+                <JobProvider>
+                    <EmployeeProvider>
+                        <UserProvider>
+                            <React.StrictMode>
+                                <App/>
+                            </React.StrictMode>
+                        </UserProvider>
+                    </EmployeeProvider>
+                </JobProvider>
+            </AuthProvider>
+        </Provider>
     </BrowserRouter>
 );
