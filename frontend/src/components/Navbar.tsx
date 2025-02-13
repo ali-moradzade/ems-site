@@ -1,24 +1,24 @@
-import {useUserContext} from "../hooks/use-user-context";
 import React from "react";
 import {FaSearch} from "react-icons/fa";
-import {Link} from "./Link";
-import {useNavigationContext} from "../hooks/use-navigation-context";
-import {useAuthContext} from "../hooks/use-auth-context";
+import {Link, useLocation, useNavigate} from "react-router-dom";
+import {useAppDispatch, useUserProfileQuery} from "../store";
+import {logout} from "../store/slices/authSlice";
 
 export function Navbar() {
-    const {user} = useUserContext()!;
+    const dispatch = useAppDispatch();
+    const location = useLocation();
+    const navigate = useNavigate();
+    const {data: user = {firstName: 'MOCK', lastName: 'MOCK'}} = useUserProfileQuery();
     const {firstName, lastName} = user;
-    const {setToken} = useAuthContext();
-    const {currentPath, navigate} = useNavigationContext();
 
-    if (['/', '/signup', '/login'].includes(currentPath)) {
+    if (['/', '/signup', '/login'].includes(location.pathname)) {
         return (
             <div></div>
         );
     }
 
     const handleLogout = () => {
-        setToken(null);
+        dispatch(logout());
         navigate('/login');
     };
 
@@ -39,7 +39,6 @@ export function Navbar() {
                 <Link
                     to={item.path}
                     className="nav-link"
-                    activeClassName="active"
                 >
                     {item.label}
                 </Link>

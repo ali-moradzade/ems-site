@@ -1,10 +1,16 @@
-import {useJobContext} from "../../hooks/use-job-context";
 import {JobDetails} from "./JobDetails";
 import {JobEdit} from "./JobEdit";
 import {JobDelete} from "./JobDelete";
+import {useGetAllJobsQuery} from "../../store";
 
 export function JobList() {
-    const {jobs} = useJobContext();
+    const {data: jobs} = useGetAllJobsQuery('');
+
+    if (!jobs) {
+        return (
+            <div>Error getting jobs</div>
+        )
+    }
 
     const renderedJobs = jobs.map(({id, name}) => {
         return (

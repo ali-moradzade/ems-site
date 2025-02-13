@@ -1,4 +1,4 @@
-import {Job} from "../../apis/jobs";
+import {Job} from "../../store";
 
 interface JobDetailsProps {
     job: Job;

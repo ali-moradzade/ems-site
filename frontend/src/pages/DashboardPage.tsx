@@ -1,10 +1,15 @@
 import {Dashboard} from "../components/Dashboard";
-import {useEmployeeContext} from "../hooks/use-employee-context";
-import {useJobContext} from "../hooks/use-job-context";
+import {useGetAllEmployeesQuery, useGetAllJobsQuery} from "../store";
 
 export function DashboardPage() {
-    const {employees} = useEmployeeContext();
-    const {jobs} = useJobContext();
+    const {data: employees} = useGetAllEmployeesQuery('');
+    const {data: jobs} = useGetAllJobsQuery('');
+
+    if (!employees || !jobs) {
+        return (
+            <div>Error getting data</div>
+        );
+    }
 
     const cards = [
         {

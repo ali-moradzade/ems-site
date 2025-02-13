@@ -1,7 +1,5 @@
-import {Job} from "../../apis/jobs";
 import {FormEvent, useRef, useState} from "react";
-import {useJobContext} from "../../hooks/use-job-context";
-import {AxiosError} from "axios";
+import {Job, useUpdateJobMutation} from "../../store";
 
 interface JobEditProps {
     job: Job;
@@ -9,12 +7,11 @@ interface JobEditProps {
 
 export function JobEdit({job}: JobEditProps) {
     const {id} = job;
-    const {updateJob} = useJobContext();
+    const [updateJob, {isLoading, error}] = useUpdateJobMutation();
 
     const [name, setName] = useState(job.name);
     const [date, setDate] = useState(job.date.split('T')[0]);
 
-    const [error, setError] = useState<null | string>(null);
     const [hasDateError, setHasDateError] = useState(false);
 
     const closeRef = useRef<HTMLButtonElement>(null);
@@ -22,7 +19,6 @@ export function JobEdit({job}: JobEditProps) {
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        setError(null);
         setHasDateError(false);
 
         // Date validation
@@ -33,15 +29,15 @@ export function JobEdit({job}: JobEditProps) {
         }
 
         try {
-            await updateJob(id, {
-                name, date,
-            });
+            await updateJob({
+                id, attrs: {
+                    name, date,
+                }
+            }).unwrap();
 
             closeRef.current?.click();
         } catch (e: any) {
-            e = e as AxiosError;
-
-            setError(`Creation failed: ${e.response.data.message}`);
+            console.error(e?.message || 'Error updating job');
         }
     };
 
@@ -62,7 +58,7 @@ export function JobEdit({job}: JobEditProps) {
                     <div className="modal-body">
                         {error &&
                             <div className="alert alert-danger" role="alert" id={`edit_job_${id}_alert`}>
-                                {error}
+                                {(error as any)?.data?.message || 'Error updating job'}
                             </div>
                         }
                         <form onSubmit={handleSubmit} id={`edit_job_${id}_form`}>
@@ -88,8 +84,14 @@ export function JobEdit({job}: JobEditProps) {
                                 />
                             </div>
                             <div className="mb-3">
-                                <button type="submit" className="btn btn-sm btn-success w-100" name="update_job_btn">
-                                    Update Job
+                                <button type="submit" className="btn btn-sm btn-success w-100" name="update_job_btn"
+                                        disabled={isLoading}>
+                                    {isLoading ? (
+                                        <span className="spinner-border spinner-border-sm" role="status"
+                                              aria-hidden="true"></span>
+                                    ) : (
+                                        'Update Job'
+                                    )}
                                 </button>
                             </div>
                         </form>

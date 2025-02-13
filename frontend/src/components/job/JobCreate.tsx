@@ -1,14 +1,12 @@
 import {FormEvent, useRef, useState} from "react";
-import {useJobContext} from "../../hooks/use-job-context";
-import {AxiosError} from "axios";
+import {useCreateJobMutation} from "../../store";
 
 export function JobCreate() {
-    const {createJob} = useJobContext();
+    const [createJob, {error, isLoading}] = useCreateJobMutation();
 
     const [name, setName] = useState('');
     const [date, setDate] = useState('');
 
-    const [error, setError] = useState<null | string>(null);
     const [hasDateError, setHasDateError] = useState(false);
 
     const closeRef = useRef<HTMLButtonElement>(null);
@@ -16,7 +14,6 @@ export function JobCreate() {
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        setError(null);
         setHasDateError(false);
 
         // Date validation
@@ -29,7 +26,7 @@ export function JobCreate() {
         try {
             await createJob({
                 name, date,
-            });
+            }).unwrap();
 
             // close the modal
             closeRef.current?.click();
@@ -38,9 +35,7 @@ export function JobCreate() {
             setName('');
             setDate('');
         } catch (e: any) {
-            e = e as AxiosError;
-
-            setError(`Creation failed: ${e.response.data.message}`);
+            console.error(e?.message || 'Error creating job');
         }
     };
 
@@ -58,7 +53,7 @@ export function JobCreate() {
                     <div className="modal-body">
                         {error &&
                             <div className="alert alert-danger" role="alert" id="add_job_alert">
-                                {error}
+                                {(error as any)?.data?.message || 'Error creating job'}
                             </div>
                         }
                         <form onSubmit={handleSubmit} id="add_job_form">
@@ -86,7 +81,11 @@ export function JobCreate() {
                             </div>
                             <div className="mb-3">
                                 <button type="submit" className="btn btn-sm btn-success w-100" name="add_job_btn">
-                                    Add Job
+                                    {isLoading ? (
+                                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    ) : (
+                                        'Add Job'
+                                    )}
                                 </button>
                             </div>
                         </form>

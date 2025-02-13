@@ -1,5 +1,5 @@
 import {WelcomePanel} from "../components/WelcomePanel";
-import {Link} from "../components/Link";
+import {Link} from "react-router-dom";
 
 export function HomePage() {
     return (
