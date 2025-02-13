@@ -1,6 +1,5 @@
-import {Employee} from "../../apis/employees";
-import {useEmployeeContext} from "../../hooks/use-employee-context";
 import {FormEvent, useRef} from "react";
+import {Employee, useDeleteEmployeeMutation} from "../../store";
 
 interface EmployeeDeleteProps {
     employee: Employee;
@@ -8,15 +7,19 @@ interface EmployeeDeleteProps {
 
 export function EmployeeDelete({employee}: EmployeeDeleteProps) {
     const {id, firstName, lastName} = employee;
-    const {deleteEmployee} = useEmployeeContext();
+    const [deleteEmployee, {error, isLoading}] = useDeleteEmployeeMutation();
 
     const closeRef = useRef<HTMLButtonElement>(null);
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        deleteEmployee(id).then();
 
-        closeRef.current?.click();
+        try {
+            await deleteEmployee(id).unwrap();
+            closeRef.current?.click();
+        } catch (e: any) {
+            console.error(e?.message || 'Error deleting employee');
+        }
     };
 
     return (
@@ -32,6 +35,11 @@ export function EmployeeDelete({employee}: EmployeeDeleteProps) {
                         ></button>
                     </div>
                     <div className="modal-body">
+                        {error &&
+                            <div className="alert alert-danger" role="alert" id={`edit_job_${id}_alert`}>
+                                {(error as any)?.data?.message || 'Error deleting employee'}
+                            </div>
+                        }
                         <form onSubmit={handleSubmit} id={`delete_employee_${id}_form`}>
                             <div className="mb-3">
                                 <p>
@@ -40,7 +48,14 @@ export function EmployeeDelete({employee}: EmployeeDeleteProps) {
                                 </p>
                             </div>
                             <div className="mb-3 float-end">
-                                <button className="btn btn-danger btn-sm" name="delete_btn">Yes</button>
+                                <button className="btn btn-danger btn-sm" name="delete_btn">
+                                    {isLoading ? (
+                                        <span className="spinner-border spinner-border-sm" role="status"
+                                              aria-hidden="true"></span>
+                                    ) : (
+                                        'Yes'
+                                    )}
+                                </button>
                                 <button className="btn btn-secondary btn-sm ms-2" name="cancel">Cancel</button>
                             </div>
                         </form>

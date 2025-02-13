@@ -1,9 +1,6 @@
-import {Employee} from "../../apis/employees";
 import {FormEvent, useRef, useState} from "react";
-import {useEmployeeContext} from "../../hooks/use-employee-context";
-import {useJobContext} from "../../hooks/use-job-context";
 import {isPhoneNumber} from "class-validator";
-import {AxiosError} from "axios";
+import {Employee, useGetAllJobsQuery, useUpdateEmployeeMutation} from "../../store";
 
 interface EmployeeEditProps {
     employee: Employee;
@@ -11,8 +8,8 @@ interface EmployeeEditProps {
 
 export function EmployeeEdit({employee}: EmployeeEditProps) {
     const {id} = employee;
-    const {updateEmployee} = useEmployeeContext();
-    const {jobs} = useJobContext();
+    const [updateEmployee, {error, isLoading}] = useUpdateEmployeeMutation();
+    const {data: jobs = []} = useGetAllJobsQuery('');
 
     const [firstName, setFirstName] = useState(employee.firstName);
     const [lastName, setLastName] = useState(employee.lastName);
@@ -21,7 +18,6 @@ export function EmployeeEdit({employee}: EmployeeEditProps) {
     const [phone, setPhone] = useState(employee.phone);
     const [job, setJob] = useState(employee.job);
 
-    const [error, setError] = useState<string | null>(null);
     const [validationErrors, setValidationErrors] = useState({
         firstName: false,
         lastName: false,
@@ -35,7 +31,6 @@ export function EmployeeEdit({employee}: EmployeeEditProps) {
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        setError(null);
         setValidationErrors({
             firstName: false,
             lastName: false,
@@ -64,14 +59,15 @@ export function EmployeeEdit({employee}: EmployeeEditProps) {
         }
 
         try {
-            await updateEmployee(id, {
-                firstName, lastName, email, date, phone, job,
-            });
+            await updateEmployee({
+                id, attrs: {
+                    firstName, lastName, email, date, phone, job,
+                }
+            }).unwrap();
 
             closeRef.current?.click();
         } catch (e: any) {
-            e = e as AxiosError;
-            setError(`Update failed: ${e.response.data.message}`);
+            console.error(e?.message || 'Error editing employee');
         }
     };
 
@@ -102,7 +98,7 @@ export function EmployeeEdit({employee}: EmployeeEditProps) {
                     <div className="modal-body">
                         {error &&
                             <div className="alert alert-danger" role="alert" id={`edit_employee_${id}_alert`}>
-                                {error}
+                                {(error as any)?.data?.message || 'Error updating employee'}
                             </div>
                         }
                         <form onSubmit={handleSubmit} id={`edit_employee_${id}_form`}>
@@ -166,9 +162,14 @@ export function EmployeeEdit({employee}: EmployeeEditProps) {
                             </div>
                             <div className="mb-3">
                                 <button type="submit" className="btn btn-sm btn-success w-100"
-                                        name="update_employee_btn"
+                                        name="update_employee_btn" disabled={isLoading}
                                 >
-                                    Update Employee
+                                    {isLoading ? (
+                                        <span className="spinner-border spinner-border-sm" role="status"
+                                              aria-hidden="true"></span>
+                                    ) : (
+                                        'Update Employee'
+                                    )}
                                 </button>
                             </div>
                         </form>

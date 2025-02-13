@@ -1,12 +1,10 @@
 import {FormEvent, useRef, useState} from "react";
-import {useEmployeeContext} from "../../hooks/use-employee-context";
-import {useJobContext} from "../../hooks/use-job-context";
 import {isPhoneNumber} from "class-validator";
-import {AxiosError} from "axios";
+import {useCreateEmployeeMutation, useGetAllJobsQuery} from "../../store";
 
 export function EmployeeCreate() {
-    const {createEmployee} = useEmployeeContext();
-    const {jobs} = useJobContext();
+    const {data: jobs = []} = useGetAllJobsQuery('');
+    const [createEmployee, {error, isLoading}] = useCreateEmployeeMutation();
 
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -15,7 +13,6 @@ export function EmployeeCreate() {
     const [phone, setPhone] = useState('');
     const [job, setJob] = useState(jobs[0]?.name || 'Unemployed');
 
-    const [error, setError] = useState<string | null>(null);
     const [validationErrors, setValidationErrors] = useState({
         firstName: false,
         lastName: false,
@@ -29,7 +26,6 @@ export function EmployeeCreate() {
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        setError(null);
         setValidationErrors({
             firstName: false,
             lastName: false,
@@ -62,7 +58,7 @@ export function EmployeeCreate() {
         try {
             await createEmployee({
                 firstName, lastName, email, date, phone, job
-            });
+            }).unwrap();
 
             // close the modal
             closeRef.current?.click();
@@ -74,9 +70,7 @@ export function EmployeeCreate() {
             setDate('');
             setPhone('');
         } catch (err: any) {
-            err = err as AxiosError;
-
-            setError(`Creation failed: ${err.response.data.message}`);
+            console.error(err?.message || 'Error creating employee');
         }
     };
 
@@ -104,7 +98,7 @@ export function EmployeeCreate() {
                     <div className="modal-body">
                         {error && (
                             <div className="alert alert-danger" role="alert" id="add_employee_alert">
-                                {error}
+                                {(error as any)?.data?.message || 'Error creating employee'}
                             </div>
                         )}
                         <form onSubmit={handleSubmit} id="add_employee_form">
@@ -168,7 +162,12 @@ export function EmployeeCreate() {
                             </div>
                             <div className="mb-3">
                                 <button type="submit" className="btn btn-sm btn-success w-100" name="add_employee_btn">
-                                    Add Employee
+                                    {isLoading ? (
+                                        <span className="spinner-border spinner-border-sm" role="status"
+                                              aria-hidden="true"></span>
+                                    ) : (
+                                        'Add Employee'
+                                    )}
                                 </button>
                             </div>
                         </form>

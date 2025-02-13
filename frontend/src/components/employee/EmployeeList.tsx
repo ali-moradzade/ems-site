@@ -1,10 +1,18 @@
 import {EmployeeDetails} from "./EmployeeDetails";
 import {EmployeeEdit} from "./EmployeeEdit";
 import {EmployeeDelete} from "./EmployeeDelete";
-import {useEmployeeContext} from "../../hooks/use-employee-context";
+import {useGetAllEmployeesQuery} from "../../store";
 
 export function EmployeeList() {
-    const {employees} = useEmployeeContext();
+    const {data: employees} = useGetAllEmployeesQuery('');
+
+    if (!employees) {
+        return (
+            <div>
+                Error getting employees
+            </div>
+        )
+    }
 
     const renderedEmployees = employees.map(({id, firstName, lastName, email}) => {
         return (
