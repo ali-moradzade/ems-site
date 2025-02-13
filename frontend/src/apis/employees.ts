@@ -25,12 +25,6 @@ export class EmployeesRestClient {
         return res.data;
     }
 
-    async getEmployee(id: string): Promise<Employee> {
-        const res = await axios.get(`${this.url}/${id}`);
-
-        return res.data;
-    }
-
     async createEmployee(
         employee: Partial<Employee>
     ) {
