@@ -2,14 +2,17 @@ import {configureStore} from "@reduxjs/toolkit";
 import {employeesApi} from "./apis/employees";
 import {setupListeners} from "@reduxjs/toolkit/query";
 import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
+import {jobsApi} from "./apis/jobs";
 
 export const store = configureStore({
     reducer: {
         [employeesApi.reducerPath]: employeesApi.reducer,
+        [jobsApi.reducerPath]: jobsApi.reducer,
     },
     middleware: (getDefaultMiddleware) => {
         return getDefaultMiddleware()
-            .concat(employeesApi.middleware);
+            .concat(employeesApi.middleware)
+            .concat(jobsApi.middleware);
     }
 });
 
@@ -27,5 +30,14 @@ export {
     useCreateEmployeeMutation,
     useUpdateEmployeeMutation,
     useDeleteEmployeeMutation,
-} from './apis/employees'
+} from './apis/employees';
 export type {Employee} from './apis/employees';
+
+export {
+    useGetAllJobsQuery,
+    useGetJobQuery,
+    useCreateJobMutation,
+    useUpdateJobMutation,
+    useDeleteJobMutation,
+} from './apis/jobs';
+export type {Job} from './apis/jobs';
