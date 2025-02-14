@@ -1,66 +1,68 @@
-import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
-import {InjectRepository} from "@nestjs/typeorm";
-import {User} from "./user.entity";
-import {Repository} from "typeorm";
+import {BadRequestException, Injectable, NotFoundException, UnauthorizedException} from '@nestjs/common';
+import {Model} from "mongoose";
+import {InjectModel} from "@nestjs/mongoose";
+import {User, UserDocument} from "../../common/database/schemas/user.schema";
+import * as bcrypt from "bcrypt";
+import {UserTokenDto} from "../../dtos/userToken.dto";
+import {AuthService} from "../auth/auth.service";
 
 @Injectable()
 export class UsersService {
+    private readonly saltOrRounds = 10;
+
     constructor(
-        @InjectRepository(User) private repository: Repository<User>,
+        @InjectModel(User.name) private repository: Model<UserDocument>,
+        private authService: AuthService,
     ) {
     }
 
-    findOne(id: number) {
+    findOne(id: string) {
         if (!id) {
             return null;
         }
 
-        return this.repository.findOneBy({
-            id,
-        });
+        return this.repository.findById(id);
     }
 
-    find(email: string) {
-        return this.repository.findBy({
+    findByEmail(email: string) {
+        return this.repository.findOne({
             email,
         });
     }
 
-    async create(
-        email: string, password: string, firstName: string, lastName: string,
-    ) {
-        const users = await this.find(email);
+    async signup(email: string, password: string, firstName: string, lastName: string) {
+        const result = await this.findByEmail(email);
 
-        if (users.length) {
-            throw new BadRequestException('Email in use');
+        if (result) {
+            throw new BadRequestException('Email already in use');
         }
 
-        const user = this.repository.create({
-            email, password, firstName, lastName,
+        const hash = await bcrypt.hash(password, this.saltOrRounds);
+
+        return this.repository.create({
+            email, password: hash, firstName, lastName
         });
-
-        return this.repository.save(user);
     }
 
-    async update(id: number, attrs: Partial<User>) {
-        const user = await this.findOne(id);
+    async login(email: string, password: string) {
+        const user = await this.findByEmail(email);
 
         if (!user) {
             throw new NotFoundException('User not found');
         }
 
-        Object.assign(user, attrs);
-
-        return this.repository.save(user);
-    }
-
-    async remove(id: number) {
-        const user = await this.findOne(id);
-
-        if (!user) {
-            throw new NotFoundException('User not found');
+        if (!(await bcrypt.compare(password, user.password))) {
+            throw new UnauthorizedException('Invalid credentials');
         }
 
-        return this.repository.remove(user);
+        const tokenProperties: UserTokenDto = {
+            id: user.id,
+            email,
+        };
+        const token = this.authService.createJwtToken(tokenProperties);
+
+        return {
+            token,
+        };
     }
 }

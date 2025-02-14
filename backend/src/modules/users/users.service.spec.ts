@@ -1,14 +1,16 @@
-import {beforeEach, describe, expect, test, vi} from 'vitest';
+import {afterAll, beforeEach, describe, expect, test, vi} from 'vitest';
 import {Test, TestingModule} from '@nestjs/testing';
 import {UsersService} from './users.service';
-import {Repository} from "typeorm";
-import {User} from "./user.entity";
-import {getRepositoryToken} from "@nestjs/typeorm";
-import {BadRequestException} from '@nestjs/common';
+import {BadRequestException, NotFoundException} from '@nestjs/common';
+import {ConfigModule, ConfigService} from "@nestjs/config";
+import {validate} from "../../env-validation";
+import {DatabaseModule} from "../../common/database/database.module";
+import {AuthService} from "../auth/auth.service";
+import {connectToTestDb, disconnectFromTestDb, dropTestDb} from "../../common/database/mongoose-test-helper";
 
 describe('UsersService', () => {
     let service: UsersService;
-    let repositoryMock: Partial<Repository<User>>;
+    let configService: ConfigService;
 
     const userMock = {
         id: 1,
@@ -19,73 +21,85 @@ describe('UsersService', () => {
     };
 
     beforeEach(async () => {
-        repositoryMock = {
-            findOneBy: vi.fn().mockResolvedValue(null),
-            findBy: vi.fn().mockResolvedValue([]),
-            create: vi.fn(),
-            save: vi.fn(),
-        };
-
         const module: TestingModule = await Test.createTestingModule({
+            imports: [
+                ConfigModule.forRoot({
+                    isGlobal: true,
+                    envFilePath: `.env.test`,
+                    validate,
+                }),
+                DatabaseModule,
+            ],
             providers: [
                 UsersService,
                 {
-                    provide: getRepositoryToken(User),
-                    useValue: repositoryMock,
-                }
+                    provide: AuthService,
+                    useValue: {
+                        createJwtToken: vi.fn().mockReturnValue('fake-jwt-token'),
+                    },
+                },
             ],
         }).compile();
 
         service = module.get<UsersService>(UsersService);
+        configService = module.get<ConfigService>(ConfigService);
+    });
+
+    beforeEach(async () => {
+        await connectToTestDb(configService);
+        await dropTestDb();
+    });
+
+    afterAll(async () => {
+        await disconnectFromTestDb();
     });
 
     test('creates users service', () => {
         expect(service).toBeDefined();
     });
 
-    describe('create', () => {
-        test('given user properties, creates user', async () => {
-            vi.spyOn(repositoryMock, 'create').mockReturnValue(userMock);
-            vi.spyOn(repositoryMock, 'save').mockResolvedValue(userMock);
+    describe('signup', () => {
+        test('given user properties, creates user with hashed password', async () => {
             const {email, password, firstName, lastName} = userMock;
 
-            const user = await service.create(email, password, firstName, lastName);
+            const user = await service.signup(email, password, firstName, lastName);
 
             expect(user).toBeDefined();
-            expect(user.email).toEqual(email);
+            expect(user.password).not.toEqual(password);
         });
 
-        test('creating user with duplicate email, throws error', async () => {
-            vi.spyOn(repositoryMock, 'findBy').mockResolvedValue([userMock]);
+        test('duplicate email, throws BadRequestException', async () => {
             const {email, password, firstName, lastName} = userMock;
 
-            await expect(service.create(email, password, firstName, lastName)).rejects.toThrow(BadRequestException);
+            await service.signup(email, password, firstName, lastName);
+
+            await expect(service.signup(email, password, firstName, lastName)).rejects.toThrow(BadRequestException);
         });
     });
 
-    describe('update', () => {
-        test('existing user, updates it', async () => {
-            vi.spyOn(repositoryMock, 'findOneBy').mockResolvedValue(userMock);
-            vi.spyOn(repositoryMock, 'save').mockImplementation((user: any) => Promise.resolve(user));
-            const id = userMock.id;
-            const attrs = {
-                firstName: 'new-firstName'
-            };
+    describe('login', () => {
+        test('given user credentials, logins the user', async () => {
+            const {email, password, firstName, lastName} = userMock;
 
-            const user = await service.update(id, attrs);
+            await service.signup(email, password, firstName, lastName);
+            const {token} = await service.login(email, password);
 
-            expect(user).toBeDefined();
-            expect(user.firstName).toEqual(attrs.firstName);
+            expect(token).toBeDefined();
+            expect(token).toBeTypeOf('string');
         });
 
-        test('non-existing user, throws NotFoundException', async () => {
-            vi.spyOn(repositoryMock, 'findOneBy').mockResolvedValue(null);
-            const id = userMock.id;
-            const attrs = {
-                firstName: 'new-firstName'
-            };
+        test('user not signed up, throws error: NotFoundException', async () => {
+            const {email, password} = userMock;
 
-            await expect(service.update(id, attrs)).rejects.toThrow(/not found/);
-        })
+            await expect(service.login(email, password)).rejects.toThrow(NotFoundException);
+        });
+
+        test('invalid credentials, throws error: UnauthorizedException', async () => {
+            const {email, password, firstName, lastName} = userMock;
+
+            await service.signup(email, password, firstName, lastName);
+
+            await expect(service.login(email, 'invalid-password')).rejects.toThrow(/Invalid credentials/);
+        });
     });
 });
