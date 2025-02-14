@@ -1,4 +1,4 @@
-import {Injectable, NotFoundException} from '@nestjs/common';
+import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
 import {InjectModel} from "@nestjs/mongoose";
 import {Model} from "mongoose";
 import {Job, JobDocument} from "../../common/database/schemas/job.schema";
@@ -11,41 +11,32 @@ export class JobsService {
     }
 
     findOne(id: string) {
-        if (!id) {
-            return null;
-        }
-
         return this.repository.findById(id);
     }
 
     findByTitle(title: string) {
-        return this.repository.find({title});
+        return this.repository.findOne({title});
     }
 
-    create(name: string, date: Date) {
-        const job = this.repo.create({name, date});
-        return this.repo.save(job);
+    findAllJobs() {
+        return this.repository.find();
     }
 
-    async update(id: number, attrs: Partial<Job>) {
-        const job = await this.findOne(id);
-
-        if (!job) {
-            throw new NotFoundException('Job not found');
+    async create(title: string, description: string, companyId: string, expirationDate: Date) {
+        const result = await this.findByTitle(title);
+        if (result) {
+            throw new BadRequestException('Job with this title already exists');
         }
 
-        Object.assign(job, attrs);
-
-        return this.repo.save(job);
+        return await this.repository.create({title, description, _companyId: companyId, expirationDate});
     }
 
-    async remove(id: number) {
-        const job = await this.findOne(id);
-
+    async remove(id: string) {
+        const job = await this.repository.findByIdAndDelete(id);
         if (!job) {
-            throw new NotFoundException('Job not found');
+            throw new NotFoundException(`Job with id ${id} not found`);
         }
 
-        return this.repo.remove(job);
+        return job;
     }
 }

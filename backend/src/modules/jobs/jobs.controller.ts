@@ -1,7 +1,8 @@
-import {Body, Controller, Delete, Get, Param, Post, Put, Query} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post} from '@nestjs/common';
 import {JobsService} from "./jobs.service";
 import {CreateJobDto} from "./dtos/create-job.dto";
-import {UpdateJobDto} from "./dtos/update-job.dto";
+import {Serialize} from "../../decorators/serialize.decorator";
+import {JobDto} from "./dtos/job.dto";
 
 @Controller('jobs')
 export class JobsController {
@@ -11,38 +12,30 @@ export class JobsController {
     }
 
     @Get(':id')
+    @Serialize(JobDto)
     async findJob(
         @Param('id') id: string,
     ) {
-        return this.jobsService.findOne(parseInt(id));
+        return this.jobsService.findOne(id);
     }
 
     @Get()
-    findAllJobs(
-        @Query('name') name: string,
-    ) {
-        return this.jobsService.findByTitle(name);
+    @Serialize(JobDto)
+    findAllJobs() {
+        return this.jobsService.findAllJobs();
     }
 
     @Post()
     createJob(
-        @Body() body: CreateJobDto,
+        @Body() {title, description, companyId, expirationDate}: CreateJobDto,
     ) {
-        return this.jobsService.create(body.name, body.date);
+        return this.jobsService.create(title, description, companyId, expirationDate);
     }
 
     @Delete(':id')
     deleteJob(
         @Param('id') id: string,
     ) {
-        return this.jobsService.remove(parseInt(id));
-    }
-
-    @Put(':id')
-    updateJob(
-        @Param('id') id: string,
-        @Body() body: UpdateJobDto
-    ) {
-        return this.jobsService.update(parseInt(id), body);
+        return this.jobsService.remove(id);
     }
 }

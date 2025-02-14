@@ -37,7 +37,7 @@ export class Job {
     title: string;
 
     @Prop({required: true})
-    description: number;
+    description: string;
 
     @Prop({type: Types.ObjectId, ref: 'Company', required: true})
     _companyId: Types.ObjectId;

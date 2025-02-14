@@ -1,95 +1,82 @@
-import {beforeEach, describe, expect, it, test, vi} from "vitest";
+import {afterAll, beforeEach, describe, expect, it, test} from "vitest";
 import {Test, TestingModule} from '@nestjs/testing';
-import {getRepositoryToken} from "@nestjs/typeorm";
-import {Repository} from "typeorm";
 import {JobsService} from "./jobs.service";
-import {Job} from "./jobs.entity";
+import {ConfigModule, ConfigService} from "@nestjs/config";
+import {Types} from "mongoose";
+import {validate} from "../../env-validation";
+import {DatabaseModule} from "../../common/database/database.module";
+import {connectToTestDb, disconnectFromTestDb, dropTestDb} from "../../common/database/mongoose-test-helper";
 
 describe('JobsService', () => {
     let service: JobsService;
-    let mockRepo: Partial<Repository<Job>>;
-    let jobMock: Job;
+    let configService: ConfigService;
+
+    const title = 'Software Engineer';
+    const description = 'A developer is required';
+    const companyId = new Types.ObjectId().toString();
+    const expirationDate = new Date();
 
     beforeEach(async () => {
-        jobMock = {
-            id: 1,
-            name: 'job',
-            date: new Date(),
-        };
-        mockRepo = {
-            findOneBy: vi.fn().mockResolvedValue(null),
-            findBy: vi.fn().mockResolvedValue([]),
-            create: vi.fn().mockResolvedValue(jobMock),
-            save: vi.fn().mockResolvedValue(jobMock),
-            remove: vi.fn().mockResolvedValue(jobMock),
-        };
-
         const module: TestingModule = await Test.createTestingModule({
+            imports: [
+                ConfigModule.forRoot({
+                    isGlobal: true,
+                    envFilePath: `.env.test`,
+                    validate,
+                }),
+                DatabaseModule,
+            ],
             providers: [
                 JobsService,
-                {
-                    provide: getRepositoryToken(Job),
-                    useValue: mockRepo,
-                }
             ],
         }).compile();
 
         service = module.get<JobsService>(JobsService);
-        mockRepo = module.get(getRepositoryToken(Job));
+        configService = module.get<ConfigService>(ConfigService);
+
+        await connectToTestDb(configService);
+    });
+
+    beforeEach(async () => {
+        await dropTestDb();
+    });
+
+    afterAll(async () => {
+        await disconnectFromTestDb();
     });
 
     it('should be defined', () => {
         expect(service).toBeDefined();
-        expect(mockRepo).toBeDefined();
     });
 
     describe('create', () => {
         test('valid properties, creates job', async () => {
-            const job = await service.create(jobMock.name, jobMock.date);
+            const job = await service.create(title, description, companyId, expirationDate);
 
             expect(job).toBeDefined();
-            expect(job.id).toEqual(jobMock.id);
-        });
-    });
-
-    describe('update', () => {
-        test('existing job, updates it', async () => {
-            vi.spyOn(mockRepo, 'findOneBy').mockResolvedValue(jobMock);
-            vi.spyOn(mockRepo, 'save').mockImplementation((arg: any) => Promise.resolve(arg));
-            const id = jobMock.id;
-            const properties: Partial<Job> = {
-                name: 'new-name',
-            };
-
-            const job = await service.update(id, properties);
-
-            expect(job).toBeDefined();
-            expect(job.name).toEqual(properties.name);
+            expect(job.id).toBeDefined();
+            expect(job.title).toEqual(title);
         });
 
-        test('non-existent job with that id, throws NotFoundException', async () => {
-            const id = 1000;
-            const properties: Partial<Job> = {
-                name: 'new-name',
-            };
+        test('duplicate title, throws BadRequestException', async () => {
+            await service.create(title, description, companyId, expirationDate);
 
-            await expect(service.update(id, properties)).rejects.toThrow(/not found/);
+            await expect(service.create(title, description, companyId, expirationDate)).rejects.toThrow(/already exists/);
         });
     });
 
     describe('remove', () => {
         test('existing job, removes it', async () => {
-            vi.spyOn(mockRepo, 'findOneBy').mockResolvedValue(jobMock);
-            const id = jobMock.id;
+            const job = await service.create(title, description, companyId, expirationDate);
 
-            const employee = await service.remove(id);
+            await service.remove(job.id);
+            const result = await service.findByTitle(title);
 
-            expect(employee).toBeDefined();
-            expect(employee.id).toEqual(id);
+            expect(result).toBeNull();
         });
 
         test('non-existent job with that id, throws NotFoundException', async () => {
-            const id = 1000;
+            const id = new Types.ObjectId().toString();
 
             await expect(service.remove(id)).rejects.toThrow(/not found/);
         });
