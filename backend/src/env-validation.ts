@@ -18,6 +18,10 @@ class EnvironmentVariables {
     @IsString()
     @IsNotEmpty()
     JWT_SECRET_KEY: string;
+
+    @IsString()
+    @IsNotEmpty()
+    SUPER_ADMIN_SECRET_KEY: string;
 }
 
 export function validate(config: Record<string, unknown>) {
