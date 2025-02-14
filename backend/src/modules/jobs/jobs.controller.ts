@@ -21,7 +21,7 @@ export class JobsController {
     findAllJobs(
         @Query('name') name: string,
     ) {
-        return this.jobsService.find(name);
+        return this.jobsService.findByTitle(name);
     }
 
     @Post()

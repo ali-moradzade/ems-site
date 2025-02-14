@@ -6,7 +6,7 @@ export const connectToTestDb = async (configService: ConfigService) => {
     if (!uri) {
         throw new Error('MONGO_URI is not defined');
     }
-    await mongoose.connect(uri, {dbName: 'vpn_management_test'});
+    await mongoose.connect(uri, {dbName: 'ems_website_test'});
 };
 
 export const disconnectFromTestDb = async () => {

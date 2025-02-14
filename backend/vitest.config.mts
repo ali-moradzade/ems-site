@@ -3,9 +3,14 @@ import {defineConfig} from 'vitest/config';
 
 export default defineConfig({
     test: {
-        include: ['**/*.e2e-spec.ts'],
         globals: true,
         root: './',
+        testTimeout: 15000,
+        hookTimeout: 15000,
     },
-    plugins: [swc.vite()],
+    plugins: [
+        swc.vite({
+            module: {type: 'es6'},
+        }),
+    ],
 });

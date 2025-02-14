@@ -43,10 +43,11 @@ describe('UsersService', () => {
 
         service = module.get<UsersService>(UsersService);
         configService = module.get<ConfigService>(ConfigService);
+
+        await connectToTestDb(configService);
     });
 
     beforeEach(async () => {
-        await connectToTestDb(configService);
         await dropTestDb();
     });
 
