@@ -1,9 +1,10 @@
-import {Body, Controller, Delete, Get, Param, Post} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post, UseGuards} from '@nestjs/common';
 import {JobsService} from "./jobs.service";
 import {CreateJobDto} from "./dtos/create-job.dto";
 import {Serialize} from "../../decorators/serialize.decorator";
 import {JobDto} from "./dtos/job.dto";
 import {ParseObjectIdPipe} from "../../pipes/parseObjectId.pipe";
+import {AdminGuard} from "../../gaurds/admin.guard";
 
 @Controller('jobs')
 export class JobsController {
@@ -27,6 +28,7 @@ export class JobsController {
     }
 
     @Post()
+    @UseGuards(AdminGuard)
     createJob(
         @Body() {title, description, companyId, expirationDate}: CreateJobDto,
     ) {
@@ -34,6 +36,7 @@ export class JobsController {
     }
 
     @Delete(':id')
+    @UseGuards(AdminGuard)
     deleteJob(
         @Param('id', ParseObjectIdPipe) id: string,
     ) {
