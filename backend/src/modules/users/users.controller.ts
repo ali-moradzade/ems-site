@@ -8,7 +8,7 @@ import {UserTokenDto} from "../../dtos/userToken.dto";
 import {Serialize} from "../../decorators/serialize.decorator";
 import {User} from "../../decorators/user.decorator";
 
-@Controller('auth')
+@Controller('users')
 export class UsersController {
     constructor(
         private usersService: UsersService,

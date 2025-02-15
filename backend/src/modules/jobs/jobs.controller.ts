@@ -7,6 +7,7 @@ import {ParseObjectIdPipe} from "../../pipes/parseObjectId.pipe";
 import {AdminGuard} from "../../gaurds/admin.guard";
 
 @Controller('jobs')
+@Serialize(JobDto)
 export class JobsController {
     constructor(
         private jobsService: JobsService,
@@ -14,7 +15,6 @@ export class JobsController {
     }
 
     @Get(':id')
-    @Serialize(JobDto)
     async findJob(
         @Param('id', ParseObjectIdPipe) id: string,
     ) {
@@ -22,7 +22,6 @@ export class JobsController {
     }
 
     @Get()
-    @Serialize(JobDto)
     findAllJobs() {
         return this.jobsService.findAllJobs();
     }

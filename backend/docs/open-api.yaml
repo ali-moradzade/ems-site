@@ -5,14 +5,12 @@ info:
   description: Open API specifications for ems backend APIs
 
 paths:
-  /auth/signup:
+  /users/signup:
     post:
-      summary: Sign up user
+      summary: User Signup
       description: Signs up user with specified properties
       tags:
         - Users
-      security:
-        - UserGuard: [ ]
       requestBody:
         required: true
         content:
@@ -22,7 +20,7 @@ paths:
               $ref: "#/components/schemas/User"
       responses:
         200:
-          description: Created user
+          description: User created
           content:
             application/json:
               schema:
@@ -33,7 +31,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BadRequest"
-  /auth/login:
+  /users/login:
     post:
       summary: User Login
       description: Logins user and returns JWT token
@@ -69,13 +67,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BadRequest"
+        404:
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotFound"
         401:
           description: Invalid credentials
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Unauthorized"
-  /whoami:
+  /users/profile:
     get:
       summary: Get Current User
       description: Returns current logged in user
@@ -83,8 +87,6 @@ paths:
         - Users
       security:
         - UserGuard: [ ]
-      parameters:
-        - $ref: "#/components/parameters/UserIdPathParam"
       responses:
         200:
           description: User properties
@@ -104,151 +106,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/BadRequest"
-  /auth:
-    get:
-      summary: Get All Users
-      description: Returns all users, optionally you can specify `email` query param
-      tags:
-        - Users
-      security:
-        - UserGuard: [ ]
-      parameters:
-        - name: email
-          in: query
-          description: Email
-          schema:
-            type: string
-            format: email
-      responses:
-        200:
-          description: List of users
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UsersList"
-        401:
-          description: You did not provide token or token is invalid
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Unauthorized"
-  /auth/{userId}:
-    get:
-      summary: Get User
-      description: Returns user with the specified `userId`
-      tags:
-        - Users
-      security:
-        - UserGuard: [ ]
-      parameters:
-        - $ref: "#/components/parameters/UserIdPathParam"
-      responses:
-        200:
-          description: User properties
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        401:
-          description: You did not provide token or token is invalid
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Unauthorized"
-        400:
-          description: Bad request, you did not provide properties correctly
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadRequest"
-    put:
-      summary: Update User
-      description: Updates specified user with `userId`, with new properties
-      tags:
-        - Users
-      security:
-        - UserGuard: [ ]
-      parameters:
-        - $ref: "#/components/parameters/UserIdPathParam"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              $ref: "#/components/schemas/User"
-      responses:
-        200:
-          description: Updated user
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        401:
-          description: You did not provide token or token is invalid
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Unauthorized"
-        400:
-          description: Bad request, you did not provide properties correctly
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadRequest"
-        404:
-          description: Not found, did not found user with this id
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/NotFound"
-    delete:
-      summary: Delete User
-      description: Deletes specified user with `userId`
-      tags:
-        - Users
-      security:
-        - UserGuard: [ ]
-      parameters:
-        - $ref: "#/components/parameters/UserIdPathParam"
-      responses:
-        200:
-          description: Deleted user properties
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        401:
-          description: You did not provide token or token is invalid
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Unauthorized"
-        400:
-          description: Bad request, you did not provide properties correctly
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadRequest"
-        404:
-          description: Not found, did not found user with this id
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/NotFound"
   /jobs:
     get:
       summary: Get All Jobs
       description: Returns all jobs
       tags:
         - Jobs
-      parameters:
-        - name: name
-          in: query
-          description: Job name
-          schema:
-            type: string
-            example: Software Enginner
       responses:
         200:
           description: List of jobs
@@ -261,6 +124,8 @@ paths:
       description: Creates a new job with specified properties
       tags:
         - Jobs
+      security:
+        - AdminGuard: [ ]
       requestBody:
         required: true
         content:
@@ -296,44 +161,13 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Job"
-    put:
-      summary: Update Job
-      description: Updates specified job with `jobId`, with new properties
-      tags:
-        - Jobs
-      parameters:
-        - $ref: "#/components/parameters/JobIdPathParam"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              $ref: "#/components/schemas/Job"
-      responses:
-        200:
-          description: Updated job
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Job"
-        400:
-          description: Bad request, you did not provide properties correctly
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadRequest"
-        404:
-          description: Not found, did not found job with this id
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/NotFound"
     delete:
       summary: Delete Job
       description: Deletes specified job with `jobId`
       tags:
         - Jobs
+      security:
+        - AdminGuard: [ ]
       parameters:
         - $ref: "#/components/parameters/JobIdPathParam"
       responses:
@@ -355,113 +189,77 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/NotFound"
-  /employees:
+  /companies:
     get:
-      summary: Get All Employees
+      summary: Get All Companies
       description: Returns all companies
       tags:
-        - Employees
-      parameters:
-        - name: email
-          in: query
-          description: Employee email
-          schema:
-            type: string
-            format: email
+        - Companies
       responses:
         200:
           description: List of companies
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/EmployeesList"
+                $ref: "#/components/schemas/CompaniesList"
     post:
-      summary: Create Employee
-      description: Creates a new employee with specified properties
+      summary: Create Company
+      description: Creates a new company with specified properties
       tags:
-        - Employees
+        - Companies
+      security:
+        - AdminGuard: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              $ref: "#/components/schemas/Employee"
+              $ref: "#/components/schemas/Company"
       responses:
         200:
-          description: Created employee
+          description: Created company
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Employee"
+                $ref: "#/components/schemas/Company"
         400:
           description: Bad request, you did not provide properties correctly
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/BadRequest"
-  /employees/{employeeId}:
+  /companies/{companyId}:
     get:
-      summary: Get Employee
-      description: Returns employee with the specified `employeeId`
+      summary: Get Company
+      description: Returns company with the specified `companyId`
       tags:
-        - Employees
+        - Companies
       parameters:
-        - $ref: "#/components/parameters/EmployeeIdPathParam"
+        - $ref: "#/components/parameters/CompanyIdPathParam"
       responses:
         200:
-          description: Employee properties
+          description: Company properties
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Employee"
-    put:
-      summary: Update Employee
-      description: Updates specified employee with `employeeId`, with new properties
-      tags:
-        - Employees
-      parameters:
-        - $ref: "#/components/parameters/EmployeeIdPathParam"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              $ref: "#/components/schemas/Employee"
-      responses:
-        200:
-          description: Updated employee
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Employee"
-        400:
-          description: Bad request, you did not provide properties correctly
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/BadRequest"
-        404:
-          description: Not found, did not found employee with this id
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/NotFound"
+                $ref: "#/components/schemas/Company"
     delete:
-      summary: Delete Employee
-      description: Deletes specified employee with `employeeId`
+      summary: Delete Company
+      description: Deletes specified company with `companyId`
       tags:
-        - Employees
+        - Companies
       parameters:
-        - $ref: "#/components/parameters/EmployeeIdPathParam"
+        - $ref: "#/components/parameters/CompanyIdPathParam"
+      security:
+        - AdminGuard: []
       responses:
         200:
-          description: Deleted employee properties
+          description: Deleted company properties
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Employee"
+                $ref: "#/components/schemas/Company"
         400:
           description: Bad request, you did not provide properties correctly
           content:
@@ -469,7 +267,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/BadRequest"
         404:
-          description: Not found, did not found employee with this id
+          description: Not found, did not found company with this id
           content:
             application/json:
               schema:
@@ -478,6 +276,11 @@ paths:
 components:
   securitySchemes:
     UserGuard:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: This API requires a valid JWT token
+    AdminGuard:
       type: http
       scheme: bearer
       bearerFormat: JWT
@@ -497,10 +300,10 @@ components:
       required: true
       schema:
         type: string
-    EmployeeIdPathParam:
-      name: employeeId
+    CompanyIdPathParam:
+      name: companyId
       in: path
-      description: Employee Id
+      description: Company Id
       required: true
       schema:
         type: string
@@ -509,8 +312,9 @@ components:
       type: object
       properties:
         id:
-          type: number
-          example: 1
+          type: string
+          format: objectId
+          example: 672b6ec43a791df2f93da42d
           readOnly: true
         email:
           type: string
@@ -534,50 +338,55 @@ components:
       type: object
       properties:
         id:
-          type: number
-          example: 1
+          type: string
+          format: objectId
+          example: 672b6ec43a791df2f93da42d
           readOnly: true
-        name:
+        title:
           type: string
           example: Web Developer
-        date:
+        description:
+          type: string
+          example: An experienced software developer is required
+        companyId:
+          type: string
+          format: objectId
+          example: 672b6ec43a791df2f93da42d
+        creationDate:
           type: string
           format: date
+          example: 2024-11-05T19:48:11.847Z
+        expirationDate:
+          type: string
+          format: date
+          example: 2024-11-05T19:48:11.847Z
     JobsList:
       type: array
       description: List of Jobs
       items:
         $ref: "#/components/schemas/Job"
-    Employee:
+    Company:
       type: object
       properties:
         id:
-          type: number
-          example: 1
+          type: string
+          format: objectId
+          example: 672b6ec43a791df2f93da42d
           readOnly: true
-        email:
+        name:
           type: string
-          format: email
-        firstName:
+          format: Company X
+        description:
           type: string
-          example: firstName
-        lastName:
+          example: This company provides software security services
+        logo:
           type: string
-          example: lastName
-        phone:
-          type: string
-          format: phone
-        job:
-          type: string
-          example: Software Developer
-        date:
-          type: string
-          format: date
-    EmployeesList:
+          example: https://www.google.com/image
+    CompaniesList:
       type: array
-      description: List of Employees
+      description: List of Companies
       items:
-        $ref: "#/components/schemas/Employee"
+        $ref: "#/components/schemas/Company"
     Unauthorized:
       type: object
       properties:
