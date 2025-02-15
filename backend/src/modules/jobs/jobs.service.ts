@@ -28,7 +28,7 @@ export class JobsService {
             throw new BadRequestException('Job with this title already exists');
         }
 
-        return await this.repository.create({title, description, _companyId: companyId, expirationDate});
+        return this.repository.create({title, description, _companyId: companyId, expirationDate});
     }
 
     async remove(id: string) {

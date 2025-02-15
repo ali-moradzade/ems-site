@@ -4,9 +4,9 @@ import {Test, TestingModule} from "@nestjs/testing";
 import {AppModule} from "../src/app.module";
 import request from "supertest";
 
-describe('/employees', () => {
+describe('/companies', () => {
     let app: INestApplication;
-    const path = '/employees';
+    const path = '/companies';
     const mockEmployee = {
         email: 'email@gmail.com',
         firstName: 'John',
@@ -57,7 +57,7 @@ describe('/employees', () => {
     });
 
     describe('GET /', () => {
-        test('no employees in db, returns []', async () => {
+        test('no companies in db, returns []', async () => {
             const email = 'test@gmail.com';
 
             const res = await request(app.getHttpServer())

@@ -358,7 +358,7 @@ paths:
   /employees:
     get:
       summary: Get All Employees
-      description: Returns all employees
+      description: Returns all companies
       tags:
         - Employees
       parameters:
@@ -370,7 +370,7 @@ paths:
             format: email
       responses:
         200:
-          description: List of employees
+          description: List of companies
           content:
             application/json:
               schema:

@@ -1,5 +1,5 @@
 import {MiddlewareConsumer, Module, ValidationPipe} from '@nestjs/common';
-import {EmployeesModule} from './modules/employees/employees.module';
+import {CompaniesModule} from './modules/companies/companies.module';
 import {JobsModule} from './modules/jobs/jobs.module';
 import {UsersModule} from './modules/users/users.module';
 import {APP_PIPE} from "@nestjs/core";
@@ -16,7 +16,7 @@ import session from 'express-session';
             validate,
         }),
         DatabaseModule,
-        EmployeesModule,
+        CompaniesModule,
         JobsModule,
         UsersModule,
     ],

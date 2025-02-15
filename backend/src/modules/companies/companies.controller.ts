@@ -1,0 +1,40 @@
+import {Body, Controller, Delete, Get, Param, Post} from '@nestjs/common';
+import {CompaniesService} from "./companies.service";
+import {CreateCompanyDto} from "./dtos/create-company.dto";
+import {Serialize} from "../../decorators/serialize.decorator";
+import {CompanyDto} from "./dtos/company.dto";
+
+@Controller('companies')
+@Serialize(CompanyDto)
+export class CompaniesController {
+    constructor(
+        private companiesService: CompaniesService,
+    ) {
+    }
+
+    @Get(':id')
+    async findCompany(
+        @Param('id') id: string,
+    ) {
+        return this.companiesService.findOne(id);
+    }
+
+    @Get()
+    findAllCompanies() {
+        return this.companiesService.findAllCompanies();
+    }
+
+    @Post()
+    createCompany(
+        @Body() {name, description, logo}: CreateCompanyDto,
+    ) {
+        return this.companiesService.create(name, description, logo);
+    }
+
+    @Delete(':id')
+    removeCompany(
+        @Param('id') id: string,
+    ) {
+        return this.companiesService.remove(id);
+    }
+}

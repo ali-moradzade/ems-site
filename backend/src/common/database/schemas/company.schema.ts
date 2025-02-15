@@ -26,13 +26,13 @@ export class Company {
         return this.id.toString();
     }
 
-    @Prop({required: true})
+    @Prop({unique: true, required: true})
     name: string;
 
     @Prop({required: true})
     description: string;
 
-    @Prop({required: true})
+    @Prop({default: ''})
     logo: string;
 }
 
