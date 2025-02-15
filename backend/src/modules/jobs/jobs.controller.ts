@@ -3,6 +3,7 @@ import {JobsService} from "./jobs.service";
 import {CreateJobDto} from "./dtos/create-job.dto";
 import {Serialize} from "../../decorators/serialize.decorator";
 import {JobDto} from "./dtos/job.dto";
+import {ParseObjectIdPipe} from "../../pipes/parseObjectId.pipe";
 
 @Controller('jobs')
 export class JobsController {
@@ -14,7 +15,7 @@ export class JobsController {
     @Get(':id')
     @Serialize(JobDto)
     async findJob(
-        @Param('id') id: string,
+        @Param('id', ParseObjectIdPipe) id: string,
     ) {
         return this.jobsService.findOne(id);
     }
@@ -34,7 +35,7 @@ export class JobsController {
 
     @Delete(':id')
     deleteJob(
-        @Param('id') id: string,
+        @Param('id', ParseObjectIdPipe) id: string,
     ) {
         return this.jobsService.remove(id);
     }

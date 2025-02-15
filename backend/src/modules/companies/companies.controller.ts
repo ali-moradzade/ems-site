@@ -3,6 +3,7 @@ import {CompaniesService} from "./companies.service";
 import {CreateCompanyDto} from "./dtos/create-company.dto";
 import {Serialize} from "../../decorators/serialize.decorator";
 import {CompanyDto} from "./dtos/company.dto";
+import {ParseObjectIdPipe} from "../../pipes/parseObjectId.pipe";
 
 @Controller('companies')
 @Serialize(CompanyDto)
@@ -14,7 +15,7 @@ export class CompaniesController {
 
     @Get(':id')
     async findCompany(
-        @Param('id') id: string,
+        @Param('id', ParseObjectIdPipe) id: string,
     ) {
         return this.companiesService.findOne(id);
     }
@@ -33,7 +34,7 @@ export class CompaniesController {
 
     @Delete(':id')
     removeCompany(
-        @Param('id') id: string,
+        @Param('id', ParseObjectIdPipe) id: string,
     ) {
         return this.companiesService.remove(id);
     }
