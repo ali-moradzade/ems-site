@@ -84,6 +84,15 @@ describe('Admin Service', () => {
 
             expect(result).toBeNull();
         });
+
+        test('existing admin with that id, returns it', async () => {
+            const admin = await service.signup(correctKey, email, password, name, superAdmin);
+
+            const result = await service.findOne(admin.id);
+
+            expect(result).toBeDefined();
+            expect(result.email).toEqual(admin.email);
+        });
     });
 
     describe('findAll', () => {

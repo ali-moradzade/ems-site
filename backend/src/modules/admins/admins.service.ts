@@ -23,10 +23,6 @@ export class AdminsService {
     }
 
     async findOne(id: string) {
-        if (!id) {
-            return null;
-        }
-
         return this.repository.findById(id);
     }
 

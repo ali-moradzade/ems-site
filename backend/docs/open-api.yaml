@@ -86,7 +86,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Unauthorized"
-                
+
   /users/signup:
     post:
       summary: User Signup
