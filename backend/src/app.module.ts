@@ -7,6 +7,7 @@ import {ConfigModule} from "@nestjs/config";
 import {validate} from './env-validation';
 import {DatabaseModule} from './common/database/database.module';
 import session from 'express-session';
+import {AdminsModule} from "./modules/admins/admins.module";
 
 @Module({
     imports: [
@@ -16,6 +17,8 @@ import session from 'express-session';
             validate,
         }),
         DatabaseModule,
+
+        AdminsModule,
         CompaniesModule,
         JobsModule,
         UsersModule,

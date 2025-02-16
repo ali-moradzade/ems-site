@@ -1,15 +1,29 @@
-import {beforeEach, describe, expect, test} from "vitest";
+import {afterAll, beforeEach, describe, expect, test} from "vitest";
 import {INestApplication} from "@nestjs/common";
 import {Test, TestingModule} from "@nestjs/testing";
 import {AppModule} from "../src/app.module";
 import request from "supertest";
+import {Types} from "mongoose";
+import {ConfigService} from "@nestjs/config";
+import {connectToTestDb, disconnectFromTestDb, dropTestDb} from "../src/common/database/mongoose-test-helper";
 
 describe('/jobs', () => {
     let app: INestApplication;
+    let configService: ConfigService;
     const path = '/jobs';
+    const admin = {
+        secretKey: '',
+        email: 'admin@gmail.com',
+        password: 'password',
+        name: 'admin',
+        superAdmin: false,
+        token: '',
+    };
     const mockJob = {
-        name: 'Graphic Designer',
-        date: '2023-12-08',
+        title: 'Software Engineer',
+        description: 'An experienced software engineer is required',
+        companyId: new Types.ObjectId().toString(),
+        expirationDate: new Date(),
     };
 
     beforeEach(async () => {
@@ -20,22 +34,60 @@ describe('/jobs', () => {
         }).compile();
 
         app = moduleFixture.createNestApplication();
+
+        configService = moduleFixture.get<ConfigService>(ConfigService);
+        admin.secretKey = configService.get<string>('SUPER_ADMIN_SECRET_KEY');
+
         await app.init();
     });
 
+    beforeEach(async () => {
+        await connectToTestDb(configService);
+        await dropTestDb();
+        await request(app.getHttpServer())
+            .post(`/admins/signup`)
+            .send(admin)
+            .expect(201);
+
+        const adminRes = await request(app.getHttpServer())
+            .post(`/admins/login`)
+            .send({
+                email: admin.email,
+                password: admin.password,
+            })
+            .expect(200);
+
+        expect(adminRes.body.token).toBeDefined();
+        admin.token = adminRes.body.token;
+    });
+
+    afterAll(async () => {
+        await disconnectFromTestDb();
+    });
+
     describe('POST /', () => {
-        test('given the job, creates it', async () => {
+        test('given job properties, creates it', async () => {
+            const res = await request(app.getHttpServer())
+                .post(path)
+                .set('Authorization', `Bearer ${admin.token}`)
+                .send(mockJob);
+
+            expect(res.statusCode).toEqual(201);
+            expect(res.body.title).toEqual(mockJob.title);
+        });
+
+        test('not giving valid admin token, throws UnauthorizedException', async () => {
             const res = await request(app.getHttpServer())
                 .post(path)
                 .send(mockJob);
 
-            expect(res.statusCode).toEqual(201);
-            expect(res.body.name).toEqual(mockJob.name);
+            expect(res.statusCode).toEqual(401);
+            expect(res.body.message).toMatch(/Unauthorized/);
         });
     });
 
     describe('GET /', () => {
-        test('no existing job, given job name, returns []', async () => {
+        test('no existing job, returns []', async () => {
             const res = await request(app.getHttpServer())
                 .get(path);
 
@@ -43,51 +95,62 @@ describe('/jobs', () => {
             expect(res.body).toEqual([]);
         });
 
-        test('with existing job, given job name, returns job with that name', async () => {
+        test('several existing jobs, returns them', async () => {
+            const expectedJobs = 2;
             await request(app.getHttpServer())
                 .post(path)
-                .send(mockJob)
-                .expect(201);
-            const {name} = mockJob;
+                .set('Authorization', `Bearer ${admin.token}`)
+                .send({
+                    ...mockJob,
+                    title: 'title1'
+                });
+            await request(app.getHttpServer())
+                .post(path)
+                .set('Authorization', `Bearer ${admin.token}`)
+                .send({
+                    ...mockJob,
+                    title: 'title2'
+                });
 
             const res = await request(app.getHttpServer())
-                .get(path)
-                .query({name});
+                .get(path);
 
             expect(res.statusCode).toEqual(200);
-            expect(res.body.length).toEqual(1);
-            expect(res.body[0].name).toEqual(name);
+            expect(res.body.length).toEqual(expectedJobs);
         });
     });
 
     describe('GET /:id', () => {
-        test('no existing job, returns empty object', async () => {
+        test('no existing job, returns {}', async () => {
+            const id = new Types.ObjectId().toString();
             const res = await request(app.getHttpServer())
-                .get(`${path}/12345`);
+                .get(`${path}/${id}`);
 
             expect(res.statusCode).toEqual(200);
             expect(res.body).toEqual({});
         });
 
-        test('with existing job, given job id, returns that job', async () => {
+        test('existing job, giving its id, returns it', async () => {
             const createdRes = await request(app.getHttpServer())
                 .post(path)
-                .send(mockJob)
-                .expect(201);
+                .set('Authorization', `Bearer ${admin.token}`)
+                .send(mockJob);
             const job = createdRes.body;
 
             const res = await request(app.getHttpServer())
                 .get(`${path}/${job.id}`);
 
             expect(res.statusCode).toEqual(200);
-            expect(res.body.name).toEqual(mockJob.name);
+            expect(res.body.title).toEqual(mockJob.title);
         });
     });
 
     describe('DELETE /:id', () => {
         test('no existing job, returns 404, Not Found', async () => {
+            const id = new Types.ObjectId().toString();
             const res = await request(app.getHttpServer())
-                .delete(`${path}/12345`);
+                .delete(`${path}/${id}`)
+                .set('Authorization', `Bearer ${admin.token}`);
 
             expect(res.statusCode).toEqual(404);
             expect(res.body.error).toMatch(/Not Found/);
@@ -96,44 +159,26 @@ describe('/jobs', () => {
         test('existing job, given job id, deletes the job', async () => {
             const createdRes = await request(app.getHttpServer())
                 .post(path)
-                .send(mockJob)
-                .expect(201);
+                .set('Authorization', `Bearer ${admin.token}`)
+                .send(mockJob);
             const job = createdRes.body;
 
             const res = await request(app.getHttpServer())
-                .delete(`${path}/${job.id}`);
+                .delete(`${path}/${job.id}`)
+                .set('Authorization', `Bearer ${admin.token}`);
 
             expect(res.statusCode).toEqual(200);
-            expect(res.body.name).toEqual(job.name);
-        });
-    });
-
-    describe('PUT /:id', () => {
-        test('given no job with that id, returns 404, Not Found', async () => {
-            const res = await request(app.getHttpServer())
-                .put(`${path}/12345`)
-                .send({name: 'hello'});
-
-            expect(res.statusCode).toEqual(404);
-            expect(res.body.error).toMatch(/Not Found/);
+            expect(res.body.title).toEqual(job.title);
         });
 
-        test('existing job, updates the job', async () => {
-            const createdRes = await request(app.getHttpServer())
-                .post(path)
-                .send(mockJob)
-                .expect(201);
-            const job = createdRes.body;
-            const newName = 'Web Designer';
+        test('not giving admin token, throws UnauthorizedException', async () => {
+            const id = new Types.ObjectId().toString();
 
             const res = await request(app.getHttpServer())
-                .put(`${path}/${job.id}`)
-                .send({
-                    name: newName,
-                });
-
-            expect(res.statusCode).toEqual(200);
-            expect(res.body.name).toEqual(newName);
-        });
+                .delete(`${path}/${id}`)
+            
+            expect(res.status).toEqual(401);
+            expect(res.body.message).toMatch(/Unauthorized/);
+        })
     });
 });

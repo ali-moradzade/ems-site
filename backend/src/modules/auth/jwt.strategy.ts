@@ -18,17 +18,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(payload: any) {
-        if (payload.superAdmin) {
-            return {
-                id: payload.id,
-                email: payload.email,
-                superAdmin: payload.superAdmin,
-            } as AdminTokenDto;
-        }
-
-        return {
-            id: payload.id,
-            email: payload.email,
-        } as UserTokenDto;
+        return payload.superAdmin !== undefined
+            ? {id: payload.id, email: payload.email, superAdmin: payload.superAdmin} as AdminTokenDto
+            : {id: payload.id, email: payload.email} as UserTokenDto;
     }
 }

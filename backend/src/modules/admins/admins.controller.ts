@@ -1,4 +1,4 @@
-import {Body, Controller, Post} from '@nestjs/common';
+import {Body, Controller, HttpCode, Post} from '@nestjs/common';
 import {AdminsService} from './admins.service';
 import {LoginDto} from './dtos/login.dto';
 import {SignupDto} from './dtos/signup.dto';
@@ -21,6 +21,7 @@ export class AdminsController {
     }
 
     @Post('login')
+    @HttpCode(200)
     login(@Body() {email, password}: LoginDto) {
         return this.adminService.login(email, password);
     }
