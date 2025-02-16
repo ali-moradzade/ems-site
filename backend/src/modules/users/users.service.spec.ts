@@ -12,13 +12,10 @@ describe('UsersService', () => {
     let service: UsersService;
     let configService: ConfigService;
 
-    const userMock = {
-        id: 1,
-        email: 'mock@mock.com',
-        password: 'mockedPassword239723',
-        firstName: 'mockFirstName',
-        lastName: 'mockLastName',
-    };
+    const email = 'mock@mock.com';
+    const password = 'mockedPassword239723';
+    const firstName = 'mockFirstName';
+    const lastName = 'mockLastName';
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -61,8 +58,6 @@ describe('UsersService', () => {
 
     describe('signup', () => {
         test('given user properties, creates user with hashed password', async () => {
-            const {email, password, firstName, lastName} = userMock;
-
             const user = await service.signup(email, password, firstName, lastName);
 
             expect(user).toBeDefined();
@@ -70,8 +65,6 @@ describe('UsersService', () => {
         });
 
         test('duplicate email, throws BadRequestException', async () => {
-            const {email, password, firstName, lastName} = userMock;
-
             await service.signup(email, password, firstName, lastName);
 
             await expect(service.signup(email, password, firstName, lastName)).rejects.toThrow(BadRequestException);
@@ -80,9 +73,8 @@ describe('UsersService', () => {
 
     describe('login', () => {
         test('given user credentials, logins the user', async () => {
-            const {email, password, firstName, lastName} = userMock;
-
             await service.signup(email, password, firstName, lastName);
+
             const {token} = await service.login(email, password);
 
             expect(token).toBeDefined();
@@ -90,14 +82,10 @@ describe('UsersService', () => {
         });
 
         test('user not signed up, throws error: NotFoundException', async () => {
-            const {email, password} = userMock;
-
             await expect(service.login(email, password)).rejects.toThrow(NotFoundException);
         });
 
         test('invalid credentials, throws error: UnauthorizedException', async () => {
-            const {email, password, firstName, lastName} = userMock;
-
             await service.signup(email, password, firstName, lastName);
 
             await expect(service.login(email, 'invalid-password')).rejects.toThrow(/Invalid credentials/);
