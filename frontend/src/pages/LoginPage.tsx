@@ -9,7 +9,7 @@ export function LoginPage() {
     const navigate = useNavigate();
     const token = useAppSelector(state => state.auth.token);
     const [login, {isLoading, error}] = useLoginMutation();
-    const {data: user} = useUserProfileQuery();
+    const {data: user} = useUserProfileQuery(undefined, {skip: !token});
 
     useEffect(() => {
         if (user) {
@@ -23,13 +23,12 @@ export function LoginPage() {
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
         try {
             const {token} = await login({email, password}).unwrap();
 
-            dispatch(setCredentials({token, user: null}));
             setPassword('');
-
-            navigate('/dashboard');
+            dispatch(setCredentials({token, user: null}));
         } catch (err: any) {
             console.error(err?.message || 'Login failed');
         }

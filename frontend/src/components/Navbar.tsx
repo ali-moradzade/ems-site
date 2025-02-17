@@ -1,17 +1,16 @@
 import React from "react";
 import {FaSearch} from "react-icons/fa";
 import {Link, useLocation, useNavigate} from "react-router-dom";
-import {useAppDispatch, useUserProfileQuery} from "../store";
+import {useAppDispatch, useAppSelector} from "../store";
 import {logout} from "../store/slices/authSlice";
 
 export function Navbar() {
     const dispatch = useAppDispatch();
     const location = useLocation();
     const navigate = useNavigate();
-    const {data: user = {firstName: 'MOCK', lastName: 'MOCK'}} = useUserProfileQuery();
-    const {firstName, lastName} = user;
+    const user = useAppSelector(state => state.auth.user);
 
-    if (['/', '/signup', '/login'].includes(location.pathname)) {
+    if (['/', '/signup', '/login'].includes(location.pathname) || !user) {
         return (
             <div></div>
         );
@@ -46,7 +45,7 @@ export function Navbar() {
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container-fluid">
                 <Link to={'/dashboard'} className="navbar-brand">
-                    Hi, {firstName} {lastName}
+                    Hi, {user.firstName} {user.lastName}
                 </Link>
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
