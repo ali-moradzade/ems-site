@@ -1,4 +1,4 @@
-import {BadRequestException, Injectable, NotFoundException, UnauthorizedException} from '@nestjs/common';
+import {BadRequestException, Injectable, UnauthorizedException} from '@nestjs/common';
 import {Model} from "mongoose";
 import {InjectModel} from "@nestjs/mongoose";
 import {User, UserDocument} from "../../common/database/schemas/user.schema";
@@ -44,7 +44,7 @@ export class UsersService {
         const user = await this.findByEmail(email);
 
         if (!user) {
-            throw new NotFoundException('User not found');
+            throw new UnauthorizedException('Invalid credentials');
         }
 
         if (!(await bcrypt.compare(password, user.password))) {

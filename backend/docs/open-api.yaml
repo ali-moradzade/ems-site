@@ -26,7 +26,7 @@ paths:
                   required:
                     - secretKey
       responses:
-        200:
+        201:
           description: Admin created
           content:
             application/json:
@@ -107,7 +107,7 @@ paths:
               type: object
               $ref: "#/components/schemas/User"
       responses:
-        200:
+        201:
           description: User created
           content:
             application/json:
