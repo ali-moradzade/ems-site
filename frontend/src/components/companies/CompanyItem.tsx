@@ -12,7 +12,7 @@ export function CompanyItem({company}: CompanyItemProps) {
             <div className="card shadow-sm border-0 rounded">
                 <div className="d-flex justify-content-center mt-3">
                     <img src={logo} alt={name} className="img-fluid rounded-circle"
-                         style={{width: '80px', height: '80px', objectFit: 'cover'}}/>
+                         style={{width: '250px', height: '250px', objectFit: 'cover'}}/>
                 </div>
 
                 <div className="card-body text-center">
