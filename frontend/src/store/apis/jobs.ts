@@ -17,7 +17,7 @@ export const jobsApi = createApi({
     }),
     tagTypes: ["Job", "JobItem"],
     endpoints: (builder) => ({
-        getAllJobs: builder.query<Job[], string | undefined>({
+        getAllJobs: builder.query<Job[], void>({
             query: () => '',
             providesTags: (result) =>
                 result

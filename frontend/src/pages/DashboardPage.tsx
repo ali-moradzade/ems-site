@@ -1,8 +1,9 @@
 import {Card, Dashboard} from "../components/Dashboard";
-import {useAppSelector, useGetAllJobsQuery} from "../store";
+import {useAppSelector, useGetAllCompaniesQuery, useGetAllJobsQuery} from "../store";
 
 export function DashboardPage() {
-    const {data: jobs} = useGetAllJobsQuery('');
+    const {data: jobs} = useGetAllJobsQuery();
+    const {data: companies} = useGetAllCompaniesQuery();
     const user = useAppSelector(state => state.auth.user);
 
     const cards: Card[] = [];
@@ -20,6 +21,16 @@ export function DashboardPage() {
             {
                 title: <div>{jobs.length} <small className="text-muted">Jobs</small></div>,
                 link: '/jobs',
+                linkText: 'View All'
+            },
+        );
+    }
+
+    if (companies) {
+        cards.push(
+            {
+                title: <div>{companies.length} <small className="text-muted">Companies</small></div>,
+                link: '/companies',
                 linkText: 'View All'
             },
         );

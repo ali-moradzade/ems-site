@@ -29,6 +29,10 @@ export function Navbar() {
         {
             label: 'Jobs',
             path: '/jobs',
+        },
+        {
+            label: 'Companies',
+            path: '/companies',
         }
     ];
 

@@ -2,7 +2,7 @@ import {JobDetails} from "./JobDetails";
 import {useGetAllJobsQuery} from "../../store";
 
 export function JobsList() {
-    const {data: jobs} = useGetAllJobsQuery('');
+    const {data: jobs} = useGetAllJobsQuery();
 
     if (!jobs) {
         return (

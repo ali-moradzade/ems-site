@@ -15,7 +15,7 @@ export const companiesApi = createApi({
     }),
     tagTypes: ['Companies', 'CompanyItem'],
     endpoints: (builder) => ({
-        getAllCompanies: builder.query<Company[], string | undefined>({
+        getAllCompanies: builder.query<Company[], void>({
             query: () => '',
             providesTags: ['Companies']
         }),

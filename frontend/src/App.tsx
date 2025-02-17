@@ -8,6 +8,7 @@ import {HomePage} from "./pages/HomePage";
 import {ProtectedRoute} from "./components/ProtectedRoute";
 import {Route, Routes} from "react-router-dom";
 import {UserProfile} from "./components/users/UserProfile";
+import {CompaniesList} from "./components/companies/CompaniesList";
 
 export function App() {
     return (
@@ -36,6 +37,11 @@ export function App() {
                 <Route path="/jobs" element={
                     <ProtectedRoute>
                         <JobsPage/>
+                    </ProtectedRoute>
+                }/>
+                <Route path="/companies" element={
+                    <ProtectedRoute>
+                        <CompaniesList/>
                     </ProtectedRoute>
                 }/>
             </Routes>
