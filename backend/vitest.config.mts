@@ -7,6 +7,9 @@ export default defineConfig({
         root: './',
         testTimeout: 15000,
         hookTimeout: 15000,
+        reporters: [
+            ['default', {summary: true}]
+        ],
     },
     plugins: [
         swc.vite({
