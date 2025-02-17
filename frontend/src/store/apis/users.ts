@@ -29,7 +29,7 @@ export const usersApi = createApi({
         userProfile: builder.query<User, void>({
             query: () => `/profile`,
         }),
-        signup: builder.mutation<AuthResponse, User>({
+        signup: builder.mutation<AuthResponse, Partial<User>>({
             query: (user) => ({
                 url: "/signup",
                 method: "POST",

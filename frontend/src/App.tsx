@@ -2,8 +2,7 @@ import React from 'react';
 import {Navbar} from "./components/Navbar";
 import {SignupPage} from "./pages/SignupPage";
 import {LoginPage} from "./pages/LoginPage";
-import {EmployeePage} from "./pages/EmployeePage";
-import {JobPage} from "./pages/JobPage";
+import {JobsPage} from "./pages/JobsPage";
 import {DashboardPage} from "./pages/DashboardPage";
 import {HomePage} from "./pages/HomePage";
 import {ProtectedRoute} from "./components/ProtectedRoute";
@@ -28,14 +27,9 @@ export function App() {
                         <DashboardPage/>
                     </ProtectedRoute>
                 }/>
-                <Route path="/employees" element={
-                    <ProtectedRoute>
-                        <EmployeePage/>
-                    </ProtectedRoute>
-                }/>
                 <Route path="/jobs" element={
                     <ProtectedRoute>
-                        <JobPage/>
+                        <JobsPage/>
                     </ProtectedRoute>
                 }/>
             </Routes>

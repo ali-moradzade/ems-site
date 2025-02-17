@@ -24,10 +24,6 @@ export function Navbar() {
 
     const linkItems = [
         {
-            label: 'Employees',
-            path: '/employees',
-        },
-        {
             label: 'Jobs',
             path: '/jobs',
         }

@@ -5,7 +5,7 @@ interface JobDetailsProps {
 }
 
 export function JobDetails({job}: JobDetailsProps) {
-    const {id, name, date} = job;
+    const {id, title, description, companyId, creationDate, expirationDate} = job;
 
     return (
         <div className="modal fade" id={`job_details_${id}`} tabIndex={-1}
@@ -24,16 +24,28 @@ export function JobDetails({job}: JobDetailsProps) {
                         >
                             <tbody>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>Id</th>
                                     <td>{id}</td>
                                 </tr>
                                 <tr>
-                                    <th>Job Added Date</th>
-                                    <td>{date.split('T')[0]}</td>
+                                    <th>Title</th>
+                                    <td>{title}</td>
                                 </tr>
                                 <tr>
-                                    <th>Name</th>
-                                    <td>{name}</td>
+                                    <th>Description</th>
+                                    <td>{description}</td>
+                                </tr>
+                                <tr>
+                                    <th>Company Id</th>
+                                    <td>{companyId}</td>
+                                </tr>
+                                <tr>
+                                    <th>Creation Date</th>
+                                    <td>{creationDate.toString().split('T')[0]}</td>
+                                </tr>
+                                <tr>
+                                    <th>Expiration Date</th>
+                                    <td>{expirationDate.toString().split('T')[0]}</td>
                                 </tr>
                             </tbody>
                         </table>

@@ -1,22 +1,16 @@
 import {Dashboard} from "../components/Dashboard";
-import {useGetAllEmployeesQuery, useGetAllJobsQuery} from "../store";
+import {useGetAllJobsQuery} from "../store";
 
 export function DashboardPage() {
-    const {data: employees} = useGetAllEmployeesQuery('');
     const {data: jobs} = useGetAllJobsQuery('');
 
-    if (!employees || !jobs) {
+    if (!jobs) {
         return (
             <div>Error getting data</div>
         );
     }
 
     const cards = [
-        {
-            title: 'Employees',
-            size: employees.length,
-            link: '/employees',
-        },
         {
             title: 'Jobs',
             size: jobs.length,

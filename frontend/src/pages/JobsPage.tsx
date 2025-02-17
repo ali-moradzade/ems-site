@@ -1,7 +1,6 @@
 import {JobList} from "../components/job/JobList";
-import {JobCreate} from "../components/job/JobCreate";
 
-export function JobPage() {
+export function JobsPage() {
     return (
         <div>
             {/* dashboard contents */}
@@ -24,9 +23,6 @@ export function JobPage() {
                     </div>
                 </div>
             </div>
-
-            {/* Add Job Modal */}
-            <JobCreate/>
         </div>
     );
 }

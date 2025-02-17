@@ -3,8 +3,11 @@ import {CONFIG} from "../../config";
 
 export interface Job {
     id: string;
-    name: string;
-    date: string;
+    title: string;
+    description: string;
+    companyId: string;
+    creationDate: Date;
+    expirationDate: Date;
 }
 
 export const jobsApi = createApi({

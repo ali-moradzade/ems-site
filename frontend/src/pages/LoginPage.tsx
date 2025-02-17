@@ -31,7 +31,6 @@ export function LoginPage() {
 
             navigate('/dashboard');
         } catch (err: any) {
-            console.log('fuck');
             console.error(err?.message || 'Login failed');
         }
     };
