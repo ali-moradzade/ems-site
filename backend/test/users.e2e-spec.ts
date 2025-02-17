@@ -141,7 +141,7 @@ describe('/users', () => {
 
         test('not giving a valid token, throws UnauthorizedException', async () => {
             const res = await request(app.getHttpServer())
-                .get(`${path}/profile`)
+                .get(`${path}/profile`);
 
             expect(res.statusCode).toEqual(401);
             expect(res.body.message).toMatch(/Unauthorized/);

@@ -222,7 +222,7 @@ paths:
               type: object
               $ref: "#/components/schemas/Job"
       responses:
-        200:
+        201:
           description: Created job
           content:
             application/json:
@@ -305,7 +305,7 @@ paths:
               type: object
               $ref: "#/components/schemas/Company"
       responses:
-        200:
+        201:
           description: Created company
           content:
             application/json:
