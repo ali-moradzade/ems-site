@@ -1,9 +1,9 @@
 import {ExecutionContext, Injectable} from '@nestjs/common';
-import {AuthGuard} from "@nestjs/passport";
-import {UserTokenDto} from "../dtos/userToken.dto";
+import {AuthGuard} from '@nestjs/passport';
+import {AdminTokenDto} from '../dtos/adminToken.dto';
 
 @Injectable()
-export class UserGuard extends AuthGuard('jwt') {
+export class AdminGuard extends AuthGuard('jwt') {
     async canActivate(context: ExecutionContext) {
         const activate = await super.canActivate(context);
         if (!activate) {
@@ -11,8 +11,8 @@ export class UserGuard extends AuthGuard('jwt') {
         }
 
         const request = context.switchToHttp().getRequest();
-        const user = request.user as UserTokenDto;
+        const user = request.user as AdminTokenDto;
 
-        return !!user;
+        return user !== undefined && user.superAdmin !== undefined;
     }
 }

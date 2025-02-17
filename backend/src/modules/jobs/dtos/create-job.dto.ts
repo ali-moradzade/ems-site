@@ -3,8 +3,17 @@ import {BadRequestException} from "@nestjs/common";
 import {Transform} from "class-transformer";
 
 export class CreateJobDto {
+    @IsNotEmpty()
     @IsString()
-    name: string;
+    title: string;
+
+    @IsNotEmpty()
+    @IsString()
+    description: string;
+
+    @IsNotEmpty()
+    @IsString()
+    companyId: string;
 
     @IsNotEmpty()
     @Transform(({value}) => {
@@ -17,7 +26,7 @@ export class CreateJobDto {
         return date;
     })
     @IsDate()
-    date: Date;
+    expirationDate: Date;
 }
 
 

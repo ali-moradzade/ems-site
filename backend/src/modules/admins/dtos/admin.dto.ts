@@ -1,7 +1,7 @@
-import {Expose} from "class-transformer";
-import {IsString} from "class-validator";
+import {IsBoolean, IsString} from 'class-validator';
+import {Expose} from 'class-transformer';
 
-export class UserDto {
+export class AdminDto {
     @Expose()
     @IsString()
     id: string;
@@ -17,4 +17,8 @@ export class UserDto {
     @Expose()
     @IsString()
     lastName: string;
+
+    @Expose()
+    @IsBoolean()
+    superAdmin: boolean;
 }

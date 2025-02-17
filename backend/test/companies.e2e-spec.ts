@@ -7,10 +7,10 @@ import {Types} from "mongoose";
 import {ConfigService} from "@nestjs/config";
 import {connectToTestDb, disconnectFromTestDb, dropTestDb} from "../src/common/database/mongoose-test-helper";
 
-describe('/jobs', () => {
+describe('/companies', () => {
     let app: INestApplication;
     let configService: ConfigService;
-    const path = '/jobs';
+    const path = '/companies';
     const admin = {
         secretKey: '',
         email: 'admin@gmail.com',
@@ -19,11 +19,10 @@ describe('/jobs', () => {
         superAdmin: false,
         token: '',
     };
-    const mockJob = {
-        title: 'Software Engineer',
-        description: 'An experienced software engineer is required',
-        companyId: new Types.ObjectId().toString(),
-        expirationDate: new Date(),
+    const mockCompany = {
+        name: 'Software Company X',
+        description: 'Presenting different software engineering services',
+        logo: 'https://www.google.com/image',
     };
 
     beforeEach(async () => {
@@ -66,20 +65,20 @@ describe('/jobs', () => {
     });
 
     describe('POST /', () => {
-        test('given job properties, creates it', async () => {
+        test('given company properties, creates it', async () => {
             const res = await request(app.getHttpServer())
                 .post(path)
                 .set('Authorization', `Bearer ${admin.token}`)
-                .send(mockJob);
+                .send(mockCompany);
 
             expect(res.statusCode).toEqual(201);
-            expect(res.body.title).toEqual(mockJob.title);
+            expect(res.body.name).toEqual(mockCompany.name);
         });
 
         test('not giving valid admin token, throws UnauthorizedException', async () => {
             const res = await request(app.getHttpServer())
                 .post(path)
-                .send(mockJob);
+                .send(mockCompany);
 
             expect(res.statusCode).toEqual(401);
             expect(res.body.message).toMatch(/Unauthorized/);
@@ -87,7 +86,7 @@ describe('/jobs', () => {
     });
 
     describe('GET /', () => {
-        test('no existing job, returns []', async () => {
+        test('no existing companies, returns []', async () => {
             const res = await request(app.getHttpServer())
                 .get(path);
 
@@ -95,33 +94,33 @@ describe('/jobs', () => {
             expect(res.body).toEqual([]);
         });
 
-        test('several existing jobs, returns them', async () => {
-            const expectedJobs = 2;
+        test('several existing companies, returns them', async () => {
+            const expectedCompanies = 2;
             await request(app.getHttpServer())
                 .post(path)
                 .set('Authorization', `Bearer ${admin.token}`)
                 .send({
-                    ...mockJob,
-                    title: 'title1'
+                    ...mockCompany,
+                    name: 'name-01'
                 });
             await request(app.getHttpServer())
                 .post(path)
                 .set('Authorization', `Bearer ${admin.token}`)
                 .send({
-                    ...mockJob,
-                    title: 'title2'
+                    ...mockCompany,
+                    name: 'name-02'
                 });
 
             const res = await request(app.getHttpServer())
                 .get(path);
 
             expect(res.statusCode).toEqual(200);
-            expect(res.body.length).toEqual(expectedJobs);
+            expect(res.body.length).toEqual(expectedCompanies);
         });
     });
 
     describe('GET /:id', () => {
-        test('no existing job, returns {}', async () => {
+        test('non-existing company, returns {}', async () => {
             const id = new Types.ObjectId().toString();
             const res = await request(app.getHttpServer())
                 .get(`${path}/${id}`);
@@ -130,23 +129,23 @@ describe('/jobs', () => {
             expect(res.body).toEqual({});
         });
 
-        test('existing job, giving its id, returns it', async () => {
+        test('existing company, giving its id, returns it', async () => {
             const createdRes = await request(app.getHttpServer())
                 .post(path)
                 .set('Authorization', `Bearer ${admin.token}`)
-                .send(mockJob);
-            const job = createdRes.body;
+                .send(mockCompany);
+            const company = createdRes.body;
 
             const res = await request(app.getHttpServer())
-                .get(`${path}/${job.id}`);
+                .get(`${path}/${company.id}`);
 
             expect(res.statusCode).toEqual(200);
-            expect(res.body.title).toEqual(mockJob.title);
+            expect(res.body.name).toEqual(mockCompany.name);
         });
     });
 
     describe('DELETE /:id', () => {
-        test('no existing job, returns 404, Not Found', async () => {
+        test('non-existing company, returns 404, Not Found', async () => {
             const id = new Types.ObjectId().toString();
             const res = await request(app.getHttpServer())
                 .delete(`${path}/${id}`)
@@ -156,29 +155,29 @@ describe('/jobs', () => {
             expect(res.body.error).toMatch(/Not Found/);
         });
 
-        test('existing job, given job id, deletes the job', async () => {
+        test('existing company, given company id, deletes the company', async () => {
             const createdRes = await request(app.getHttpServer())
                 .post(path)
                 .set('Authorization', `Bearer ${admin.token}`)
-                .send(mockJob);
-            const job = createdRes.body;
+                .send(mockCompany);
+            const company = createdRes.body;
 
             const res = await request(app.getHttpServer())
-                .delete(`${path}/${job.id}`)
+                .delete(`${path}/${company.id}`)
                 .set('Authorization', `Bearer ${admin.token}`);
 
             expect(res.statusCode).toEqual(200);
-            expect(res.body.title).toEqual(job.title);
+            expect(res.body.title).toEqual(company.title);
         });
 
         test('not giving admin token, throws UnauthorizedException', async () => {
             const id = new Types.ObjectId().toString();
 
             const res = await request(app.getHttpServer())
-                .delete(`${path}/${id}`)
+                .delete(`${path}/${id}`);
 
             expect(res.status).toEqual(401);
             expect(res.body.message).toMatch(/Unauthorized/);
-        })
+        });
     });
 });

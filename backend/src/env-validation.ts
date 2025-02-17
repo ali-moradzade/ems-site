@@ -1,4 +1,4 @@
-import {IsString, validateSync} from "class-validator";
+import {IsNotEmpty, IsString, validateSync} from "class-validator";
 import {plainToInstance} from "class-transformer";
 
 /**
@@ -9,13 +9,19 @@ class EnvironmentVariables {
      * Database
      */
     @IsString()
-    DB_NAME: string;
+    @IsNotEmpty()
+    MONGO_URI: string;
 
     /**
      * Authentication
      */
     @IsString()
+    @IsNotEmpty()
     JWT_SECRET_KEY: string;
+
+    @IsString()
+    @IsNotEmpty()
+    SUPER_ADMIN_SECRET_KEY: string;
 }
 
 export function validate(config: Record<string, unknown>) {

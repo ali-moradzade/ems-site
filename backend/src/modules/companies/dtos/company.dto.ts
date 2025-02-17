@@ -1,20 +1,21 @@
+import {IsNotEmpty, IsString} from "class-validator";
 import {Expose} from "class-transformer";
-import {IsString} from "class-validator";
 
-export class UserDto {
+export class CompanyDto {
     @Expose()
     @IsString()
     id: string;
 
     @Expose()
     @IsString()
-    email: string;
+    name: string;
 
     @Expose()
     @IsString()
-    firstName: string;
+    description: string;
 
     @Expose()
     @IsString()
-    lastName: string;
+    logo: string;
 }
+

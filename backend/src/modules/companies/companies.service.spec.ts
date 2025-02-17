@@ -1,20 +1,19 @@
 import {afterAll, beforeEach, describe, expect, it, test} from "vitest";
 import {Test, TestingModule} from '@nestjs/testing';
-import {JobsService} from "./jobs.service";
+import {CompaniesService} from './companies.service';
 import {ConfigModule, ConfigService} from "@nestjs/config";
-import {Types} from "mongoose";
-import {validate} from "../../env-validation";
 import {DatabaseModule} from "../../common/database/database.module";
+import {validate} from "../../env-validation";
 import {connectToTestDb, disconnectFromTestDb, dropTestDb} from "../../common/database/mongoose-test-helper";
+import {Types} from "mongoose";
 
-describe('JobsService', () => {
-    let service: JobsService;
+describe('EmployeesService', () => {
+    let service: CompaniesService;
     let configService: ConfigService;
 
-    const title = 'Software Engineer';
-    const description = 'A developer is required';
-    const companyId = new Types.ObjectId().toString();
-    const expirationDate = new Date();
+    const name = 'company';
+    const description = 'software development company';
+    const logo = 'https://www.google.com/image';
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -27,11 +26,11 @@ describe('JobsService', () => {
                 DatabaseModule,
             ],
             providers: [
-                JobsService,
+                CompaniesService,
             ],
         }).compile();
 
-        service = module.get<JobsService>(JobsService);
+        service = module.get<CompaniesService>(CompaniesService);
         configService = module.get<ConfigService>(ConfigService);
 
         await connectToTestDb(configService);
@@ -50,32 +49,32 @@ describe('JobsService', () => {
     });
 
     describe('create', () => {
-        test('valid properties, creates job', async () => {
-            const job = await service.create(title, description, companyId, expirationDate);
+        test('valid properties, creates company', async () => {
+            const company = await service.create(name, description, logo);
 
-            expect(job).toBeDefined();
-            expect(job.id).toBeDefined();
-            expect(job.title).toEqual(title);
+            expect(company).toBeDefined();
+            expect(company.id).toBeDefined();
         });
 
-        test('duplicate title, throws BadRequestException', async () => {
-            await service.create(title, description, companyId, expirationDate);
+        test('existing company with that name, throws BadRequestException', async () => {
+            await service.create(name, description, logo);
 
-            await expect(service.create(title, description, companyId, expirationDate)).rejects.toThrow(/already exists/);
+            await expect(service.create(name, description, logo)).rejects.toThrow(/already exists/);
         });
     });
 
-    describe('remove', () => {
-        test('existing job, removes it', async () => {
-            const job = await service.create(title, description, companyId, expirationDate);
 
-            await service.remove(job.id);
-            const result = await service.findByTitle(title);
+    describe('remove', () => {
+        test('existing company, removes it', async () => {
+            const company = await service.create(name, description, logo);
+
+            await service.remove(company.id);
+            const result = await service.findOne(company.id);
 
             expect(result).toBeNull();
         });
 
-        test('non-existent job with that id, throws NotFoundException', async () => {
+        test('non-existent company with that id, throws NotFoundException', async () => {
             const id = new Types.ObjectId().toString();
 
             await expect(service.remove(id)).rejects.toThrow(/not found/);

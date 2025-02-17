@@ -8,6 +8,7 @@ import {join} from "path";
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     app.enableCors();
+    app.setGlobalPrefix('api')
 
     // Load the custom OpenAPI spec file, and serve it using Swagger
     const file = fs.readFileSync(join(__dirname, '..', '..', 'docs', 'open-api.yaml'), 'utf8');

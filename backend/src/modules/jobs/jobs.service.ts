@@ -1,51 +1,42 @@
-import {Injectable, NotFoundException} from '@nestjs/common';
-import {InjectRepository} from "@nestjs/typeorm";
-import {Job} from "./jobs.entity";
-import {Repository} from "typeorm";
+import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
+import {InjectModel} from "@nestjs/mongoose";
+import {Model} from "mongoose";
+import {Job, JobDocument} from "../../common/database/schemas/job.schema";
 
 @Injectable()
 export class JobsService {
     constructor(
-        @InjectRepository(Job) private repo: Repository<Job>,
+        @InjectModel(Job.name) private repository: Model<JobDocument>,
     ) {
     }
 
-    findOne(id: number) {
-        if (!id) {
-            return null;
+    findOne(id: string) {
+        return this.repository.findById(id);
+    }
+
+    findByTitle(title: string) {
+        return this.repository.findOne({title});
+    }
+
+    findAllJobs() {
+        return this.repository.find();
+    }
+
+    async create(title: string, description: string, companyId: string, expirationDate: Date) {
+        const result = await this.findByTitle(title);
+        if (result) {
+            throw new BadRequestException('Job with this title already exists');
         }
 
-        return this.repo.findOneBy({id});
+        return this.repository.create({title, description, _companyId: companyId, expirationDate});
     }
 
-    find(name: string) {
-        return this.repo.findBy({name});
-    }
-
-    create(name: string, date: Date) {
-        const job = this.repo.create({name, date});
-        return this.repo.save(job);
-    }
-
-    async update(id: number, attrs: Partial<Job>) {
-        const job = await this.findOne(id);
-
+    async remove(id: string) {
+        const job = await this.repository.findByIdAndDelete(id);
         if (!job) {
-            throw new NotFoundException('Job not found');
+            throw new NotFoundException(`Job with id ${id} not found`);
         }
 
-        Object.assign(job, attrs);
-
-        return this.repo.save(job);
-    }
-
-    async remove(id: number) {
-        const job = await this.findOne(id);
-
-        if (!job) {
-            throw new NotFoundException('Job not found');
-        }
-
-        return this.repo.remove(job);
+        return job;
     }
 }
