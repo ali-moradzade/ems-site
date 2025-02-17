@@ -12,6 +12,10 @@ export class JobDto {
 
     @Expose()
     @IsString()
+    description: string;
+
+    @Expose()
+    @IsString()
     companyId: string;
 
     @Expose()
