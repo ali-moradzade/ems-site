@@ -176,7 +176,7 @@ describe('/jobs', () => {
 
             const res = await request(app.getHttpServer())
                 .delete(`${path}/${id}`)
-            
+
             expect(res.status).toEqual(401);
             expect(res.body.message).toMatch(/Unauthorized/);
         })

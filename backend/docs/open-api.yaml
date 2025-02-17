@@ -32,6 +32,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Admin"
+        403:
+          description: Forbidden, you did not provide correct `secretKey`
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Forbidden"
         400:
           description: Bad request, you did not provide properties correctly
           content:
@@ -499,6 +505,15 @@ components:
         message:
           type: string
           example: Unauthorized
+    Forbidden:
+      type: object
+      properties:
+        statusCode:
+          type: number
+          example: 403
+        message:
+          type: string
+          example: Forbidden
     BadRequest:
       type: object
       properties:
