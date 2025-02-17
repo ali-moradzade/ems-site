@@ -4,7 +4,6 @@ import {CONFIG} from "../../config";
 export interface User {
     id: string;
     email: string;
-    password?: string;
     firstName: string;
     lastName: string;
 }
@@ -29,7 +28,7 @@ export const usersApi = createApi({
         userProfile: builder.query<User, void>({
             query: () => `/profile`,
         }),
-        signup: builder.mutation<AuthResponse, Partial<User>>({
+        signup: builder.mutation<AuthResponse, {email: string, password: string, firstName: string, lastName: string}>({
             query: (user) => ({
                 url: "/signup",
                 method: "POST",

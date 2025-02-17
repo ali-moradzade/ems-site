@@ -7,6 +7,7 @@ import {DashboardPage} from "./pages/DashboardPage";
 import {HomePage} from "./pages/HomePage";
 import {ProtectedRoute} from "./components/ProtectedRoute";
 import {Route, Routes} from "react-router-dom";
+import {UserProfile} from "./components/users/UserProfile";
 
 export function App() {
     return (
@@ -25,6 +26,11 @@ export function App() {
                 <Route path="/dashboard" element={
                     <ProtectedRoute>
                         <DashboardPage/>
+                    </ProtectedRoute>
+                }/>
+                <Route path="/profile" element={
+                    <ProtectedRoute>
+                        <UserProfile/>
                     </ProtectedRoute>
                 }/>
                 <Route path="/jobs" element={

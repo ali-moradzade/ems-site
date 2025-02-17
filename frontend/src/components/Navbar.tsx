@@ -10,7 +10,7 @@ export function Navbar() {
     const navigate = useNavigate();
     const user = useAppSelector(state => state.auth.user);
 
-    if (['/', '/signup', '/login'].includes(location.pathname) || !user) {
+    if (['/', '/signup', '/login'].includes(location.pathname)) {
         return (
             <div></div>
         );
@@ -22,6 +22,10 @@ export function Navbar() {
     };
 
     const linkItems = [
+        {
+            label: 'Profile',
+            path: '/profile',
+        },
         {
             label: 'Jobs',
             path: '/jobs',
@@ -45,7 +49,7 @@ export function Navbar() {
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container-fluid">
                 <Link to={'/dashboard'} className="navbar-brand">
-                    Hi, {user.firstName} {user.lastName}
+                    Hi, {user?.firstName} {user?.lastName}
                 </Link>
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
