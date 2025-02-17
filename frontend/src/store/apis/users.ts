@@ -2,6 +2,7 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {CONFIG} from "../../config";
 
 export interface User {
+    id: string;
     email: string;
     password?: string;
     firstName: string;
@@ -15,7 +16,7 @@ export interface AuthResponse {
 export const usersApi = createApi({
     reducerPath: "usersApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: `${CONFIG.BACKEND_URL}`,
+        baseUrl: `${CONFIG.BACKEND_URL}/users`,
         prepareHeaders: (headers, {getState}) => {
             const token = (getState() as any).auth.token;
             if (token) {
@@ -26,27 +27,20 @@ export const usersApi = createApi({
     }),
     endpoints: (builder) => ({
         userProfile: builder.query<User, void>({
-            query: () => `/whoami`,
+            query: () => `/profile`,
         }),
         signup: builder.mutation<AuthResponse, User>({
             query: (user) => ({
-                url: "/auth/signup",
+                url: "/signup",
                 method: "POST",
                 body: user,
             }),
         }),
         login: builder.mutation<AuthResponse, { email: string; password: string }>({
             query: (credentials) => ({
-                url: "/auth/login",
+                url: "/login",
                 method: "POST",
                 body: credentials,
-            }),
-        }),
-        updateUser: builder.mutation<User, { id: number; attrs: Partial<User> }>({
-            query: ({id, attrs}) => ({
-                url: `/auth/${id}`,
-                method: "PUT",
-                body: attrs,
             }),
         }),
     }),
@@ -57,5 +51,4 @@ export const {
     useUserProfileQuery,
     useSignupMutation,
     useLoginMutation,
-    useUpdateUserMutation,
 } = usersApi;

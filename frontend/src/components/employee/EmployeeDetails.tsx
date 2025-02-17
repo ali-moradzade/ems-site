@@ -1,7 +1,7 @@
-import {Employee} from "../../store";
+import {Company} from "../../store";
 
 interface EmployeeDetailsProps {
-    employee: Employee;
+    employee: Company;
 }
 
 export function EmployeeDetails({employee}: EmployeeDetailsProps) {

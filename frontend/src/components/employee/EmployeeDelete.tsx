@@ -1,8 +1,8 @@
 import {FormEvent, useRef} from "react";
-import {Employee, useDeleteEmployeeMutation} from "../../store";
+import {Company, useDeleteEmployeeMutation} from "../../store";
 
 interface EmployeeDeleteProps {
-    employee: Employee;
+    employee: Company;
 }
 
 export function EmployeeDelete({employee}: EmployeeDeleteProps) {

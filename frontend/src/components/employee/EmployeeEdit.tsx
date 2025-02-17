@@ -1,9 +1,9 @@
 import {FormEvent, useRef, useState} from "react";
 import {isPhoneNumber} from "class-validator";
-import {Employee, useGetAllJobsQuery, useUpdateEmployeeMutation} from "../../store";
+import {Company, useGetAllJobsQuery, useUpdateEmployeeMutation} from "../../store";
 
 interface EmployeeEditProps {
-    employee: Employee;
+    employee: Company;
 }
 
 export function EmployeeEdit({employee}: EmployeeEditProps) {
