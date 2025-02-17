@@ -1,4 +1,4 @@
-import {JobList} from "../components/job/JobList";
+import {JobsList} from "../components/jobs/JobsList";
 
 export function JobsPage() {
     return (
@@ -19,7 +19,7 @@ export function JobsPage() {
                         </div>
                     </div>
                     <div className="col-lg-9 col-md-9">
-                        <JobList/>
+                        <JobsList/>
                     </div>
                 </div>
             </div>
