@@ -1,7 +1,7 @@
 import {afterAll, beforeEach, describe, expect, test, vi} from 'vitest';
 import {Test, TestingModule} from '@nestjs/testing';
 import {UsersService} from './users.service';
-import {BadRequestException, NotFoundException} from '@nestjs/common';
+import {BadRequestException, UnauthorizedException} from '@nestjs/common';
 import {ConfigModule, ConfigService} from "@nestjs/config";
 import {validate} from "../../env-validation";
 import {DatabaseModule} from "../../common/database/database.module";
@@ -81,8 +81,8 @@ describe('UsersService', () => {
             expect(token).toBeTypeOf('string');
         });
 
-        test('user not signed up, throws error: NotFoundException', async () => {
-            await expect(service.login(email, password)).rejects.toThrow(NotFoundException);
+        test('user not signed up, throws UnauthorizedException', async () => {
+            await expect(service.login(email, password)).rejects.toThrow(UnauthorizedException);
         });
 
         test('invalid credentials, throws error: UnauthorizedException', async () => {
