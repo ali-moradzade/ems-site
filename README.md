@@ -1,6 +1,6 @@
 # Employee Management Site
 
-This site is a simple site to manage `employees` and `jobs`
+This site is a simple site to manage `companies` and `jobs`
 
 ## Usage
 
@@ -40,8 +40,8 @@ E2E Testing:
 
 Database:
 
-- TypeORM
-- Sqlite
+- MongoDB
+- Mongoose
 
 ## Documentation
 
