@@ -1,10 +1,16 @@
-import {IsNotEmpty, IsString, validateSync} from "class-validator";
+import {IsNotEmpty, IsNumber, IsString, validateSync} from "class-validator";
 import {plainToInstance} from "class-transformer";
 
 /**
  * Define env schema here
  */
 class EnvironmentVariables {
+    /**
+     * Deployment
+     */
+    @IsNumber()
+    @IsNotEmpty()
+    PORT: number;
     /**
      * Database
      */

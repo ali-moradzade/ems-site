@@ -11,7 +11,7 @@ export interface Company {
 export const companiesApi = createApi({
     reducerPath: "companiesApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: `${CONFIG.BACKEND_URL}/companies`
+        baseUrl: `${CONFIG.BACKEND_PREFIX}/companies`
     }),
     tagTypes: ['Companies', 'CompanyItem'],
     endpoints: (builder) => ({

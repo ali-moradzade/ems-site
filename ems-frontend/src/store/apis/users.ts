@@ -14,7 +14,7 @@ export interface AuthResponse {
 }
 
 const baseQuery = fetchBaseQuery({
-    baseUrl: `${CONFIG.BACKEND_URL}/users`,
+    baseUrl: `${CONFIG.BACKEND_PREFIX}/users`,
     prepareHeaders: (headers, {getState}) => {
         const token = (getState() as any).auth.token;
         if (token) {

@@ -13,7 +13,7 @@ export interface Job {
 export const jobsApi = createApi({
     reducerPath: "jobsApi",
     baseQuery: fetchBaseQuery({
-        baseUrl: `${CONFIG.BACKEND_URL}/jobs`,
+        baseUrl: `${CONFIG.BACKEND_PREFIX}/jobs`,
     }),
     tagTypes: ["Job", "JobItem"],
     endpoints: (builder) => ({
