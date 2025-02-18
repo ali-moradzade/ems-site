@@ -40,7 +40,7 @@ export function SignupPage() {
 
             navigate('/dashboard');
         } catch (err: any) {
-            console.error(err?.message || 'Error signing up user');
+            console.error('Signup failed:', err?.data?.message);
         }
     };
 

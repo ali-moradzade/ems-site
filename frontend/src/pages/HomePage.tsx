@@ -8,14 +8,14 @@ export function HomePage() {
         <div className="container-fluid">
             <WelcomePanel/>
             <div className="row justify-content-center mt-5">
-                <div className="col-6">
+                <div className="col-12 col-md-10 col-lg-6">
                     <div className="card shadow">
                         <div className="card-body">
                             <div className="card-title">
                                 <div className="text-center">
                                     <h2>Welcome to Employee Management Site!</h2>
                                 </div>
-                                <div className="card-text p-2" style={{height: '200px'}}>
+                                <div className="card-text p-2 mt-3" style={{minHeight: '200px'}}>
                                     <p className="text-muted">
                                         EMS site is a site where you can see different companies
                                         and their job opportunities.
@@ -39,10 +39,10 @@ export function HomePage() {
                                     </p>
                                 </div>
                                 <div className="text-center">
-                                    <Link to={'/signup'} className="btn btn-success card-link w-25">
+                                    <Link to={'/signup'} className="btn btn-success card-link w-auto mx-2">
                                         Signup
                                     </Link>
-                                    <Link to={'/login'} className="btn btn-success card-link w-25">
+                                    <Link to={'/login'} className="btn btn-success card-link w-auto mx-2">
                                         Login
                                     </Link>
                                 </div>
