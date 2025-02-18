@@ -13,7 +13,7 @@ export function CompaniesList() {
     }
 
     return (
-        <div className="container mt-5">
+        <div className="container mt-3">
             <div className="row justify-content-center">
                 {companies.map(company => (
                     <CompanyItem key={company.id} company={company}/>
