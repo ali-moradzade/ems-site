@@ -2,13 +2,13 @@ import React from 'react';
 import {Navbar} from "./components/Navbar";
 import {SignupPage} from "./pages/SignupPage";
 import {LoginPage} from "./pages/LoginPage";
-import {JobsPage} from "./pages/JobsPage";
 import {DashboardPage} from "./pages/DashboardPage";
 import {HomePage} from "./pages/HomePage";
 import {ProtectedRoute} from "./components/ProtectedRoute";
 import {Route, Routes} from "react-router-dom";
 import {UserProfile} from "./components/users/UserProfile";
 import {CompaniesList} from "./components/companies/CompaniesList";
+import {JobsList} from "./components/jobs/JobsList";
 
 export function App() {
     return (
@@ -36,7 +36,7 @@ export function App() {
                 }/>
                 <Route path="/jobs" element={
                     <ProtectedRoute>
-                        <JobsPage/>
+                        <JobsList/>
                     </ProtectedRoute>
                 }/>
                 <Route path="/companies" element={
