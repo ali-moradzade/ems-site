@@ -18,7 +18,7 @@ export function CompanyItem({company}: CompanyItemProps) {
                 <div className="card-body text-center">
                     <h5 className="card-title fw-bold">{name}</h5>
                     <p className="card-text text-muted">{description}</p>
-                    <a href="#" className="btn btn-primary btn-sm">View Details</a>
+                    <button className="btn btn-primary btn-sm">View Details</button>
                 </div>
             </div>
         </div>
