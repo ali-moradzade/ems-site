@@ -1,30 +1,25 @@
 import {recurse} from "cypress-recurse";
-import {recurseDelay, urls} from "./config";
+import {recurseDelay, urls, USER} from "./config";
 
 describe('Logout', () => {
-    const user = {
-        email: 'alimorizz1379@gmail.com',
-        password: '1234',
-    };
-
     it('after successful login, pressing logout, logs user out', () => {
         cy.visit(urls.login);
 
         // handle flaky inputs
         recurse(
             () => cy.get('input[type=email]')
-                .clear().type(user.email),
+                .clear().type(USER.email),
 
-            ($input) => $input.val() === user.email,
+            ($input) => $input.val() === USER.email,
             {delay: recurseDelay}
-        ).should('have.value', user.email);
+        ).should('have.value', USER.email);
         recurse(
             () => cy.get('input[type=password]')
-                .clear().type(user.password),
+                .clear().type(USER.password),
 
-            ($input) => $input.val() === user.password,
+            ($input) => $input.val() === USER.password,
             {delay: recurseDelay}
-        ).should('have.value', user.password);
+        ).should('have.value', USER.password);
 
         cy.get('button[type=submit]').click();
 
