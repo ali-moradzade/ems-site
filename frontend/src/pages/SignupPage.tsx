@@ -10,7 +10,7 @@ export function SignupPage() {
     const token = useAppSelector(state => state.auth.token);
     const [signup, {isLoading, error}] = useSignupMutation();
     const [login] = useLoginMutation();
-    const {data: user} = useUserProfileQuery();
+    const {data: user} = useUserProfileQuery(undefined, {skip: !token});
 
     useEffect(() => {
         if (user) {
@@ -48,10 +48,10 @@ export function SignupPage() {
         <div>
             <WelcomePanel/>
             <div className="row justify-content-center mt-5">
-                <div className="col-4">
-                    <div className="card shadow" id="signup_card">
+                <div className="col-12 col-sm-10 col-md-8 col-lg-4">
+                    <div className="card shadow mx-3" id="signup_card">
                         <div className="card-body">
-                            <div className="card-title">
+                            <div className="card-title text-center">
                                 <h3>Signup</h3>
                                 <div className="card-text">
                                     <p className="small text-muted">
@@ -66,7 +66,7 @@ export function SignupPage() {
                                     <form id="signup_form" onSubmit={handleSubmit}>
                                         <div className="mb-3">
                                             <input
-                                                type="email" className="form-control form-control mt-2"
+                                                type="email" className="form-control"
                                                 placeholder="Email" required name="email"
                                                 value={email}
                                                 onChange={e => setEmail(e.target.value)}
@@ -74,7 +74,7 @@ export function SignupPage() {
                                         </div>
                                         <div className="mb-3">
                                             <input
-                                                type="password" className="form-control form-control mt-2"
+                                                type="password" className="form-control"
                                                 placeholder="Password" required name="password"
                                                 value={password}
                                                 onChange={e => setPassword(e.target.value)}
@@ -82,7 +82,7 @@ export function SignupPage() {
                                         </div>
                                         <div className="mb-3">
                                             <input
-                                                type="text" className="form-control form-control mt-2"
+                                                type="text" className="form-control"
                                                 placeholder="First Name" required name="first_name"
                                                 value={firstName}
                                                 onChange={e => setFirstName(e.target.value)}
@@ -90,7 +90,7 @@ export function SignupPage() {
                                         </div>
                                         <div className="mb-3">
                                             <input
-                                                type="text" className="form-control form-control mt-2"
+                                                type="text" className="form-control"
                                                 placeholder="Last Name" required
                                                 value={lastName}
                                                 onChange={e => setLastName(e.target.value)}
