@@ -30,7 +30,7 @@ export function LoginPage() {
             setPassword('');
             dispatch(setCredentials({token, user: null}));
         } catch (err: any) {
-            console.error(err?.message || 'Login failed');
+            console.error('Login failed:', err?.data?.message);
         }
     };
 
@@ -38,10 +38,10 @@ export function LoginPage() {
         <div>
             <WelcomePanel/>
             <div className="row justify-content-center mt-5">
-                <div className="col-4">
-                    <div className="card shadow" id="login_card">
+                <div className="col-12 col-sm-8 col-md-6 col-lg-4">
+                    <div className="card shadow mx-3" id="login_card">
                         <div className="card-body">
-                            <div className="card-title">
+                            <div className="card-title text-center">
                                 <h3>Login</h3>
                                 <div className="card-text">
                                     <p className="small text-muted">Login with your username &amp; password</p>
@@ -53,7 +53,7 @@ export function LoginPage() {
                                     <form id="login_form" onSubmit={handleSubmit}>
                                         <div className="mb-3">
                                             <input
-                                                type="email" className="form-control form-control mt-2"
+                                                type="email" className="form-control"
                                                 placeholder="Email" required name="email"
                                                 value={email}
                                                 onChange={e => setEmail(e.target.value)}
@@ -61,7 +61,7 @@ export function LoginPage() {
                                         </div>
                                         <div className="mb-3">
                                             <input
-                                                type="password" className="form-control form-control mt-2"
+                                                type="password" className="form-control"
                                                 placeholder="Password" required name="password"
                                                 value={password}
                                                 onChange={e => setPassword(e.target.value)}
