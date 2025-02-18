@@ -74,6 +74,7 @@ export function Navbar() {
                     <div className="d-grid">
                         <button
                             className="btn btn-sm btn-warning mt-2 mx-lg-2 mt-lg-0"
+                            id="logout_btn"
                             onClick={handleLogout}
                         >
                             Logout

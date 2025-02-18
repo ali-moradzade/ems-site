@@ -5,7 +5,7 @@ import {LoginPage} from "./pages/LoginPage";
 import {DashboardPage} from "./pages/DashboardPage";
 import {HomePage} from "./pages/HomePage";
 import {ProtectedRoute} from "./components/ProtectedRoute";
-import {Route, Routes} from "react-router-dom";
+import {Navigate, Route, Routes} from "react-router-dom";
 import {UserProfile} from "./components/users/UserProfile";
 import {CompaniesList} from "./components/companies/CompaniesList";
 import {JobsList} from "./components/jobs/JobsList";
@@ -44,6 +44,7 @@ export function App() {
                         <CompaniesList/>
                     </ProtectedRoute>
                 }/>
+                <Route path="*" element={<Navigate to="/"/>}/>
             </Routes>
         </div>
     );
