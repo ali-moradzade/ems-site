@@ -36,18 +36,16 @@ export function Navbar() {
         }
     ];
 
-    const renderedLinks = linkItems.map((item) => {
-        return (
-            <li className="nav-item" key={item.label}>
-                <Link
-                    to={item.path}
-                    className="nav-link"
-                >
-                    {item.label}
-                </Link>
-            </li>
-        );
-    });
+    const renderedLinks = linkItems.map((item) => (
+        <li className="nav-item" key={item.label}>
+            <Link
+                to={item.path}
+                className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
+            >
+                {item.label}
+            </Link>
+        </li>
+    ));
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -64,7 +62,7 @@ export function Navbar() {
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                         {renderedLinks}
                     </ul>
-                    <form className="d-flex" role="search">
+                    <form className="d-flex align-items-center mt-2 mt-lg-0" role="search">
                         <div className="input-group">
                             <input type="search" className="form-control form-control-sm" placeholder="Search .."
                                    aria-label="Recipient's username" aria-describedby="button-addon2"/>
@@ -73,12 +71,14 @@ export function Navbar() {
                             </button>
                         </div>
                     </form>
-                    <button
-                        className="btn btn-sm btn-warning ms-3"
-                        onClick={handleLogout}
-                    >
-                        Logout
-                    </button>
+                    <div className="d-grid">
+                        <button
+                            className="btn btn-sm btn-warning mt-2 mx-lg-2 mt-lg-0"
+                            onClick={handleLogout}
+                        >
+                            Logout
+                        </button>
+                    </div>
                 </div>
             </div>
         </nav>
