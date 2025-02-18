@@ -1,28 +1,40 @@
-import {Dashboard} from "../components/Dashboard";
-import {useGetAllEmployeesQuery, useGetAllJobsQuery} from "../store";
+import {Card, Dashboard} from "../components/Dashboard";
+import {useAppSelector, useGetAllCompaniesQuery, useGetAllJobsQuery} from "../store";
 
 export function DashboardPage() {
-    const {data: employees} = useGetAllEmployeesQuery('');
-    const {data: jobs} = useGetAllJobsQuery('');
+    const {data: jobs} = useGetAllJobsQuery();
+    const {data: companies} = useGetAllCompaniesQuery();
+    const user = useAppSelector(state => state.auth.user);
 
-    if (!employees || !jobs) {
-        return (
-            <div>Error getting data</div>
+    const cards: Card[] = [];
+
+    if (user) {
+        cards.push({
+            title: <div>Profile</div>,
+            link: '/profile',
+            linkText: 'View Profile'
+        });
+    }
+
+    if (jobs) {
+        cards.push(
+            {
+                title: <div>{jobs.length} <small className="text-muted">Jobs</small></div>,
+                link: '/jobs',
+                linkText: 'View All'
+            },
         );
     }
 
-    const cards = [
-        {
-            title: 'Employees',
-            size: employees.length,
-            link: '/employees',
-        },
-        {
-            title: 'Jobs',
-            size: jobs.length,
-            link: '/jobs',
-        },
-    ];
+    if (companies) {
+        cards.push(
+            {
+                title: <div>{companies.length} <small className="text-muted">Companies</small></div>,
+                link: '/companies',
+                linkText: 'View All'
+            },
+        );
+    }
 
     return (
         <div>

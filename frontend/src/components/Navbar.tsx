@@ -1,15 +1,14 @@
 import React from "react";
 import {FaSearch} from "react-icons/fa";
 import {Link, useLocation, useNavigate} from "react-router-dom";
-import {useAppDispatch, useUserProfileQuery} from "../store";
+import {useAppDispatch, useAppSelector} from "../store";
 import {logout} from "../store/slices/authSlice";
 
 export function Navbar() {
     const dispatch = useAppDispatch();
     const location = useLocation();
     const navigate = useNavigate();
-    const {data: user = {firstName: 'MOCK', lastName: 'MOCK'}} = useUserProfileQuery();
-    const {firstName, lastName} = user;
+    const user = useAppSelector(state => state.auth.user);
 
     if (['/', '/signup', '/login'].includes(location.pathname)) {
         return (
@@ -24,33 +23,35 @@ export function Navbar() {
 
     const linkItems = [
         {
-            label: 'Employees',
-            path: '/employees',
+            label: 'Profile',
+            path: '/profile',
         },
         {
             label: 'Jobs',
             path: '/jobs',
+        },
+        {
+            label: 'Companies',
+            path: '/companies',
         }
     ];
 
-    const renderedLinks = linkItems.map((item) => {
-        return (
-            <li className="nav-item" key={item.label}>
-                <Link
-                    to={item.path}
-                    className="nav-link"
-                >
-                    {item.label}
-                </Link>
-            </li>
-        );
-    });
+    const renderedLinks = linkItems.map((item) => (
+        <li className="nav-item" key={item.label}>
+            <Link
+                to={item.path}
+                className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
+            >
+                {item.label}
+            </Link>
+        </li>
+    ));
 
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container-fluid">
                 <Link to={'/dashboard'} className="navbar-brand">
-                    Hi, {firstName} {lastName}
+                    Hi, {user?.firstName} {user?.lastName}
                 </Link>
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -61,7 +62,7 @@ export function Navbar() {
                     <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                         {renderedLinks}
                     </ul>
-                    <form className="d-flex" role="search">
+                    <form className="d-flex align-items-center mt-2 mt-lg-0" role="search">
                         <div className="input-group">
                             <input type="search" className="form-control form-control-sm" placeholder="Search .."
                                    aria-label="Recipient's username" aria-describedby="button-addon2"/>
@@ -70,12 +71,14 @@ export function Navbar() {
                             </button>
                         </div>
                     </form>
-                    <button
-                        className="btn btn-sm btn-warning ms-3"
-                        onClick={handleLogout}
-                    >
-                        Logout
-                    </button>
+                    <div className="d-grid">
+                        <button
+                            className="btn btn-sm btn-warning mt-2 mx-lg-2 mt-lg-0"
+                            onClick={handleLogout}
+                        >
+                            Logout
+                        </button>
+                    </div>
                 </div>
             </div>
         </nav>

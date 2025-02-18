@@ -1,9 +1,10 @@
 import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {CONFIG} from "../../config";
+import {logout} from "../slices/authSlice";
 
 export interface User {
+    id: string;
     email: string;
-    password?: string;
     firstName: string;
     lastName: string;
 }
@@ -12,41 +13,57 @@ export interface AuthResponse {
     token: string;
 }
 
+const baseQuery = fetchBaseQuery({
+    baseUrl: `${CONFIG.BACKEND_URL}/users`,
+    prepareHeaders: (headers, {getState}) => {
+        const token = (getState() as any).auth.token;
+        if (token) {
+            headers.set("Authorization", `Bearer ${token}`);
+        }
+        return headers;
+    },
+});
+
+const baseQueryWithAuth: typeof baseQuery = async (args, api, extraOptions) => {
+    const result = await baseQuery(args, api, extraOptions);
+
+    // Handle where we have an expired token
+    if (
+        result.error &&
+        result.error.status === 401 &&
+        typeof args === "string" &&
+        args.includes("/profile")
+    ) {
+        api.dispatch(logout());
+    }
+
+    return result;
+};
+
 export const usersApi = createApi({
     reducerPath: "usersApi",
-    baseQuery: fetchBaseQuery({
-        baseUrl: `${CONFIG.BACKEND_URL}`,
-        prepareHeaders: (headers, {getState}) => {
-            const token = (getState() as any).auth.token;
-            if (token) {
-                headers.set("Authorization", `Bearer ${token}`);
-            }
-            return headers;
-        },
-    }),
+    baseQuery: baseQueryWithAuth,
     endpoints: (builder) => ({
         userProfile: builder.query<User, void>({
-            query: () => `/whoami`,
+            query: () => `/profile`,
         }),
-        signup: builder.mutation<AuthResponse, User>({
+        signup: builder.mutation<AuthResponse, {
+            email: string,
+            password: string,
+            firstName: string,
+            lastName: string
+        }>({
             query: (user) => ({
-                url: "/auth/signup",
+                url: "/signup",
                 method: "POST",
                 body: user,
             }),
         }),
         login: builder.mutation<AuthResponse, { email: string; password: string }>({
             query: (credentials) => ({
-                url: "/auth/login",
+                url: "/login",
                 method: "POST",
                 body: credentials,
-            }),
-        }),
-        updateUser: builder.mutation<User, { id: number; attrs: Partial<User> }>({
-            query: ({id, attrs}) => ({
-                url: `/auth/${id}`,
-                method: "PUT",
-                body: attrs,
             }),
         }),
     }),
@@ -57,5 +74,4 @@ export const {
     useUserProfileQuery,
     useSignupMutation,
     useLoginMutation,
-    useUpdateUserMutation,
 } = usersApi;

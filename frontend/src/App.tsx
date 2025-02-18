@@ -2,12 +2,13 @@ import React from 'react';
 import {Navbar} from "./components/Navbar";
 import {SignupPage} from "./pages/SignupPage";
 import {LoginPage} from "./pages/LoginPage";
-import {EmployeePage} from "./pages/EmployeePage";
-import {JobPage} from "./pages/JobPage";
 import {DashboardPage} from "./pages/DashboardPage";
 import {HomePage} from "./pages/HomePage";
 import {ProtectedRoute} from "./components/ProtectedRoute";
 import {Route, Routes} from "react-router-dom";
+import {UserProfile} from "./components/users/UserProfile";
+import {CompaniesList} from "./components/companies/CompaniesList";
+import {JobsList} from "./components/jobs/JobsList";
 
 export function App() {
     return (
@@ -28,14 +29,19 @@ export function App() {
                         <DashboardPage/>
                     </ProtectedRoute>
                 }/>
-                <Route path="/employees" element={
+                <Route path="/profile" element={
                     <ProtectedRoute>
-                        <EmployeePage/>
+                        <UserProfile/>
                     </ProtectedRoute>
                 }/>
                 <Route path="/jobs" element={
                     <ProtectedRoute>
-                        <JobPage/>
+                        <JobsList/>
+                    </ProtectedRoute>
+                }/>
+                <Route path="/companies" element={
+                    <ProtectedRoute>
+                        <CompaniesList/>
                     </ProtectedRoute>
                 }/>
             </Routes>

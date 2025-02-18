@@ -2,9 +2,12 @@ import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import {CONFIG} from "../../config";
 
 export interface Job {
-    id: number;
-    name: string;
-    date: string;
+    id: string;
+    title: string;
+    description: string;
+    companyId: string;
+    creationDate: Date;
+    expirationDate: Date;
 }
 
 export const jobsApi = createApi({
@@ -14,11 +17,8 @@ export const jobsApi = createApi({
     }),
     tagTypes: ["Job", "JobItem"],
     endpoints: (builder) => ({
-        getAllJobs: builder.query<Job[], string | undefined>({
-            query: (name) => ({
-                url: "",
-                params: name ? {name} : {},
-            }),
+        getAllJobs: builder.query<Job[], void>({
+            query: () => '',
             providesTags: (result) =>
                 result
                     ? [
@@ -31,29 +31,6 @@ export const jobsApi = createApi({
             query: (id) => `/${id}`,
             providesTags: (result, error, id) => (result ? [{type: "JobItem", id}] : []),
         }),
-        createJob: builder.mutation<Job, { name: string; date: string }>({
-            query: (job) => ({
-                url: "",
-                method: "POST",
-                body: job,
-            }),
-            invalidatesTags: (result) => (result ? [{type: "Job", id: "LIST"}] : []),
-        }),
-        updateJob: builder.mutation<Job, { id: number; attrs: Partial<Job> }>({
-            query: ({id, attrs}) => ({
-                url: `/${id}`,
-                method: "PUT",
-                body: attrs,
-            }),
-            invalidatesTags: (result, error, {id}) => (result ? [{type: "JobItem", id}] : []),
-        }),
-        deleteJob: builder.mutation<Job, number>({
-            query: (id) => ({
-                url: `/${id}`,
-                method: "DELETE",
-            }),
-            invalidatesTags: (result, error, id) => (result ? [{type: "JobItem", id}, {type: "Job", id: "LIST"}] : []),
-        }),
     }),
 });
 
@@ -61,7 +38,4 @@ export const jobsApi = createApi({
 export const {
     useGetAllJobsQuery,
     useGetJobQuery,
-    useCreateJobMutation,
-    useUpdateJobMutation,
-    useDeleteJobMutation,
 } = jobsApi;

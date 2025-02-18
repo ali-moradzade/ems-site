@@ -1,4 +1,4 @@
-import {MiddlewareConsumer, Module, ValidationPipe} from '@nestjs/common';
+import {MiddlewareConsumer, Module, RequestMethod, ValidationPipe} from '@nestjs/common';
 import {CompaniesModule} from './modules/companies/companies.module';
 import {JobsModule} from './modules/jobs/jobs.module';
 import {UsersModule} from './modules/users/users.module';
@@ -41,6 +41,6 @@ export class AppModule {
                 resave: false,
                 saveUninitialized: false,
             }),
-        ).forRoutes('*');
+        ).forRoutes({path: '*', method: RequestMethod.ALL});
     }
 }

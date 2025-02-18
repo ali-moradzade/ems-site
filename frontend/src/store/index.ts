@@ -1,5 +1,5 @@
 import {configureStore} from "@reduxjs/toolkit";
-import {employeesApi} from "./apis/employees";
+import {companiesApi} from "./apis/companies";
 import {setupListeners} from "@reduxjs/toolkit/query";
 import {TypedUseSelectorHook, useDispatch, useSelector} from "react-redux";
 import {jobsApi} from "./apis/jobs";
@@ -8,14 +8,14 @@ import {authReducer} from "./slices/authSlice";
 
 export const store = configureStore({
     reducer: {
-        [employeesApi.reducerPath]: employeesApi.reducer,
+        [companiesApi.reducerPath]: companiesApi.reducer,
         [jobsApi.reducerPath]: jobsApi.reducer,
         [usersApi.reducerPath]: usersApi.reducer,
         auth: authReducer,
     },
     middleware: (getDefaultMiddleware) => {
         return getDefaultMiddleware()
-            .concat(employeesApi.middleware)
+            .concat(companiesApi.middleware)
             .concat(jobsApi.middleware)
             .concat(usersApi.middleware);
     }
@@ -31,19 +31,14 @@ export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export {
-    useGetAllEmployeesQuery,
-    useCreateEmployeeMutation,
-    useUpdateEmployeeMutation,
-    useDeleteEmployeeMutation,
-} from './apis/employees';
-export type {Employee} from './apis/employees';
+    useGetCompanyQuery,
+    useGetAllCompaniesQuery,
+} from './apis/companies';
+export type {Company} from './apis/companies';
 
 export {
     useGetAllJobsQuery,
     useGetJobQuery,
-    useCreateJobMutation,
-    useUpdateJobMutation,
-    useDeleteJobMutation,
 } from './apis/jobs';
 export type {Job} from './apis/jobs';
 
@@ -51,6 +46,5 @@ export {
     useUserProfileQuery,
     useSignupMutation,
     useLoginMutation,
-    useUpdateUserMutation,
 } from './apis/users';
 export type {User} from './apis/users';
