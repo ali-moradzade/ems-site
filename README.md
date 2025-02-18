@@ -2,6 +2,11 @@
 
 This site is a simple site to manage `companies` and `jobs`
 
+## Preview
+
+Frontend address: [Preview](https://ems-site.ali-moradzade.work.gd/)  
+Backed address: [Preview](https://api.ems-site.ali-moradzade.work.gd/docs)
+
 ## Usage
 
 You can install dependencies for both front & backend by going to their directories and running:
@@ -16,8 +21,8 @@ After that you can start backend and front-end by going into their directories a
 npm run start
 ```
 
-Frontend address: `http://localhost:3000`  
-Backed address: `http://localhost:3300`
+After that front will be available on port `3000` and backend will be available based on `PORT`
+inside `.env.development`
 
 ## Technologies Used
 
@@ -45,7 +50,8 @@ Database:
 
 ## Documentation
 
-You can view backend Open API Specification by going into `/docs` route. (`http://localhost:3300/docs`)
+You can view backend Open API Specification by going into `/docs`
+route. (`https://api.ems-site.ali-moradzade.work.gd/docs`)
 
 ## E2E Testing
 
