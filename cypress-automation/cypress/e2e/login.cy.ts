@@ -1,5 +1,5 @@
 import {recurse} from "cypress-recurse";
-import {recurseDelay, urls} from "./utils";
+import {recurseDelay, urls} from "./config";
 
 describe('Login', () => {
     const user = {
