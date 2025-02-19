@@ -37,8 +37,6 @@ export function SignupPage() {
             setPassword('');
             setFirstName('');
             setLastName('');
-
-            navigate('/dashboard');
         } catch (err: any) {
             console.error('Signup failed:', err?.data?.message);
         }
@@ -56,7 +54,7 @@ export function SignupPage() {
                                 <div className="card-text">
                                     <p className="small text-muted">
                                         Fill in the information and sign up in <span
-                                        className="fw-bold">ESM</span> website
+                                        className="fw-bold">EMS</span> website
                                     </p>
                                     {error && (
                                         <div className="alert alert-danger" role="alert" id="signup_alert">
