@@ -16,14 +16,9 @@ export function App() {
             <Navbar/>
 
             <Routes>
+                <Route path="/" element={<HomePage/>}/>
                 <Route path="/signup" element={<SignupPage/>}/>
                 <Route path="/login" element={<LoginPage/>}/>
-                <Route path="/" element={
-                    <ProtectedRoute>
-                        <HomePage/>
-                    </ProtectedRoute>
-
-                }/>
                 <Route path="/dashboard" element={
                     <ProtectedRoute>
                         <DashboardPage/>

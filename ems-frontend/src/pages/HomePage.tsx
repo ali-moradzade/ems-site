@@ -1,9 +1,20 @@
 import {WelcomePanel} from "../components/WelcomePanel";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faTelegram} from "@fortawesome/free-brands-svg-icons";
+import {useAppSelector} from "../store";
+import {useEffect} from "react";
 
 export function HomePage() {
+    const navigate = useNavigate();
+    const user = useAppSelector(state => state.auth.user);
+
+    useEffect(() => {
+        if (user) {
+            navigate("/dashboard");
+        }
+    }, [user, navigate]);
+
     return (
         <div className="container-fluid">
             <WelcomePanel/>
