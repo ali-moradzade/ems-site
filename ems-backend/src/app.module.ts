@@ -13,7 +13,7 @@ import {AdminsModule} from "./modules/admins/admins.module";
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
-            envFilePath: `.env.${process.env.NODE_ENV}`,
+            envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
             validate,
         }),
         DatabaseModule,

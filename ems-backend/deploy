@@ -13,7 +13,7 @@ SERVER_PORT="22"
 SERVER_PATH="/home/ubuntu/works"
 LOCAL_PROJECT_PATH=$(pwd)
 PROJECT_NAME=$(basename "$LOCAL_PROJECT_PATH")
-ENV_SOURCE_PATH="/home/ubuntu/env/$PROJECT_NAME/.env.development"
+ENV_SOURCE_PATH="/home/ubuntu/env/$PROJECT_NAME/.env"
 ZIP_NAME="$PROJECT_NAME.zip"
 REMOTE_PROJECT_PATH="$SERVER_PATH/$PROJECT_NAME"
 
@@ -74,14 +74,14 @@ ssh -p "$SERVER_PORT" "$SERVER_USER@$SERVER_IP" <<EOF
 
   # Copy environment file
   echo -e "\nReplacing environment file..."
-  cp "$ENV_SOURCE_PATH" "$REMOTE_PROJECT_PATH/.env.development" || exit 1
+  cp "$ENV_SOURCE_PATH" "$REMOTE_PROJECT_PATH/.env" || exit 1
 
   # Change to the project directory
   cd "$REMOTE_PROJECT_PATH" || exit 1
 
   # Rebuild and restart the backend service
   echo -e "\nRebuilding and restarting the backend service..."
-  docker compose down || true
+  docker compose down --remove-orphans || true
   docker compose up -d --build || exit 1
 
   echo
