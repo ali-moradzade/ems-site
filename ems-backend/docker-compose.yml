@@ -3,9 +3,10 @@ services:
     build: .
     container_name: ems-backend
     restart: always
+    network_mode: host
     env_file:
       - .env.development
     environment:
       - PORT=${PORT:-3001}
     ports:
-      - "${PORT}:${PORT}
+      - "${PORT}:${PORT}"
