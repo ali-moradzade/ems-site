@@ -1,11 +1,11 @@
-version: "3.8"
-
 services:
-  ems-backend:
+  backend:
     build: .
-    container_name: Employee management site backend
+    container_name: ems-backend
     restart: always
     env_file:
-      - .env
+      - .env.development
+    environment:
+      - PORT=${PORT:-3001}
     ports:
-      - "${PORT}:${PORT}"
+      - "${PORT}:${PORT}

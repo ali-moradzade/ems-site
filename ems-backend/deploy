@@ -81,8 +81,8 @@ ssh -p "$SERVER_PORT" "$SERVER_USER@$SERVER_IP" <<EOF
 
   # Rebuild and restart the backend service
   echo -e "\nRebuilding and restarting the backend service..."
-  docker-compose down || true
-  docker-compose up -d --build || exit 1
+  docker compose down || true
+  docker compose up -d --build || exit 1
 
   echo
   echo "###################################"
