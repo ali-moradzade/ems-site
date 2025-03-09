@@ -1,0 +1,99 @@
+#!/bin/bash
+#=======================
+# Author : Ali Moradzade
+# Created: 2024/10/01
+#=======================
+
+# deploy.sh
+
+# Variables
+SERVER_USER="ubuntu"
+SERVER_IP="172.86.112.178"
+SERVER_PORT="22"
+SERVER_PATH="/home/ubuntu/works"
+LOCAL_PROJECT_PATH=$(pwd)
+PROJECT_NAME=$(basename "$LOCAL_PROJECT_PATH")
+ENV_SOURCE_PATH="/home/ubuntu/env/$PROJECT_NAME/.env.development"
+ZIP_NAME="$PROJECT_NAME.zip"
+REMOTE_PROJECT_PATH="$SERVER_PATH/$PROJECT_NAME"
+
+handle_error() {
+    echo "Error: $1"
+    exit 1
+}
+
+run_tests() {
+	echo "Starting tests for $PROJECT_NAME..."
+	cd "$LOCAL_PROJECT_PATH" || exit 1
+
+	# Run unit tests
+	echo -e "\nRunning unit tests..."
+	npm run test || { echo "Unit tests failed. Aborting deployment."; exit 1; }
+
+	# Run e2e tests
+	echo -e "\nRunning end-to-end tests..."
+	npm run test:e2e || { echo "End-to-end tests failed. Aborting deployment."; exit 1; }
+
+	echo -e "\nAll tests passed successfully."
+}
+
+# Check if the server directory path is accessible
+ssh -p "$SERVER_PORT" "$SERVER_USER@$SERVER_IP" "[ -d $SERVER_PATH ]" || handle_error "Server directory path $SERVER_PATH does not exist."
+
+run_tests
+
+echo -e "\nStarting deployment of $PROJECT_NAME...\n"
+
+# Zip the project excluding specified directories
+echo "Zipping project files..."
+cd "$LOCAL_PROJECT_PATH/.." || handle_error "Could not navigate to the project parent directory."
+
+# Create a zip file excluding unnecessary directories
+zip -r "$ZIP_NAME" "$PROJECT_NAME" -x "$PROJECT_NAME/.git/*" "$PROJECT_NAME/.idea/*" "$PROJECT_NAME/node_modules/*" "$PROJECT_NAME/dist/*" "$PROJECT_NAME/logs/*" || handle_error "Failed to zip project files."
+
+# Secure copy the zip file to the server
+echo -e "\nTransferring zip file to the server..."
+scp -P "$SERVER_PORT" "$ZIP_NAME" "$SERVER_USER@$SERVER_IP:$SERVER_PATH" || handle_error "Failed to transfer the zip file to the server."
+
+# SSH into the server to deploy the project
+echo -e "\nDeploying on the server..."
+ssh -p "$SERVER_PORT" "$SERVER_USER@$SERVER_IP" <<EOF
+  # Navigate to server path
+  cd "$SERVER_PATH" || exit 1
+
+  # Remove existing project directory if it exists
+  if [ -d "$REMOTE_PROJECT_PATH" ]; then
+      echo -e "\nRemoving existing project directory..."
+      rm -rf "$REMOTE_PROJECT_PATH" || exit 1
+  fi
+
+  # Unzip the new files
+  echo -e "\nUnzipping project files..."
+  unzip -o "$ZIP_NAME" || exit 1
+  rm "$ZIP_NAME"
+
+  # Copy environment file
+  echo -e "\nReplacing environment file..."
+  cp "$ENV_SOURCE_PATH" "$REMOTE_PROJECT_PATH/.env.development" || exit 1
+
+  # Change to the project directory
+  cd "$REMOTE_PROJECT_PATH" || exit 1
+
+  # Rebuild and restart the backend service
+  echo -e "\nRebuilding and restarting the backend service..."
+  docker-compose down || true
+  docker-compose up -d --build || exit 1
+
+  echo
+  echo "###################################"
+  echo "# Deployment in server completed! #"
+  echo "###################################"
+  echo
+EOF
+
+# Cleanup local zip file
+echo "Cleaning up local files..."
+/bin/rm "$ZIP_NAME" || echo "Warning: Could not delete local zip file $ZIP_NAME."
+
+echo "Deployment completed successfully."
+
