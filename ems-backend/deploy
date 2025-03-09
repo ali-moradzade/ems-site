@@ -4,8 +4,6 @@
 # Created: 2024/10/01
 #=======================
 
-# deploy.sh
-
 # Variables
 SERVER_USER="ubuntu"
 SERVER_IP="172.86.112.178"
