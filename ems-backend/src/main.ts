@@ -18,7 +18,7 @@ async function bootstrap() {
     const openAPISpec = yaml.parse(file);
     SwaggerModule.setup('docs', app, openAPISpec);
 
-    const PORT = configService.get<number>('PORT', 3300);
+    const PORT = configService.get<number>('PORT');
     await app.listen(PORT);
 
     console.log(`Application is running on: http://localhost:${PORT}`);

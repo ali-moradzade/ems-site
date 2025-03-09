@@ -1,0 +1,69 @@
+#!/bin/bash
+#=======================
+# Author : Ali Moradzade
+# Created: 2024/11/07
+#=======================
+
+# Variables
+SERVER_USER="ubuntu"
+SERVER_IP="172.86.112.178"
+SERVER_PORT="22"
+SERVER_PATH="/home/ubuntu/works"
+LOCAL_PROJECT_PATH=$(pwd)
+PROJECT_NAME=$(basename "$LOCAL_PROJECT_PATH")
+ZIP_NAME="$PROJECT_NAME.zip"
+
+handle_error() {
+    echo "Error: $1"
+    exit 1
+}
+
+ssh -p "$SERVER_PORT" "$SERVER_USER@$SERVER_IP" "[ -d $SERVER_PATH ]" || handle_error "Server directory path $SERVER_PATH does not exist."
+
+echo -e "\nStarting deployment of $PROJECT_NAME...\n"
+
+cd "$LOCAL_PROJECT_PATH" || handle_error "Could not navigate to the project directory."
+
+echo -e "Building production app..."
+npm run build || handle_error "Could not build production app."
+
+# Check if the zip file was created
+if [ ! -d "build" ]; then
+    handle_error "Build directory does not exist."
+fi
+
+# Zip the project excluding specified directories
+echo "Zipping project files..."
+zip -r "$ZIP_NAME" "build" || handle_error "Failed to zip project files."
+
+# Secure copy the zip file to the server
+echo -e "\nTransferring zip file to the server..."
+scp -P "$SERVER_PORT" "$ZIP_NAME" "$SERVER_USER@$SERVER_IP:$SERVER_PATH" || handle_error "Failed to transfer the zip file to the server."
+
+# SSH into the server to deploy the project
+echo -e "\nDeploying on the server..."
+# shellcheck disable=SC2087
+ssh -p "$SERVER_PORT" "$SERVER_USER@$SERVER_IP" << EOF
+    # Navigate to server path
+    cd "$SERVER_PATH" || exit 1
+
+    # Unzip the new files
+    echo -e "\nUnzipping project files..."
+    unzip -o "$ZIP_NAME" || exit 1
+    rm "$ZIP_NAME"
+
+    sudo rm -rf "/var/www/$PROJECT_NAME" && sudo mv build "/var/www/$PROJECT_NAME" || echo "Error moving build directory to /var/www/$PROJECT_NAME"
+
+    echo
+    echo "###################################"
+    echo "# Deployment in server completed! #"
+    echo "###################################"
+    echo
+EOF
+
+# Cleanup local zip file
+echo "Cleaning up local files..."
+/bin/rm "$ZIP_NAME" || echo "Warning: Could not delete local zip file $ZIP_NAME."
+
+echo "Deployment completed successfully."
+

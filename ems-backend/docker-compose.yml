@@ -1,0 +1,6 @@
+services:
+  backend:
+    build: .
+    container_name: ems-backend
+    restart: always
+    network_mode: host

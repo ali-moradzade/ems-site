@@ -18,7 +18,7 @@ describe('EmployeesService', () => {
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             imports: [
-                ConfigModule.forRoot({
+                await ConfigModule.forRoot({
                     isGlobal: true,
                     envFilePath: `.env.test`,
                     validate,
