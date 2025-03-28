@@ -4,9 +4,15 @@
 # Created: 2024/11/07
 #=======================
 
+# Ensure VM_IP is set
+if [ -z "$VM_IP" ]; then
+    echo "Error: VM_IP is not set. Please ensure it's exported in your shell configuration."
+    exit 1
+fi
+
 # Variables
 SERVER_USER="ubuntu"
-SERVER_IP="172.86.112.178"
+SERVER_IP="$VM_IP"
 SERVER_PORT="22"
 SERVER_PATH="/home/ubuntu/works"
 LOCAL_PROJECT_PATH=$(pwd)

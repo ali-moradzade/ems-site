@@ -5,6 +5,7 @@ import {User, UserSchema} from './schemas/user.schema';
 import {Admin, AdminSchema} from './schemas/admin.schema';
 import {Job, JobSchema} from './schemas/job.schema';
 import {Company, CompanySchema} from "./schemas/company.schema";
+import {getMongoUri} from "../../env-validation";
 
 @Global()
 @Module({
@@ -13,7 +14,7 @@ import {Company, CompanySchema} from "./schemas/company.schema";
         MongooseModule.forRootAsync({
             imports: [ConfigModule],
             useFactory: async (configService: ConfigService) => ({
-                uri: configService.get<string>('MONGO_URI'),
+                uri: getMongoUri(configService),
             }),
             inject: [ConfigService],
         }),
